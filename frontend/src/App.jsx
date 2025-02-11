@@ -63,18 +63,18 @@ function App() {
             onClick: ref => { openMenu(); ref.current && ref.current.gatherTaskList() }
         },
         {
-            name: 'pollo',
-            icon: <i className="fa-solid fa-drumstick-bite"></i>,
-            ref: useRef(null),
-            component: Pollo,
-            onClick: () => { openMenu() }
-        },
-        {
             name: 'instagram',
             icon: <i className="fa-brands fa-instagram"></i>,
             ref: useRef(),
             component: Instagram,
             onClick: ref => { openMenu(); ref.current && ref.current.getListOfDates() }
+        },
+        {
+            name: 'pollo',
+            icon: <i className="fa-solid fa-drumstick-bite"></i>,
+            ref: useRef(null),
+            component: Pollo,
+            onClick: () => { openMenu() }
         },
         {
             name: 'linux',
