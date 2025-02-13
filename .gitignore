@@ -1,5 +1,6 @@
-# VS Code workspace files
+# VS Code ignores
 *.code-workspace
+/.vscode
 
 # General ignores
-.DS_Store
+/.DS_Store
