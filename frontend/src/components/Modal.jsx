@@ -7,6 +7,7 @@ const Modal = forwardRef(({ number, name, title, Content, openMenu }, ref) => {
     const spanRef = useRef(null)
     const buttonRef = useRef(null)
     const showingTime = 3000
+    const submitButtonText = name === 'linux' ? 'Refresh' : 'Submit'
 
     const toggleCheckmark = () => {
         setShowCheckmark(prev => !prev)
@@ -81,7 +82,7 @@ const Modal = forwardRef(({ number, name, title, Content, openMenu }, ref) => {
                                 </svg>
                             </div>
                         }
-                        <button ref={buttonRef} onClick={submit} type="button" className="btn btn-outline-primary" disabled={isDisabled}>Submit</button>
+                        <button ref={buttonRef} onClick={submit} type="button" className="btn btn-outline-primary" disabled={isDisabled}>{submitButtonText}</button>
                     </div>
                 </div>
             </div>
