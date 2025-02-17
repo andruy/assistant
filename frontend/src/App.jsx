@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import './App.css'
 import MenuButton from './components/MenuButton'
 import Modal from './components/Modal'
@@ -10,78 +10,91 @@ import Calendar from './components/modals/Calendar'
 import Notepad from './components/modals/Notepad'
 import Pollo from './components/modals/Pollo'
 import Instagram from './components/modals/Instagram'
+import InstagramViewer from './components/modals/InstagramViewer'
 import Linux from './components/modals/Linux'
 
 function App() {
     const logoRef = useRef(null)
+    const instagramDate = useState("")
+    const instagramList = useState({})
 
-    function openMenu() {
+    function toggleMenu() {
         logoRef.current && logoRef.current.click()
     }
 
     const modals = [
         {
-            name: 'apple',
+            name: 'Apple',
             icon: <i className="fa-brands fa-apple"></i>,
             ref: useRef(null),
             component: Apple,
-            onClick: () => { openMenu() }
+            onClick: () => { toggleMenu() }
         },
         {
-            name: 'microsoft',
+            name: 'Microsoft',
             icon: <i className="fa-brands fa-microsoft"></i>,
             ref: useRef(null),
             component: Microsoft,
-            onClick: ref => { openMenu(); ref.current && ref.current.getDirectories() }
+            onClick: ref => { toggleMenu(); ref.current && ref.current.getDirectories() }
         },
         {
-            name: 'folder',
+            name: 'Folder',
             icon: <i className="fa-solid fa-folder-closed"></i>,
             ref: useRef(null),
             component: Folder,
-            onClick: () => { openMenu() }
+            onClick: () => { toggleMenu() }
         },
         {
-            name: 'hourglass',
+            name: 'Hourglass',
             icon: <i className="fa-regular fa-hourglass-half"></i>,
             ref: useRef(null),
             component: Hourglass,
-            onClick: () => { openMenu() }
+            onClick: () => { toggleMenu() }
         },
         {
-            name: 'calendar',
+            name: 'Calendar',
             icon: <i className="fa-regular fa-calendar-days"></i>,
             ref: useRef(null),
             component: Calendar,
-            onClick: ref => { openMenu(); ref.current && ref.current.getActions() }
+            onClick: ref => { toggleMenu(); ref.current && ref.current.getActions() }
         },
         {
-            name: 'notepad',
+            name: 'Notepad',
             icon: <i className="fa-regular fa-clipboard"></i>,
             ref: useRef(null),
             component: Notepad,
-            onClick: ref => { openMenu(); ref.current && ref.current.gatherTaskList() }
+            onClick: ref => { toggleMenu(); ref.current && ref.current.gatherTaskList() }
         },
         {
-            name: 'instagram',
+            name: 'Instagram',
             icon: <i className="fa-brands fa-instagram"></i>,
             ref: useRef(),
             component: Instagram,
-            onClick: ref => { openMenu(); ref.current && ref.current.getListOfDates() }
+            onClick: ref => { toggleMenu(); ref.current && ref.current.getListOfDates() }
         },
         {
-            name: 'pollo',
+            name: 'Pollo',
             icon: <i className="fa-solid fa-drumstick-bite"></i>,
             ref: useRef(null),
             component: Pollo,
-            onClick: () => { openMenu() }
+            onClick: () => { toggleMenu() }
         },
         {
-            name: 'linux',
+            name: 'Linux',
             icon: <i className="fa-brands fa-linux"></i>,
             ref: useRef(null),
             component: Linux,
-            onClick: ref => { openMenu(); ref.current && ref.current.send() }
+            onClick: ref => { toggleMenu(); ref.current && ref.current.send() }
+        }
+    ]
+
+    const nestedModals = [
+        {
+            name: 'InstagramViewer',
+            icon: <i className="fa-brands fa-instagram"></i>,
+            ref: useRef(null),
+            component: InstagramViewer,
+            onClick: ref => { ref.current && ref.current.sortInstagramAccountsList() }
         }
     ]
 
@@ -97,7 +110,7 @@ function App() {
                 <div className="collapse collapse-horizontal" id="collapseExample">
                     <div className="btn-group-vertical">
                         {modals.map((modal, index) => (
-                            <button key={index} onClick={() => modal.onClick(modal.ref)} type="button" className="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target={"#staticBackdrop" + index}>
+                            <button key={index} onClick={() => modal.onClick(modal.ref)} type="button" className="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target={"#staticBackdrop" + modal.name}>
                                 {modal.icon}
                             </button>
                         ))}
@@ -106,7 +119,29 @@ function App() {
             </div>
 
             {modals.map((modal, index) => (
-                <Modal key={index} number={index} name={modal.name} title={modal.icon} Content={modal.component} openMenu={openMenu} ref={modal.ref} />
+                <Modal
+                    key={index}
+                    name={modal.name}
+                    title={modal.icon}
+                    Content={modal.component}
+                    toggleMenu={toggleMenu}
+                    instagramDate={instagramDate}
+                    instagramList={instagramList}
+                    ref={modal.ref}
+                />
+            ))}
+
+            {nestedModals.map((nestedModal, index) => (
+                <Modal
+                    key={index}
+                    name={nestedModal.name}
+                    title={nestedModal.icon}
+                    Content={nestedModal.component}
+                    toggleMenu={toggleMenu}
+                    instagramDate={instagramDate}
+                    instagramList={instagramList}
+                    ref={nestedModal.ref}
+                />
             ))}
         </>
     )

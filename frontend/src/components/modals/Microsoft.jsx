@@ -99,7 +99,7 @@ const Microsoft = forwardRef(({ isDisabled }, ref) => {
             </select>
             <div className="input-group mb-3">
                 <input value={inputValue} onKeyDown={handleKeyDown} onChange={handleInputChange} className="form-control form-control-lg" type="text" placeholder="Enter links..." />
-                <button onClick={handleAddLink} type="button" className="btn btn-outline-secondary" disabled={plusIsDisabled}>
+                <button onClick={handleAddLink} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
                     <i className="fa-solid fa-plus"></i>
                 </button>
             </div>

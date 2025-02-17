@@ -1,13 +1,13 @@
 import { useState, useRef, forwardRef } from 'react'
 
-const Modal = forwardRef(({ number, name, title, Content, openMenu }, ref) => {
+const Modal = forwardRef(({ name, title, Content, toggleMenu, instagramDate, instagramList }, ref) => {
     const [isDisabled, setIsDisabled] = useState(true)
     const [showCheckmark, setShowCheckmark] = useState(false)
     const [showX, setShowX] = useState(false)
     const spanRef = useRef(null)
     const buttonRef = useRef(null)
     const showingTime = 3000
-    const submitButtonText = name === 'linux' ? 'Refresh' : 'Submit'
+    const submitButtonText = name === 'Linux' ? 'Refresh' : 'Submit'
 
     const toggleCheckmark = () => {
         setShowCheckmark(prev => !prev)
@@ -44,11 +44,11 @@ const Modal = forwardRef(({ number, name, title, Content, openMenu }, ref) => {
     }
 
     return (
-        <div className="modal fade" id={"staticBackdrop" + number} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby={"staticBackdropLabel" + number} aria-modal>
+        <div className="modal fade" id={"staticBackdrop" + name} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby={"staticBackdropLabel" + name} aria-modal>
             <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
                 style={{
-                    maxWidth: name === 'linux' && '100%',
-                    margin: name === 'linux' && 'var(--bs-modal-margin)'
+                    maxWidth: name === 'Linux' && '100%',
+                    margin: name === 'Linux' && 'var(--bs-modal-margin)'
                 }}
             >
                 <div className="modal-content"
@@ -59,11 +59,11 @@ const Modal = forwardRef(({ number, name, title, Content, openMenu }, ref) => {
                     }}
                 >
                     <div className="modal-header">
-                        <h3 className="modal-title" id={"staticBackdropLabel" + number}>{title}</h3>
-                        <button onClick={() => { openMenu() }} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h3 className="modal-title" id={"staticBackdropLabel" + name}>{title}</h3>
+                        <button onClick={() => { toggleMenu() }} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        <Content isDisabled={setIsDisabled} parentButtonRef={buttonRef} ref={ref} />
+                        <Content isDisabled={setIsDisabled} parentButtonRef={buttonRef} instagramDate={instagramDate} instagramList={instagramList} ref={ref} />
                     </div>
                     <div className="modal-footer">
                         <span ref={spanRef} className="spinner-border text-primary visually-hidden" role="status"></span>

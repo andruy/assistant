@@ -76,7 +76,7 @@ const Notepad = forwardRef(({ isDisabled }, ref) => {
                         <option key={index} value={task.id}>{task.name + " " + task.time}</option>
                     ))}
                 </select>
-                <button onClick={handleAddTask} type="button" className="btn btn-outline-secondary" disabled={plusIsDisabled}>
+                <button onClick={handleAddTask} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
                     <i className="fa-solid fa-plus"></i>
                 </button>
             </div>
@@ -96,7 +96,7 @@ const Notepad = forwardRef(({ isDisabled }, ref) => {
                             taskPlaceholder
                         }
                     </div>
-                    <button onClick={() => setTaskPlaceholder("")} className="btn btn-outline-danger btn-sm ms-2" disabled={taskPlaceholder === ''}>
+                    <button type="button" className="btn btn-outline-danger btn-sm ms-2" onClick={() => setTaskPlaceholder("")} disabled={taskPlaceholder === ''}>
                         <i className="fa-solid fa-arrow-rotate-left"></i>
                     </button>
                 </li>

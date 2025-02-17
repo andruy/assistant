@@ -57,7 +57,7 @@ const Folder = forwardRef(({ isDisabled }, ref) => {
         <>
             <div className="input-group mb-3">
                 <input value={inputValue} onKeyDown={handleKeyDown} onChange={handleChange} className="form-control form-control-lg" type="text" placeholder="Name of the folder?" />
-                <button onClick={handleAddFolder} type="button" className="btn btn-outline-secondary" disabled={plusIsDisabled}>
+                <button onClick={handleAddFolder} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
                     <i className="fa-solid fa-plus"></i>
                 </button>
             </div>
@@ -66,7 +66,7 @@ const Folder = forwardRef(({ isDisabled }, ref) => {
                     <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>
                         <span style={{color: "#6c757d"}}>/the/new/folder/</span>{folderName}
                     </div>
-                    <button onClick={() => setFolderName("{}")} className="btn btn-outline-danger btn-sm ms-2" disabled={folderName === '{}'}>
+                    <button type="button" className="btn btn-outline-danger btn-sm ms-2" onClick={() => setFolderName("{}")} disabled={folderName === '{}'}>
                         <i className="fa-solid fa-arrow-rotate-left"></i>
                     </button>
                 </li>

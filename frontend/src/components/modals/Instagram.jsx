@@ -1,8 +1,10 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
 
-const Instagram = forwardRef(({ isDisabled }, ref) => {
-    const [selectValue, setSelectValue] = useState("")
+const Instagram = forwardRef(({ isDisabled, instagramDate, instagramList }, ref) => {
+    const [selectValue, setSelectValue] = instagramDate
     const [datesList, setDatesList] = useState([])
+    const [selected, setSelected] = useState("")
+    const [instagramAccountsList, setInstagramAccountsList] = instagramList
 
     async function send() {
         const formData = new FormData()
@@ -13,9 +15,13 @@ const Instagram = forwardRef(({ isDisabled }, ref) => {
 
         if (response.ok) {
             const result = await response.json()
-            // TODO
-            return result
+            setInstagramAccountsList(result)
+            setSelected(selectValue)
+            return { report: "Got the list" }
         } else {
+            console.error(response)
+            setInstagramAccountsList({})
+            setSelected("")
             return "Something went wrong"
         }
     }
@@ -41,12 +47,19 @@ const Instagram = forwardRef(({ isDisabled }, ref) => {
     }
 
     return (
-        <select value={selectValue} onChange={handleSelectChange} className="form-select form-select-lg mb-3" aria-label="Default select example">
-            <option value="" disabled hidden>Open for selection</option>
-            {datesList.map((date, index) => (
-                <option key={index} value={date}>{date}</option>
-            ))}
-        </select>
+        <div className="input-group">
+            <select value={selectValue} onChange={handleSelectChange} className="form-select form-select-lg" aria-label="Default select example">
+                <option value="" disabled hidden>Open for selection</option>
+                {datesList.map((date, index) => (
+                    <option key={index} value={date}>{date}</option>
+                ))}
+            </select>
+            {
+                Object.keys(instagramAccountsList).length > 0 && <button data-bs-toggle="modal" data-bs-target={"#staticBackdrop" + "InstagramViewer"} type="button" className="btn btn-dark">
+                    {"Open " + selected}
+                </button>
+            }
+        </div>
     )
 })
 

@@ -79,7 +79,7 @@ const Apple = forwardRef(({ isDisabled }, ref) => {
         <>
             <div className="input-group mb-3">
                 <input value={inputValue} onKeyDown={handleKeyDown} onChange={handleChange} className="form-control form-control-lg" type="text" placeholder="Enter links..." />
-                <button onClick={handleAddLink} type="button" className="btn btn-outline-secondary" disabled={plusIsDisabled}>
+                <button onClick={handleAddLink} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
                     <i className="fa-solid fa-plus"></i>
                 </button>
             </div>
@@ -98,7 +98,7 @@ const Apple = forwardRef(({ isDisabled }, ref) => {
                                         <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>
                                             {link}
                                         </div>
-                                        <button onClick={() => setLinksArray(linksArray.filter((_, i) => i !== index))} className="btn btn-outline-danger btn-sm ms-2">
+                                        <button type="button" className="btn btn-outline-danger btn-sm ms-2" onClick={() => setLinksArray(linksArray.filter((_, i) => i !== index))}>
                                             <i className="fa-solid fa-trash"></i>
                                         </button>
                                     </li>

@@ -110,7 +110,7 @@ const Hourglass = forwardRef(({ isDisabled }, ref) => {
             </div>
             <div className="input-group mb-3">
                 <input value={inputValue} onKeyDown={handleKeyDown} onChange={handleInputChange} className="form-control form-control-lg" type="number" inputMode="numeric" pattern="\d*" min={1} placeholder="How long? (minutes)" />
-                <button onClick={handleAddTask} type="button" className="btn btn-outline-secondary" disabled={plusIsDisabled}>
+                <button onClick={handleAddTask} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
                     <i className="fa-solid fa-plus"></i>
                 </button>
             </div>
@@ -134,10 +134,10 @@ const Hourglass = forwardRef(({ isDisabled }, ref) => {
                                                     `AC will stop ${new Date(task.timeframe + Date.now()).toLocaleString()}`
                                             }
                                         </div>
-                                        <button onClick={() => {
+                                        <button type="button" className="btn btn-outline-danger btn-sm ms-2" onClick={() => {
                                             const newTasksArray = tasksArray.filter((_, i) => i !== index)
                                             setTasksArray(newTasksArray)
-                                        }} className="btn btn-outline-danger btn-sm ms-2">
+                                        }}>
                                             <i className="fa-solid fa-trash"></i>
                                         </button>
                                     </li>
