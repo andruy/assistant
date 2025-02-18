@@ -9,6 +9,9 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
     const [bottomAccordionIsDisabled, setBottomAccordionIsDisabled] = useState(false)
     const topButtonRef = useRef(null)
     const bottomButtonRef = useRef(null)
+    const [buttonIsDisabled, setButtonIsDisabled] = useState(false)
+    const [startingPoint, setStartingPoint] = useState(0)
+    const [endingPoint, setEndingPoint] = useState(1)
 
     async function send() {
         const formData = new FormData()
@@ -86,6 +89,29 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
         })
     }
 
+    const handleFirstChange = event => {
+        const num = parseInt(event.target.value)
+        setStartingPoint(num - 1)
+    }
+
+    const handleSecondChange = event => {
+        const num = parseInt(event.target.value)
+        setEndingPoint(num - 1)
+    }
+
+    function openLinksBatch() {
+        for (let i = startingPoint; i < endingPoint; i++) {
+            if (i >= Object.values(instagramAccountsList).length) {
+                return
+            }
+            window.open(Object.values(instagramAccountsList)[i], "_blank")
+        }
+    }
+
+    useEffect(() => {
+        setButtonIsDisabled(startingPoint > endingPoint ? true : false)
+    }, [startingPoint, endingPoint])
+
     return (
         <>
             <div className="accordion mb-3" id={"accordionExample1" + idSuffix}>
@@ -100,7 +126,7 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
                             <ul className="list-group">
                                 {
                                     Object.entries(toBeDeletedList).map(([key, value]) => (
-                                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                                        <li key={key} className="list-group-item d-flex justify-content-between align-items-center">
                                             <span>{Object.keys(toBeDeletedList).indexOf(key) + 1}</span>
                                             <a href={value} target="_blank">{key}</a>
                                             <button type="button" className="btn btn-outline-info btn-sm ms-2" onClick={() => {
@@ -114,7 +140,7 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
                                                     return rest
                                                 })
                                             }}>
-                                                < i className="fa-solid fa-arrow-rotate-left" ></i >
+                                                <i className="fa-solid fa-arrow-rotate-left"></i>
                                             </button>
                                         </li>
                                     ))
@@ -133,18 +159,17 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
                     </h2>
                     <div id={"collapseBox2" + idSuffix} className="accordion-collapse collapse" data-bs-parent={"#accordionExample2" + idSuffix}>
                         <div className="accordion-body">
-                            <div className="d-flex mb-3">
-                                <button type="button" className="btn btn-outline-secondary btn-sm" style={{ width: "60rem" }}>
-                                    {/* {`Open links batch (${batchIndex + 1})`} */}
+                            <div className="input-group input-group-sm mb-3">
+                                <button onClick={openLinksBatch} type="button" className="btn btn-outline-secondary" disabled={buttonIsDisabled}>
+                                    Open links
                                 </button>
-                                <div className="input-group input-group-sm">
-                                    <input className="form-control" type="text" placeholder="Index" />
-                                </div>
+                                <input onChange={handleFirstChange} className="form-control" type="number" inputMode="numeric" pattern="\d*" min={1} placeholder="Starting index" />
+                                <input onChange={handleSecondChange} className="form-control" type="number" inputMode="numeric" pattern="\d*" min={2} placeholder="Ending index" />
                             </div>
                             <ul className="list-group">
                                 {
                                     Object.entries(instagramAccountsList).map(([key, value]) => (
-                                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                                        <li key={key} className="list-group-item d-flex justify-content-between align-items-center">
                                             <span>{Object.keys(instagramAccountsList).indexOf(key) + 1}</span>
                                             <a href={value} target="_blank">{key}</a>
                                             <button type="button" className="btn btn-outline-warning btn-sm ms-2" onClick={() => {
@@ -158,7 +183,7 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
                                                     return rest
                                                 })
                                             }}>
-                                                <i class="fa-solid fa-eraser"></i>
+                                                <i className="fa-solid fa-eraser"></i>
                                             </button>
                                         </li>
                                     ))

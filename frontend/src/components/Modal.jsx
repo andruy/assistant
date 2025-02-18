@@ -63,7 +63,13 @@ const Modal = forwardRef(({ name, title, Content, toggleMenu, instagramDate, ins
                         <button onClick={() => { toggleMenu() }} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        <Content isDisabled={setIsDisabled} parentButtonRef={buttonRef} instagramDate={instagramDate} instagramList={instagramList} ref={ref} />
+                        <Content
+                            isDisabled={setIsDisabled}
+                            parentButtonRef={buttonRef}
+                            instagramDate={instagramDate}
+                            instagramList={instagramList}
+                            ref={ref}
+                        />
                     </div>
                     <div className="modal-footer">
                         <span ref={spanRef} className="spinner-border text-primary visually-hidden" role="status"></span>

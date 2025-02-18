@@ -93,8 +93,7 @@ function App() {
             name: 'InstagramViewer',
             icon: <i className="fa-brands fa-instagram"></i>,
             ref: useRef(null),
-            component: InstagramViewer,
-            onClick: ref => { ref.current && ref.current.sortInstagramAccountsList() }
+            component: InstagramViewer
         }
     ]
 
