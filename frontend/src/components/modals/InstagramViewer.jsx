@@ -3,8 +3,9 @@ import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "re
 const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }, ref) => {
     const idSuffix = 'InstagramViewer'
     const [date] = instagramDate
-    const [instagramAccountsList, setInstagramAccountsList] = instagramList
-    const [toBeDeletedList, setToBeDeletedList] = useState([])
+    const [incoming] = instagramList
+    const [instagramAccountsList, setInstagramAccountsList] = useState({})
+    const [toBeDeletedList, setToBeDeletedList] = useState({})
     const [topAccordionIsDisabled, setTopAccordionIsDisabled] = useState(true)
     const [bottomAccordionIsDisabled, setBottomAccordionIsDisabled] = useState(false)
     const topButtonRef = useRef(null)
@@ -40,6 +41,11 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
     useImperativeHandle(ref, () => ({
         send,
     }))
+
+    useEffect(() => {
+        setInstagramAccountsList(incoming)
+        setToBeDeletedList([])
+    }, [incoming])
 
     useEffect(() => {
         if (Object.keys(toBeDeletedList).length === 0) {
