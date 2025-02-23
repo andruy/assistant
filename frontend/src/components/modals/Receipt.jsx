@@ -1,6 +1,6 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
 
-const Pollo = forwardRef(({ isDisabled, parentButtonRef }, ref) => {
+const Receipt = forwardRef(({ isDisabled, parentButtonRef }, ref) => {
     const [inputValue, setInputValue] = useState("")
     const [mealSelectValue, setMealSelectValue] = useState("")
     const [typeSelectValue, setTypeSelectValue] = useState("")
@@ -12,7 +12,7 @@ const Pollo = forwardRef(({ isDisabled, parentButtonRef }, ref) => {
             visit: typeSelectValue
         }
 
-        const response = await fetch('/pollo', {
+        const response = await fetch('/Receipt', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -79,4 +79,4 @@ const Pollo = forwardRef(({ isDisabled, parentButtonRef }, ref) => {
     )
 })
 
-export default Pollo
+export default Receipt

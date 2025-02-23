@@ -1,6 +1,6 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
 
-const Linux = forwardRef(({ isDisabled }, ref) => {
+const Terminal = forwardRef(({ isDisabled }, ref) => {
     const [text, setText] = useState('Did not find any logs')
 
     async function send() {
@@ -39,4 +39,4 @@ const Linux = forwardRef(({ isDisabled }, ref) => {
     )
 })
 
-export default Linux
+export default Terminal

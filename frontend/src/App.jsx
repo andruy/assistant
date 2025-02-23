@@ -8,10 +8,10 @@ import Folder from './components/modals/Folder'
 import Hourglass from './components/modals/Hourglass'
 import Calendar from './components/modals/Calendar'
 import Notepad from './components/modals/Notepad'
-import Pollo from './components/modals/Pollo'
+import Receipt from './components/modals/Receipt'
 import Instagram from './components/modals/Instagram'
 import InstagramViewer from './components/modals/InstagramViewer'
-import Linux from './components/modals/Linux'
+import Terminal from './components/modals/Terminal'
 
 function App() {
     const logoRef = useRef(null)
@@ -25,65 +25,65 @@ function App() {
     const modals = [
         {
             name: 'Apple',
-            icon: <i className="fa-brands fa-apple"></i>,
+            icon: <i class="bi bi-apple"></i>,
             ref: useRef(null),
             component: Apple,
             onClick: () => { toggleMenu() }
         },
         {
             name: 'Microsoft',
-            icon: <i className="fa-brands fa-microsoft"></i>,
+            icon: <i class="bi bi-microsoft"></i>,
             ref: useRef(null),
             component: Microsoft,
             onClick: ref => { toggleMenu(); ref.current && ref.current.getDirectories() }
         },
         {
             name: 'Folder',
-            icon: <i className="fa-solid fa-folder-closed"></i>,
+            icon: <i class="bi bi-folder-fill"></i>,
             ref: useRef(null),
             component: Folder,
             onClick: () => { toggleMenu() }
         },
         {
             name: 'Hourglass',
-            icon: <i className="fa-regular fa-hourglass-half"></i>,
+            icon: <i class="bi bi-hourglass-split"></i>,
             ref: useRef(null),
             component: Hourglass,
             onClick: () => { toggleMenu() }
         },
         {
             name: 'Calendar',
-            icon: <i className="fa-regular fa-calendar-days"></i>,
+            icon: <i class="bi bi-calendar3"></i>,
             ref: useRef(null),
             component: Calendar,
             onClick: ref => { toggleMenu(); ref.current && ref.current.getActions() }
         },
         {
             name: 'Notepad',
-            icon: <i className="fa-regular fa-clipboard"></i>,
+            icon: <i class="bi bi-clipboard"></i>,
             ref: useRef(null),
             component: Notepad,
             onClick: ref => { toggleMenu(); ref.current && ref.current.gatherTaskList() }
         },
         {
             name: 'Instagram',
-            icon: <i className="fa-brands fa-instagram"></i>,
+            icon: <i class="bi bi-instagram"></i>,
             ref: useRef(),
             component: Instagram,
             onClick: ref => { toggleMenu(); ref.current && ref.current.getListOfDates() }
         },
         {
-            name: 'Pollo',
-            icon: <i className="fa-solid fa-drumstick-bite"></i>,
+            name: 'Receipt',
+            icon: <i class="bi bi-receipt"></i>,
             ref: useRef(null),
-            component: Pollo,
+            component: Receipt,
             onClick: () => { toggleMenu() }
         },
         {
-            name: 'Linux',
-            icon: <i className="fa-brands fa-linux"></i>,
+            name: 'Terminal',
+            icon: <i class="bi bi-terminal"></i>,
             ref: useRef(null),
-            component: Linux,
+            component: Terminal,
             onClick: ref => { toggleMenu(); ref.current && ref.current.send() }
         }
     ]
@@ -91,7 +91,7 @@ function App() {
     const nestedModals = [
         {
             name: 'InstagramViewer',
-            icon: <i className="fa-brands fa-instagram"></i>,
+            icon: <i class="bi bi-instagram"></i>,
             ref: useRef(null),
             component: InstagramViewer
         }

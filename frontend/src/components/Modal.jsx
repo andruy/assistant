@@ -7,7 +7,7 @@ const Modal = forwardRef(({ name, title, Content, toggleMenu, instagramDate, ins
     const spanRef = useRef(null)
     const buttonRef = useRef(null)
     const showingTime = 3000
-    const submitButtonText = name === 'Linux' ? 'Refresh' : 'Submit'
+    const submitButtonText = name === 'Terminal' ? 'Refresh' : 'Submit'
 
     const toggleCheckmark = () => {
         setShowCheckmark(prev => !prev)
@@ -47,8 +47,8 @@ const Modal = forwardRef(({ name, title, Content, toggleMenu, instagramDate, ins
         <div className="modal fade" id={"staticBackdrop" + name} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby={"staticBackdropLabel" + name} aria-modal>
             <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
                 style={{
-                    maxWidth: name === 'Linux' && '100%',
-                    margin: name === 'Linux' && 'var(--bs-modal-margin)'
+                    maxWidth: name === 'Terminal' && '100%',
+                    margin: name === 'Terminal' && 'var(--bs-modal-margin)'
                 }}
             >
                 <div className="modal-content"
