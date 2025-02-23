@@ -58,7 +58,7 @@ const Folder = forwardRef(({ isDisabled }, ref) => {
             <div className="input-group mb-3">
                 <input value={inputValue} onKeyDown={handleKeyDown} onChange={handleChange} className="form-control form-control-lg" type="text" placeholder="Name of the folder?" />
                 <button onClick={handleAddFolder} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
-                    <i className="fa-solid fa-plus"></i>
+                    <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
             <ul className="list-group list-group-flush">
@@ -67,7 +67,7 @@ const Folder = forwardRef(({ isDisabled }, ref) => {
                         <span style={{color: "#6c757d"}}>/the/new/folder/</span>{folderName}
                     </div>
                     <button type="button" className="btn btn-outline-danger btn-sm ms-2" onClick={() => setFolderName("{}")} disabled={folderName === '{}'}>
-                        <i className="fa-solid fa-arrow-rotate-left"></i>
+                        <i class="bi bi-arrow-counterclockwise"></i>
                     </button>
                 </li>
             </ul>

@@ -100,7 +100,7 @@ const Microsoft = forwardRef(({ isDisabled }, ref) => {
             <div className="input-group mb-3">
                 <input value={inputValue} onKeyDown={handleKeyDown} onChange={handleInputChange} className="form-control form-control-lg" type="text" placeholder="Enter links..." />
                 <button onClick={handleAddLink} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
-                    <i className="fa-solid fa-plus"></i>
+                    <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
             <div className="accordion" id={"accordionExample" + idSuffix}>
@@ -132,7 +132,7 @@ const Microsoft = forwardRef(({ isDisabled }, ref) => {
                                                                     return updatedLinks
                                                                 })
                                                             }}>
-                                                                <i className="fa-solid fa-trash"></i>
+                                                                <i class="bi bi-trash3"></i>
                                                             </button>
                                                         </li>
                                                     ))

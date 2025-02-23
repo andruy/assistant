@@ -101,17 +101,17 @@ const Hourglass = forwardRef(({ isDisabled }, ref) => {
             <div className="d-flex justify-content-evenly mb-3">
                 <input type="radio" className="btn-check" name="options-outlined" id={"success-outlined" + idSuffix} autoComplete="off" />
                 <label className="btn btn-outline-success" htmlFor={"success-outlined" + idSuffix}>
-                    <i className="fa-solid fa-play"></i>
+                    <i class="bi bi-play-fill"></i>
                 </label>
                 <input ref={inputRef} type="radio" className="btn-check" name="options-outlined" id={"danger-outlined" + idSuffix} autoComplete="off" defaultChecked />
                 <label className="btn btn-outline-danger" htmlFor={"danger-outlined" + idSuffix}>
-                    <i className="fa-solid fa-stop"></i>
+                    <i class="bi bi-stop-fill"></i>
                 </label>
             </div>
             <div className="input-group mb-3">
                 <input value={inputValue} onKeyDown={handleKeyDown} onChange={handleInputChange} className="form-control form-control-lg" type="number" inputMode="numeric" pattern="\d*" min={1} placeholder="How long? (minutes)" />
                 <button onClick={handleAddTask} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
-                    <i className="fa-solid fa-plus"></i>
+                    <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
             <div className="accordion" id={"accordionExample" + idSuffix}>
@@ -128,7 +128,7 @@ const Hourglass = forwardRef(({ isDisabled }, ref) => {
                                     <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
                                         <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>
                                             {
-                                                task.email.subject  === "Turn AC on" ?
+                                                task.email.subject === "Turn AC on" ?
                                                     `AC will start ${new Date(task.timeframe + Date.now()).toLocaleString()}`
                                                     :
                                                     `AC will stop ${new Date(task.timeframe + Date.now()).toLocaleString()}`
@@ -138,7 +138,7 @@ const Hourglass = forwardRef(({ isDisabled }, ref) => {
                                             const newTasksArray = tasksArray.filter((_, i) => i !== index)
                                             setTasksArray(newTasksArray)
                                         }}>
-                                            <i className="fa-solid fa-trash"></i>
+                                            <i class="bi bi-trash3"></i>
                                         </button>
                                     </li>
                                 ))}

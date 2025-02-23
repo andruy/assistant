@@ -146,7 +146,7 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
                                                     return rest
                                                 })
                                             }}>
-                                                <i className="fa-solid fa-arrow-rotate-left"></i>
+                                                <i class="bi bi-arrow-counterclockwise"></i>
                                             </button>
                                         </li>
                                     ))
@@ -189,7 +189,7 @@ const InstagramViewer = forwardRef(({ isDisabled, instagramDate, instagramList }
                                                     return rest
                                                 })
                                             }}>
-                                                <i className="fa-solid fa-eraser"></i>
+                                                <i class="bi bi-eraser-fill"></i>
                                             </button>
                                         </li>
                                     ))

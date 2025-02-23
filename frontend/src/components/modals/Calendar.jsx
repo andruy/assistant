@@ -96,7 +96,7 @@ const Calendar = forwardRef(({ isDisabled }, ref) => {
             <div className="input-group mb-3">
                 <input value={dateInput} onKeyDown={handleKeyDown} onChange={handleInputChange} className="form-control form-control-lg" type="datetime-local" placeholder="Enter links..." />
                 <button onClick={handleAddTask} type="button" className="btn btn-dark" disabled={plusIsDisabled}>
-                    <i className="fa-solid fa-plus"></i>
+                    <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
             <ul className="list-group list-group-flush">
@@ -116,7 +116,7 @@ const Calendar = forwardRef(({ isDisabled }, ref) => {
                         }
                     </div>
                     <button type="button" className="btn btn-outline-danger btn-sm ms-2" onClick={() => setDatePlaceholder("")} disabled={datePlaceholder === ''}>
-                        <i className="fa-solid fa-arrow-rotate-left"></i>
+                        <i class="bi bi-arrow-counterclockwise"></i>
                     </button>
                 </li>
             </ul>
