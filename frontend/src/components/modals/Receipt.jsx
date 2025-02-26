@@ -12,7 +12,7 @@ const Receipt = forwardRef(({ isDisabled, parentButtonRef }, ref) => {
             visit: typeSelectValue
         }
 
-        const response = await fetch('/Receipt', {
+        const response = await fetch('/pollo', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
