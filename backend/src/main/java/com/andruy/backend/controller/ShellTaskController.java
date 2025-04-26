@@ -33,7 +33,6 @@ public class ShellTaskController {
 
     @PostMapping("/yte")
     public ResponseEntity<Map<String, String>> assignDirectories(@RequestBody Map<String, List<String>> body) {
-
         shellTaskService.assignAndProcess(body);
 
         return ResponseEntity.ok().body(Map.of("report", shellTaskService.getTaskResponse().get(1)));

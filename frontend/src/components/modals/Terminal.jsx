@@ -5,7 +5,7 @@ const Terminal = forwardRef(({ isDisabled }, ref) => {
 
     async function send() {
         const response = await fetch('/logReader')
-        
+
         if (response.ok) {
             const result = await response.json()
             setText(result.report)
