@@ -1,0 +1,2 @@
+C:/Users/Docker/Dropbox/repos/assistant/assistant.client/obj/Debug/assistant.client.esproj.CoreCompileInputs.cache
+/Users/andruy/Documents/dev/dotnet/assistant/assistant.client/obj/Debug/assistant.client.esproj.CoreCompileInputs.cache
