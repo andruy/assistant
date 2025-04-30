@@ -1,13 +1,7 @@
 package com.andruy.backend.service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +11,8 @@ import java.util.Scanner;
 import java.util.Map.Entry;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,9 +23,14 @@ import com.andruy.backend.model.ShellTask;
 import com.andruy.backend.util.BashHandler;
 import com.andruy.backend.util.DirectoryList;
 import com.andruy.backend.util.ShellScriptBuilder;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 
 @Service
 public class ShellTaskService {
+    Logger logger = LoggerFactory.getLogger(ShellTaskService.class);
     @Value("${my.email.recipient}")
     private String receiver;
     @Value("${dir.corrections}")
@@ -43,7 +44,6 @@ public class ShellTaskService {
     private StringBuilder sb;
     private Scanner scanner;
     private ShellTask task;
-    private URL url;
 
     public void ytTask(Map<Directory, List<String>> map) {
         task = ShellTask.YOUTUBE;
@@ -105,29 +105,21 @@ public class ShellTaskService {
 
     private String getDirectory(String address) {
         String response = "";
-        StringBuilder content = new StringBuilder();
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+        Page page = browser.newPage();
 
         try {
-            url = new URL(address);
-            URLConnection conn = url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
-
-            while ((inputLine = bufferedReader.readLine()) != null) {
-                content.append(inputLine);
-            }
-
-            bufferedReader.close();
-            response = content.toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            page.navigate(address);
+            response = page.locator("//*[@id=\"text\"]/a").textContent();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        } finally {
+            browser.close();
+            playwright.close();
         }
 
-        return response.substring(
-            response.indexOf("\"name\": \"") + 9, response.indexOf("\"}}]}</script>")
-        );
+        return response;
     }
 
     private String renameDirectory() {
@@ -140,7 +132,7 @@ public class ShellTaskService {
             }
             scanner.close();
         } catch (FileNotFoundException  e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return sb.toString();
