@@ -86,37 +86,42 @@ public class ShellTaskService {
         Map<Directory, List<String>> map = new HashMap<>();
         JSONObject correction = new JSONObject(renameDirectory()).getJSONObject("RenameDirectory");
 
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+        Page page = browser.newPage();
+
         for (String url : list) {
-            Directory directory = new Directory(getDirectory(url));
+            Directory directory = new Directory(getDirectory(url, page));
 
-            if (correction.has(directory.getName())) {
-                directory.setName(correction.getString(directory.getName()));
-            }
+            if (directory != null && !directory.getName().isEmpty()) {
+                if (correction.has(directory.getName())) {
+                    directory.setName(correction.getString(directory.getName()));
+                }
 
-            if (map.containsKey(directory)) {
-                map.get(directory).add(url);
+                if (map.containsKey(directory)) {
+                    map.get(directory).add(url);
+                } else {
+                    map.put(directory, new ArrayList<>(List.of(url)));
+                }
             } else {
-                map.put(directory, new ArrayList<>(List.of(url)));
+                logger.warn("Directory is null or empty for URL: " + url);
             }
         }
+
+        browser.close();
+        playwright.close();
 
         ytTask(map);
     }
 
-    private String getDirectory(String address) {
+    private String getDirectory(String address, Page page) {
         String response = "";
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-        Page page = browser.newPage();
 
         try {
             page.navigate(address);
             response = page.locator("//*[@id=\"text\"]/a").textContent();
         } catch (Exception e) {
             logger.error(e.getMessage());
-        } finally {
-            browser.close();
-            playwright.close();
         }
 
         return response;
