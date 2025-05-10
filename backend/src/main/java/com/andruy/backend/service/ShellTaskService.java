@@ -87,7 +87,7 @@ public class ShellTaskService {
         JSONObject correction = new JSONObject(renameDirectory()).getJSONObject("RenameDirectory");
 
         Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
         Page page = browser.newPage();
 
         for (String url : list) {
@@ -119,7 +119,7 @@ public class ShellTaskService {
 
         try {
             page.navigate(address);
-            response = page.locator("//*[@id=\"text\"]/a").textContent();
+            response = page.locator("h3#title").first().textContent();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
