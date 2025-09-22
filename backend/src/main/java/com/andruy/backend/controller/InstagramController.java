@@ -54,6 +54,6 @@ public class InstagramController {
 
     @PutMapping("/protectAccounts")
     public ResponseEntity<Map<String, String>> protectAccounts(@RequestParam("date") Date date, @RequestBody List<String> list) {
-        return ResponseEntity.ok(instagramService.protectAccounts("NMF", date, list));
+        return ResponseEntity.ok(instagramService.protectAccounts(date, list));
     }
 }
