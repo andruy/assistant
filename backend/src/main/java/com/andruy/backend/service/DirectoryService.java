@@ -12,7 +12,7 @@ import com.andruy.backend.util.Constants;
 @Service
 public class DirectoryService {
     @Value("${my.programming.directory}")
-    String base;
+    private String base;
 
     public String createFolder(Directory name) {
         List<String> output = new BashHandler(new String[] { Constants.MAKE_DIR, base + name.getName() }).startAndReturnOutput();
