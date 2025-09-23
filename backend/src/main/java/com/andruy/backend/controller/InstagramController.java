@@ -31,7 +31,7 @@ public class InstagramController {
     }
 
     @GetMapping("/compare")
-    public ResponseEntity<Map<String, String>> getFollowersComparison() {
+    public ResponseEntity<Map<String, String>> getFollowersAndFollowingComparison() {
         instagramService.getComparison();
         return ResponseEntity.ok(Map.of("report", "You will be notified when the task is done"));
     }
@@ -43,17 +43,17 @@ public class InstagramController {
 
     @GetMapping("/listOfAccounts")
     public ResponseEntity<Map<String, String>> getListOfAccounts(@RequestParam("date") Date date) {
-        return ResponseEntity.ok(instagramService.getListOfAccounts("NMF", date));
+        return ResponseEntity.ok(instagramService.getListOfAccounts("nmf", date));
     }
 
     @DeleteMapping("/deleteAccounts")
     public ResponseEntity<Map<String, String>> deleteAccounts(@RequestParam("date") Date date, @RequestBody List<String> list) {
-        instagramService.deleteAccounts("NMF", date, list);
+        instagramService.deleteAccounts("nmf", date, list);
         return ResponseEntity.ok(Map.of("report", "You will be notified when the task is done"));
     }
 
     @PutMapping("/protectAccounts")
     public ResponseEntity<Map<String, String>> protectAccounts(@RequestParam("date") Date date, @RequestBody List<String> list) {
-        return ResponseEntity.ok(instagramService.protectAccounts("NMF", date, list));
+        return ResponseEntity.ok(instagramService.protectAccounts(date, list));
     }
 }

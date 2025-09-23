@@ -4,19 +4,16 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.interactions.Actions;
+// import org.jsoup.Jsoup;
+// import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +21,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.andruy.backend.repository.InstagramRepository;
 import com.andruy.backend.model.PushNotification;
+import com.andruy.backend.repository.InstagramRepository;
 import com.andruy.backend.util.TimeTracker;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.AriaRole;
 
 @Service
 public class InstagramService {
@@ -36,20 +40,17 @@ public class InstagramService {
     private PushNotificationService pushNotificationService;
     @Autowired
     private TimeTracker timeTracker;
-    Logger logger = LoggerFactory.getLogger(InstagramService.class);
+    private Logger logger = LoggerFactory.getLogger(InstagramService.class);
     private boolean secondIteration = false;
     private List<String> followersList;
     private List<String> followingList;
+    private Playwright playwright;
+    private Browser browser;
+    private Page page;
     private final String ADDRESS = "https://www.instagram.com/";
-    private final int LONG_HALT = 15000;
     private final int SHORT_HALT = 3000;
-    private final int MID_HALT = 7000;
-    private List<WebElement> elements;
     private String response = "";
-    private WebElement element;
-    private WebDriver driver;
     private double totalTime;
-    private Actions actions;
     private long startTime;
     private Date date;
     @Value("${my.ig.username}")
@@ -86,88 +87,48 @@ public class InstagramService {
         return CompletableFuture.completedFuture(null);
     }
 
-    public void getList(String target, boolean comparison) {
+    private void getList(String target, boolean comparison) {
         try {
             if (secondIteration) {
-                element = driver.findElement(By.className("_abm0"));
-                printClasses(element);
-                actions = new Actions(driver);
-                actions.moveToElement(element).click().perform();
-                Thread.sleep(MID_HALT);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
             } else {
                 accountLogin();
-                element = driver.findElement(By.cssSelector("a[href='/andruy/?next=%2F']"));
-                actions = new Actions(driver);
-                actions.moveToElement(element).click().perform();
-                Thread.sleep(MID_HALT);
             }
 
-            element = driver.findElement(By.cssSelector("a[href='/andruy/" + target + "/?next=%2F"));
-            int followInt = Integer.parseInt(element.findElement(By.xpath("./*[1]"))
-                                                    .findElement(By.xpath("./*[1]"))
-                                                    .getText().replaceFirst(",", ""));
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(username + "'s profile picture Profile")).click();
 
-            String filler = target.equals("followers") ? followInt + " " + target : target + " " + followInt;
+            String filler = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).innerText();
+
             logger.trace("Instagram's original counter shows " + filler);
-            List<String> resultList = new ArrayList<>(followInt + 100);
-            actions = new Actions(driver);
-            actions.moveToElement(element).click().perform();
-            Thread.sleep(MID_HALT);
 
-            WebElement scrollingElement = driver.findElement(By.cssSelector("input[placeholder='Search']"))
-                                                .findElement(By.xpath(".."))
-                                                .findElement(By.xpath(".."))
-                                                .findElement(By.xpath("./following-sibling::div[1]"));
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).click();
+            Thread.sleep(SHORT_HALT);
 
-            WebElement listingElement = scrollingElement.findElement(By.xpath("./*[1]"))
-                                                        .findElement(By.xpath("./*[1]"));
+            Locator scrollingElement = page.locator("xpath=/html/body/div[4]/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]");
+            Locator listingElement = page.locator("xpath=/html/body/div[4]/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div");
 
             // Scroll down to load lazy-loaded content
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            int initialChildCount = listingElement.findElements(By.xpath("./*")).size();
-            long lastHeight = (long) js.executeScript("return arguments[0].scrollHeight;", scrollingElement);
-            long newHeight = 0;
+            int initialChildCount = listingElement.locator("xpath=./*").count();
+            int lastHeight = (int) scrollingElement.evaluate("element => element.scrollHeight");
+            int newHeight = 0;
             int scrollingIterations = 0;
             boolean contentLoaded = true;
-            int i = 0;
 
             while (contentLoaded) {
-                // Process the loaded content
-                elements = listingElement.findElements(By.xpath("./div"));
-                while (i < initialChildCount) {
-                    resultList.add(
-                        elements.get(i).findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./following-sibling::div[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .findElement(By.xpath("./*[1]"))
-                                        .getText()
-                    );
-                    i++;
-                }
-
                 // Scroll to the bottom of the div
-                js.executeScript("arguments[0].scrollTop = arguments[0].scrollHeight;", scrollingElement);
+                scrollingElement.evaluate("e => e.scrollTop = e.scrollHeight");
                 Thread.sleep(SHORT_HALT); // Wait for content to load
 
                 // Check if new elements are loaded by counting the child elements
-                int newChildCount = listingElement.findElements(By.xpath("./*")).size();
+                int newChildCount = listingElement.locator("xpath=./*").count();
 
                 // Get the current scroll height of the div
-                newHeight = (long) js.executeScript("return arguments[0].scrollHeight;", scrollingElement);
+                newHeight = (int) scrollingElement.evaluate("element => element.scrollHeight");
 
                 // Check if new content is loaded or if we've reached the end of the div
                 if (newChildCount > initialChildCount) {
-                    initialChildCount = newChildCount; // Update the count of loaded elements
+                    // Update the count of loaded elements
+                    initialChildCount = newChildCount;
                     logger.trace("New content loaded, child count: " + newChildCount);
 
                     if (scrollingIterations > 0) {
@@ -186,19 +147,47 @@ public class InstagramService {
                 // Update last height for comparison in the next iteration
                 lastHeight = newHeight;
             }
-            Thread.sleep(SHORT_HALT);
+
+            totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
+            logger.trace("Total elapsed time retrieving accounts: " + totalTime + " minutes");
+
+            // Process the loaded content
+            long newStartTime = System.currentTimeMillis();
+
+            List<Locator> elements = listingElement.locator("xpath=./div").all();
+
+            // List<Document> documents = elements.stream()
+            //                                 .map(Locator::innerHTML)
+            //                                 .map(Jsoup::parse)
+            //                                 .toList();
+
+            Set<String> resultList = new HashSet<>();
+
+            for (Locator element : elements) {
+                try {
+                    String alt = element.locator("a").first().getAttribute("href");
+                    int idx = alt.indexOf('?');
+                    resultList.add(alt.substring(1, idx - 1));
+                } catch (Exception e) {
+                    logger.warn("Encountered an element with no name?\n" + element.innerHTML() + "\n" + e.getMessage());
+                }
+            }
+
+            totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), newStartTime);
+            logger.trace("Total elapsed time adding the names to the list: " + totalTime + " minutes");
 
             // Store the list to database
             int updatedRecords = 0;
             for (String s : resultList) {
-                updatedRecords += instagramRepository.saveUser(target.toUpperCase(), s, date);
+                updatedRecords += instagramRepository.saveUser(target, s, date);
             }
-            logger.trace("Inserted " + updatedRecords + " records to IG_" + target.toUpperCase() + " table");
+
+            logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
 
             if (target.equals("followers")) {
-                followersList = resultList;
+                followersList = resultList.stream().toList();
             } else {
-                followingList = resultList;
+                followingList = resultList.stream().toList();
             }
 
             response = target.equals("followers") ? "You have " + resultList.size() + " " + target : resultList.size() + " are " + target + " you";
@@ -207,8 +196,8 @@ public class InstagramService {
             if (comparison) {
                 secondIteration = true;
             } else {
-                driver.close();
-                driver.quit();
+                browser.close();
+                playwright.close();
             }
         } catch (Exception e) {
             if (secondIteration) {
@@ -217,8 +206,8 @@ public class InstagramService {
 
             response = e.getMessage();
             logger.error(response);
-            driver.close();
-            driver.quit();
+            browser.close();
+            playwright.close();
         }
     }
 
@@ -240,9 +229,9 @@ public class InstagramService {
             // Store the list to database
             int updatedRecords = 0;
             for (String s : result) {
-                updatedRecords += instagramRepository.saveUser(target.toUpperCase(), s, date);
+                updatedRecords += instagramRepository.saveUser(target, s, date);
             }
-            logger.trace("Inserted " + updatedRecords + " records to IG_" + target.toUpperCase() + " table");
+            logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
             totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
             logger.trace("Total elapsed time: " + totalTime + " minutes");
         }
@@ -278,49 +267,46 @@ public class InstagramService {
 
         for (String s : list) {
             try {
-                driver.get(map.get(s));
-                Thread.sleep(MID_HALT);
-                element = driver.findElement(By.cssSelector("._ap3a._aaco._aacw._aad6._aade"));
+                // TODO
+                // driver.get(map.get(s));
+                // element = driver.findElement(By.cssSelector("._ap3a._aaco._aacw._aad6._aade"));
 
-                if (element.getText().equals("Following")) {
-                    actions = new Actions(driver);
-                    actions.moveToElement(element).click().perform();
-                    Thread.sleep(SHORT_HALT);
-                    elements = driver.findElements(By.cssSelector(".x1i10hfl.x1qjc9v5.xjbqb8w.xjqpnuy.xa49m3k.xqeqjp1.x2hbi6w.x13fuv20.xu3j5b3.x1q0q8m5.x26u7qi.x972fbf.xcfux6l.x1qhh985.xm0m39n.x9f619.x1ypdohk.xdl72j9.x2lah0s.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.x2lwn1j.xeuugli.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1n2onr6.x16tdsg8.x1hl2dhg.xggy1nq.x1ja2u2z.x1t137rt.x1q0g3np.x87ps6o.x1lku1pv.x1a2a7pz.x1dm5mii.x16mil14.xiojian.x1yutycm.x1lliihq.x193iq5w.xh8yej3"));
-                    actions = new Actions(driver);
-                    actions.moveToElement(elements.get(elements.size() - 1)).click().perform();
-                    Thread.sleep(SHORT_HALT);
-                    map.remove(s);
-                    listOfDeletedAccounts.add(s);
-                    logger.trace("Deleted " + s);
-                } else if (element.getText().equals("Follow")) {
-                    logger.trace("You were not following " + s + " anymore");
-                    map.remove(s);
-                    listOfDeletedAccounts.add(s);
-                } else if (element.getText().equals("Requested")) {
-                    actions = new Actions(driver);
-                    actions.moveToElement(element).click().perform();
-                    Thread.sleep(SHORT_HALT);
-                    logger.trace("Had requested to follow " + s + " and it has been reverted");
-                    map.remove(s);
-                    listOfDeletedAccounts.add(s);
-                }
+                // if (element.getText().equals("Following")) {
+                //     actions = new Actions(driver);
+                //     actions.moveToElement(element).click().perform();
+                //     elements = driver.findElements(By.cssSelector(".x1i10hfl.x1qjc9v5.xjbqb8w.xjqpnuy.xa49m3k.xqeqjp1.x2hbi6w.x13fuv20.xu3j5b3.x1q0q8m5.x26u7qi.x972fbf.xcfux6l.x1qhh985.xm0m39n.x9f619.x1ypdohk.xdl72j9.x2lah0s.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.x2lwn1j.xeuugli.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1n2onr6.x16tdsg8.x1hl2dhg.xggy1nq.x1ja2u2z.x1t137rt.x1q0g3np.x87ps6o.x1lku1pv.x1a2a7pz.x1dm5mii.x16mil14.xiojian.x1yutycm.x1lliihq.x193iq5w.xh8yej3"));
+                //     actions = new Actions(driver);
+                //     actions.moveToElement(elements.get(elements.size() - 1)).click().perform();
+                //     map.remove(s);
+                //     listOfDeletedAccounts.add(s);
+                //     logger.trace("Deleted " + s);
+                // } else if (element.getText().equals("Follow")) {
+                //     logger.trace("You were not following " + s + " anymore");
+                //     map.remove(s);
+                //     listOfDeletedAccounts.add(s);
+                // } else if (element.getText().equals("Requested")) {
+                //     actions = new Actions(driver);
+                //     actions.moveToElement(element).click().perform();
+                //     logger.trace("Had requested to follow " + s + " and it has been reverted");
+                //     map.remove(s);
+                //     listOfDeletedAccounts.add(s);
+                // }
             } catch (Exception e) {
                 logger.error("Error deleting " + s + "\n" + e.getMessage());
-                driver.close();
-                driver.quit();
+                browser.close();
+                playwright.close();
             }
         }
 
-        driver.close();
-        driver.quit();
+        browser.close();
+        playwright.close();
 
         int updatedRecords = 0;
         for (Map.Entry<String, String> entry : map.entrySet()) {
             updatedRecords += instagramRepository.saveUser(suffix, entry.getKey(), date);
         }
 
-        logger.trace("Deleted " + listOfDeletedAccounts.size() + " accounts and now there are " + updatedRecords + " records left in IG_" + suffix);
+        logger.trace("Deleted " + listOfDeletedAccounts.size() + " accounts and now there are " + updatedRecords + " records left in ig_" + suffix);
         totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
         logger.trace("Total elapsed time: " + totalTime + " minutes");
         int status = pushNotificationService.push(new PushNotification("Completed deletion", "Deleted " + listOfDeletedAccounts.size() + " accounts"));
@@ -329,11 +315,11 @@ public class InstagramService {
         return CompletableFuture.completedFuture(null);
     }
 
-    public Map<String, String> protectAccounts(String suffix, Date date, List<String> list) {
+    public Map<String, String> protectAccounts(Date date, List<String> list) {
         logger.trace("Will protect accounts dating back to " + date.toString());
         int updatedRecords = 0;
         for (String s : list) {
-            updatedRecords += instagramRepository.protectAccount(suffix, s, date);
+            updatedRecords += instagramRepository.protectAccount(s, date);
         }
         response = "Protected " + updatedRecords + " accounts";
         int status = pushNotificationService.push(new PushNotification("Process completed", response));
@@ -349,27 +335,21 @@ public class InstagramService {
 
     private void accountLogin() {
         try {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless");
-            driver = new ChromeDriver(options);
-            driver.get(ADDRESS);
-            Thread.sleep(MID_HALT);
+            playwright = Playwright.create();
+            browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
 
-            driver.findElement(By.name("username")).sendKeys(username);
-            driver.findElement(By.name("password")).sendKeys(password);
-            driver.findElement(By.cssSelector("button[type='submit']")).click();
-            Thread.sleep(LONG_HALT);
+            BrowserContext context = browser.newContext();
+            page = context.newPage();
+            page.navigate(ADDRESS);
+            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Phone number, username, or")).click();
+            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Phone number, username, or")).fill(username);
+            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).click();
+            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).fill(password);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in").setExact(true)).click();
         } catch (Exception e) {
             logger.error("Error logging in\n" + e.getMessage());
-        }
-    }
-
-    private void printClasses(WebElement e) {
-        String classAttribute = e.getAttribute("class");
-        String[] classes = classAttribute.split("\\s+");
-        System.out.println("Classes for child " + e);
-        for (String className : classes) {
-            System.out.println(className);
+            browser.close();
+            playwright.close();
         }
     }
 }
