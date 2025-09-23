@@ -329,11 +329,11 @@ public class InstagramService {
         return CompletableFuture.completedFuture(null);
     }
 
-    public Map<String, String> protectAccounts(String suffix, Date date, List<String> list) {
+    public Map<String, String> protectAccounts(Date date, List<String> list) {
         logger.trace("Will protect accounts dating back to " + date.toString());
         int updatedRecords = 0;
         for (String s : list) {
-            updatedRecords += instagramRepository.protectAccount(suffix, s, date);
+            updatedRecords += instagramRepository.protectAccount(s, date);
         }
         response = "Protected " + updatedRecords + " accounts";
         int status = pushNotificationService.push(new PushNotification("Process completed", response));
