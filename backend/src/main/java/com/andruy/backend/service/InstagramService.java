@@ -12,8 +12,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-// import org.jsoup.Jsoup;
-// import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -266,30 +264,24 @@ public class InstagramService {
 
         for (String s : list) {
             try {
-                // TODO
-                // driver.get(map.get(s));
-                // element = driver.findElement(By.cssSelector("._ap3a._aaco._aacw._aad6._aade"));
+                page.navigate(s);
 
-                // if (element.getText().equals("Following")) {
-                //     actions = new Actions(driver);
-                //     actions.moveToElement(element).click().perform();
-                //     elements = driver.findElements(By.cssSelector(".x1i10hfl.x1qjc9v5.xjbqb8w.xjqpnuy.xa49m3k.xqeqjp1.x2hbi6w.x13fuv20.xu3j5b3.x1q0q8m5.x26u7qi.x972fbf.xcfux6l.x1qhh985.xm0m39n.x9f619.x1ypdohk.xdl72j9.x2lah0s.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.x2lwn1j.xeuugli.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1n2onr6.x16tdsg8.x1hl2dhg.xggy1nq.x1ja2u2z.x1t137rt.x1q0g3np.x87ps6o.x1lku1pv.x1a2a7pz.x1dm5mii.x16mil14.xiojian.x1yutycm.x1lliihq.x193iq5w.xh8yej3"));
-                //     actions = new Actions(driver);
-                //     actions.moveToElement(elements.get(elements.size() - 1)).click().perform();
-                //     map.remove(s);
-                //     listOfDeletedAccounts.add(s);
-                //     logger.trace("Deleted " + s);
-                // } else if (element.getText().equals("Follow")) {
-                //     logger.trace("You were not following " + s + " anymore");
-                //     map.remove(s);
-                //     listOfDeletedAccounts.add(s);
-                // } else if (element.getText().equals("Requested")) {
-                //     actions = new Actions(driver);
-                //     actions.moveToElement(element).click().perform();
-                //     logger.trace("Had requested to follow " + s + " and it has been reverted");
-                //     map.remove(s);
-                //     listOfDeletedAccounts.add(s);
-                // }
+                if (page.locator("header").innerText().contains("Following")) {
+                    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Following Down chevron icon")).click();
+                    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Unfollow")).click();
+                    map.remove(s);
+                    listOfDeletedAccounts.add(s);
+                    logger.trace("Deleted " + s);
+                } else if (page.locator("header").innerText().contains("Requested")) {
+                    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Requested")).click();
+                    map.remove(s);
+                    listOfDeletedAccounts.add(s);
+                    logger.trace("Had requested to follow " + s + " and it has been reverted");
+                } else {
+                    logger.trace("You were not following " + s + " anymore");
+                    map.remove(s);
+                    listOfDeletedAccounts.add(s);
+                }
             } catch (Exception e) {
                 logger.error("Error deleting " + s + "\n" + e.getMessage());
                 browser.close();
