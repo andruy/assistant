@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LogService {
-    Logger logger = LoggerFactory.getLogger(LogService.class);
+    private Logger logger = LoggerFactory.getLogger(LogService.class);
 
     public Map<String, String> logReader() {
         StringBuilder sb = new StringBuilder();

@@ -18,7 +18,7 @@ import com.microsoft.playwright.Playwright;
 
 @Service
 public class PolloService {
-    Logger logger = LoggerFactory.getLogger(PolloService.class);
+    private Logger logger = LoggerFactory.getLogger(PolloService.class);
     @Autowired
     private PushNotificationService pushNotificationService;
     private final String EMAIL = "andruydev@outlook.com";

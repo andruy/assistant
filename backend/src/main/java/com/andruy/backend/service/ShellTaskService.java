@@ -30,7 +30,7 @@ import com.microsoft.playwright.Playwright;
 
 @Service
 public class ShellTaskService {
-    Logger logger = LoggerFactory.getLogger(ShellTaskService.class);
+    private Logger logger = LoggerFactory.getLogger(ShellTaskService.class);
     @Value("${my.email.recipient}")
     private String receiver;
     @Value("${dir.corrections}")
