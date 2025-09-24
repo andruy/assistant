@@ -76,7 +76,7 @@ public class InstagramService {
 
     @Async
     public CompletableFuture<Void> getComparison() {
-        logger.warn("Starting comparison process");
+        logger.trace("New comparison process");
         startTime = System.currentTimeMillis();
         date = new Date(startTime);
         getList("followers", true);
@@ -99,6 +99,7 @@ public class InstagramService {
 
             String filler = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).innerText();
 
+            logger.trace("Starting " + target + " retrieval");
             logger.trace("Instagram's original counter shows " + filler);
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).click();
@@ -156,11 +157,6 @@ public class InstagramService {
 
             List<Locator> elements = listingElement.locator("xpath=./div").all();
 
-            // List<Document> documents = elements.stream()
-            //                                 .map(Locator::innerHTML)
-            //                                 .map(Jsoup::parse)
-            //                                 .toList();
-
             Set<String> resultList = new HashSet<>();
 
             for (Locator element : elements) {
@@ -192,6 +188,9 @@ public class InstagramService {
 
             response = target.equals("followers") ? "You have " + resultList.size() + " " + target : resultList.size() + " are " + target + " you";
             logger.trace(response);
+            logger.trace("Expected: " + filler);
+            logger.trace("Completed " + target + " retrieval");
+            logger.trace("###");
 
             if (comparison) {
                 secondIteration = true;
