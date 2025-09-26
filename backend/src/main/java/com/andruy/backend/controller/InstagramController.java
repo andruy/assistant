@@ -46,6 +46,11 @@ public class InstagramController {
         return ResponseEntity.ok(instagramService.getListOfAccounts("nmf", date));
     }
 
+    @GetMapping("/compareDates")
+    public ResponseEntity<Map<String, String>> getComparisonBetweenDates(@RequestParam("dateFollowers") Date dateFollowers, @RequestParam("dateFollowing") Date dateFollowing) {
+        return ResponseEntity.ok(instagramService.getComparisonBetweenDates(dateFollowers, dateFollowing));
+    }
+
     @DeleteMapping("/deleteAccounts")
     public ResponseEntity<Map<String, String>> deleteAccounts(@RequestParam("date") Date date, @RequestBody List<String> list) {
         instagramService.deleteAccounts("nmf", date, list);
