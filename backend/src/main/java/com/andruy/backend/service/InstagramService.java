@@ -226,7 +226,7 @@ public class InstagramService {
             // Store the list to database
             int updatedRecords = 0;
             for (String s : result) {
-                updatedRecords += instagramRepository.saveUser(target, s, date);
+                updatedRecords += instagramRepository.saveUser(target, s, date == null ? new Date(System.currentTimeMillis()) : date);
             }
             logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
             totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
@@ -304,6 +304,15 @@ public class InstagramService {
         logger.trace("Push notification status: " + status);
 
         return CompletableFuture.completedFuture(null);
+    }
+
+    public Map<String, String> getComparisonBetweenDates(Date dateFollowers, Date dateFollowing) {
+        List<String> followers = instagramRepository.getUsers("followers", dateFollowers);
+        List<String> following = instagramRepository.getUsers("following", dateFollowing);
+
+        compareThem(followers, following);
+
+        return Map.of("report", "You may now check the list of accounts that do not follow you back");
     }
 
     public Map<String, String> protectAccounts(Date date, List<String> list) {
