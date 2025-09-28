@@ -1,16 +1,12 @@
 package com.andruy.backend.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Map.Entry;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.andruy.backend.model.Directory;
+import com.andruy.backend.model.DirectoryCorrection;
 import com.andruy.backend.model.Email;
 import com.andruy.backend.model.ShellTask;
+import com.andruy.backend.repository.ShellTaskRepository;
 import com.andruy.backend.util.BashHandler;
 import com.andruy.backend.util.DirectoryList;
 import com.andruy.backend.util.ShellScriptBuilder;
@@ -33,16 +31,16 @@ public class ShellTaskService {
     private Logger logger = LoggerFactory.getLogger(ShellTaskService.class);
     @Value("${my.email.recipient}")
     private String receiver;
-    @Value("${dir.corrections}")
-    private String dataFile;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private ShellTaskRepository shellTaskRepository;
     private Map<Directory, List<String>> doNotExist;
     private ShellScriptBuilder scriptBuilder;
     private List<Directory> directories;
     private List<String> taskResponse;
-    private StringBuilder sb;
-    private Scanner scanner;
+    private Playwright playwright;
+    private Browser browser;
     private ShellTask task;
 
     public void ytTask(Map<Directory, List<String>> map) {
@@ -83,35 +81,42 @@ public class ShellTaskService {
     public void assignAndProcess(Map<String, List<String>> body) {
         List<String> list = body.get("links");
 
-        Map<Directory, List<String>> map = new HashMap<>();
-        JSONObject correction = new JSONObject(renameDirectory()).getJSONObject("RenameDirectory");
+        Map<Directory, List<String>> mapForTask = new HashMap<>();
+        List<DirectoryCorrection> corrections = shellTaskRepository.getDirectories();
 
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-        Page page = browser.newPage();
+        try {
+            playwright = Playwright.create();
+            browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+            Page page = browser.newPage();
 
-        for (String url : list) {
-            Directory directory = new Directory(getDirectory(url, page));
+            for (String url : list) {
+                Directory directory = new Directory(getDirectory(url, page));
 
-            if (directory != null && !directory.getName().isEmpty()) {
-                if (correction.has(directory.getName())) {
-                    directory.setName(correction.getString(directory.getName()));
-                }
+                if (directory != null && !directory.getName().isEmpty()) {
+                    for (DirectoryCorrection dc : corrections) {
+                        if (directory.getName().equals(dc.name())) {
+                            directory.setName(dc.alias());
+                            break;
+                        }
+                    }
 
-                if (map.containsKey(directory)) {
-                    map.get(directory).add(url);
+                    if (mapForTask.containsKey(directory)) {
+                        mapForTask.get(directory).add(url);
+                    } else {
+                        mapForTask.put(directory, new ArrayList<>(List.of(url)));
+                    }
                 } else {
-                    map.put(directory, new ArrayList<>(List.of(url)));
+                    logger.warn("Directory is null or empty for URL: " + url);
                 }
-            } else {
-                logger.warn("Directory is null or empty for URL: " + url);
             }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        } finally {
+            browser.close();
+            playwright.close();
         }
 
-        browser.close();
-        playwright.close();
-
-        ytTask(map);
+        ytTask(mapForTask);
     }
 
     private String getDirectory(String address, Page page) {
@@ -119,28 +124,12 @@ public class ShellTaskService {
 
         try {
             page.navigate(address);
-            response = page.locator("h3#title").first().textContent();
+            response = page.locator("#text-container").locator("a").innerText();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
 
         return response;
-    }
-
-    private String renameDirectory() {
-        sb = new StringBuilder();
-
-        try {
-            scanner = new Scanner(new File(dataFile));
-            while (scanner.hasNextLine()) {
-                sb.append(scanner.nextLine());
-            }
-            scanner.close();
-        } catch (FileNotFoundException  e) {
-            logger.error(e.getMessage());
-        }
-
-        return sb.toString();
     }
 
     public List<String> getTaskResponse () {
