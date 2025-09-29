@@ -1,4 +1,4 @@
-package com.andruy.backend.service;
+package com.andruy.backend.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

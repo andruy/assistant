@@ -23,6 +23,7 @@ import com.andruy.backend.util.DirectoryList;
 import com.andruy.backend.util.ShellScriptBuilder;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 
@@ -41,6 +42,7 @@ public class ShellTaskService {
     private List<String> taskResponse;
     private Playwright playwright;
     private Browser browser;
+    private Page page;
     private ShellTask task;
 
     public void ytTask(Map<Directory, List<String>> map) {
@@ -87,10 +89,10 @@ public class ShellTaskService {
         try {
             playwright = Playwright.create();
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-            Page page = browser.newPage();
+            page = browser.newPage();
 
             for (String url : list) {
-                Directory directory = new Directory(getDirectory(url, page));
+                Directory directory = new Directory(getDirectory(url));
 
                 if (directory != null && !directory.getName().isEmpty()) {
                     for (DirectoryCorrection dc : corrections) {
@@ -119,17 +121,28 @@ public class ShellTaskService {
         ytTask(mapForTask);
     }
 
-    private String getDirectory(String address, Page page) {
-        String response = "";
-
+    private String getDirectory(String address) {
         try {
             page.navigate(address);
-            response = page.locator("#text-container").locator("a").innerText();
+
+            String name = page.locator("a.yt-simple-endpoint.style-scope.yt-formatted-string").first().textContent();
+
+            if (name.equals("#Shorts")) {
+                Locator l = page.locator("link").all().stream()
+                    .filter(element -> element.getAttribute("itemprop") != null && element.getAttribute("itemprop").equals("name"))
+                    .findFirst()
+                    .orElse(null);
+
+                if (l != null) {
+                    name = l.getAttribute("content");
+                }
+            }
+
+            return name;
         } catch (Exception e) {
             logger.error(e.getMessage());
+            return "";
         }
-
-        return response;
     }
 
     public List<String> getTaskResponse () {
