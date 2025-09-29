@@ -15,10 +15,10 @@ public class DirectoryService {
     private String base;
 
     public String createFolder(Directory name) {
-        List<String> output = new BashHandler(new String[] { Constants.MAKE_DIR, base + name.getName() }).startAndReturnOutput();
+        List<String> output = new BashHandler(new String[] { Constants.MAKE_DIR, base + name.name() }).startAndReturnOutput();
 
         // if (!output.isEmpty()) {
         // }
-        return output.isEmpty() ? "Created folder " + name.getName() : output.get(0);
+        return output.isEmpty() ? "Created folder " + name.name() : output.get(0);
     }
 }

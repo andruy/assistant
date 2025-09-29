@@ -22,14 +22,14 @@ public class TaskHandler extends Thread {
     @Override
     public void run() {
         try {
-            if (task.getTimeframe() < System.currentTimeMillis()) {
+            if (task.timeframe() < System.currentTimeMillis()) {
                 execute();
             } else {
-                TaskId params = new TaskId(UUID.randomUUID().toString(), task.getEmail().getSubject(), task.getTime());
+                TaskId params = new TaskId(UUID.randomUUID().toString(), task.email().subject(), task.getTime());
 
                 Promise.add(params, thread);
 
-                Thread.sleep(task.getTimeframe() - System.currentTimeMillis());
+                Thread.sleep(task.timeframe() - System.currentTimeMillis());
 
                 execute();
             }
@@ -39,8 +39,8 @@ public class TaskHandler extends Thread {
     }
 
     private void execute() {
-        new EmailService().sendEmail(task.getEmail());
+        new EmailService().sendEmail(task.email());
         System.out.println("Email sent at " + LocalDateTime.now().toString().substring(0, 16));
-        new PushNotificationService().push(new PushNotification(task.getEmail().getSubject(), "Done"));
+        new PushNotificationService().push(new PushNotification(task.email().subject(), "Done"));
     }
 }

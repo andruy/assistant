@@ -59,13 +59,13 @@ public class EmailService {
             message.setFrom(new InternetAddress(username == null ? System.getProperty("emailUsername") : username, name));
 
             // Set To: header field of the header
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getTo()));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.to()));
 
             // Set Subject: header field
-            message.setSubject(email.getSubject());
+            message.setSubject(email.subject());
 
             // Now set the actual message
-            message.setContent(email.getBody(), type);
+            message.setContent(email.body(), type);
 
             // Send message
             Transport.send(message);
@@ -104,13 +104,13 @@ public class EmailService {
             message.setFrom(new InternetAddress(username == null ? System.getProperty("emailUsername") : username, name));
 
             // Set To: header field of the header
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getTo()));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.to()));
 
             // Set Subject: header field
-            message.setSubject(email.getSubject());
+            message.setSubject(email.subject());
 
             // Now set the actual message
-            message.setText(email.getBody());
+            message.setText(email.body());
 
             // Send message
             Transport.send(message);

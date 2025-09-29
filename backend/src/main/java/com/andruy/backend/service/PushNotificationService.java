@@ -22,8 +22,8 @@ public class PushNotificationService {
     public int push(PushNotification msg) {
         httpClient = HttpClient.newHttpClient();
         httpRequest = HttpRequest.newBuilder()
-            .header("Title", msg.getTitle())
-            .POST(HttpRequest.BodyPublishers.ofString(msg.getBody()))
+            .header("Title", msg.title())
+            .POST(HttpRequest.BodyPublishers.ofString(msg.body()))
             .uri(URI.create(ntfyUrl == null ? System.getProperty("ntfyUrl") : ntfyUrl))
             .build();
 

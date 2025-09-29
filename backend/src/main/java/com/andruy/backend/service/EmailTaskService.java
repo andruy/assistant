@@ -40,12 +40,12 @@ public class EmailTaskService {
 
     public void deleteThread(TaskId params) {
         Promise.killThread(params);
-        deletionReport = "Thread " + params.getId() + " killed";
-        pushNotificationService.push(new PushNotification("Suspended", params.getName() + " (" + params.getTime() + ")"));
+        deletionReport = "Thread " + params.id() + " killed";
+        pushNotificationService.push(new PushNotification("Suspended", params.name() + " (" + params.time() + ")"));
     }
 
     public String report() {
-        return task.getTimeframe() < System.currentTimeMillis() ? "Sending email now" :
+        return task.timeframe() < System.currentTimeMillis() ? "Sending email now" :
             "Sending email on " + task.getTime();
     }
 

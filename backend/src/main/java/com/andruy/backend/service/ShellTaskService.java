@@ -53,7 +53,7 @@ public class ShellTaskService {
 
         for (Entry<Directory, List<String>> entry : map.entrySet()) {
             if (directories.contains(entry.getKey())) {
-                scriptBuilder.moveTo(entry.getKey().getName());
+                scriptBuilder.moveTo(entry.getKey().name());
 
                 for (String s : entry.getValue()) {
                     scriptBuilder.downloadVideo(s);
@@ -94,10 +94,10 @@ public class ShellTaskService {
             for (String url : list) {
                 Directory directory = new Directory(getDirectory(url));
 
-                if (directory != null && !directory.getName().isEmpty()) {
+                if (directory != null && !directory.name().isEmpty()) {
                     for (DirectoryCorrection dc : corrections) {
-                        if (directory.getName().equals(dc.name())) {
-                            directory.setName(dc.alias());
+                        if (directory.name().equals(dc.name())) {
+                            directory = new Directory(dc.alias());
                             break;
                         }
                     }
