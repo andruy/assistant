@@ -8,8 +8,8 @@ import java.util.Date;
 public record EmailTask(long timeframe, Email email) {
     public String getTime() {
         Date date = new Date(timeframe);
-        LocalDate localDate = date.toInstant().atZone(ZoneId.of("America/New_York")).toLocalDate();
-        LocalTime localTime = date.toInstant().atZone(ZoneId.of("America/New_York")).toLocalTime();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.of(System.getProperty("appTimezone"))).toLocalDate();
+        LocalTime localTime = date.toInstant().atZone(ZoneId.of(System.getProperty("appTimezone"))).toLocalTime();
 
         return localDate + " at " + localTime;
     }
