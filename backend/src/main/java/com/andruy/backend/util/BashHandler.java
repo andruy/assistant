@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Properties;
 
@@ -18,7 +21,8 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
-public final class BashHandler extends Thread {
+@Component
+public class BashHandler {
     private String line;
     private String report;
     private String[] input;
@@ -27,29 +31,19 @@ public final class BashHandler extends Thread {
     private BufferedReader reader;
     private StringBuffer emailReport;
     private StringBuilder outputBuffer;
+    @Autowired
+    private EmailService emailService;
     private final String OS = System.getProperty("os.name").toLowerCase();
 
-    /**
-     * Executes a bash command straight away
-     * @param input the command to execute
-     */
-    public BashHandler(String[] input) {
-        this.input = input;
-        output = new ArrayList<>();
-    }
-
-    /**
-     * Executes bash script test.sh (without returning output)
-     */
-    public BashHandler(String report) {
+    public void init(String report) {
         this.report = report;
         emailReport = new StringBuffer();
         input = new String[] { "./script.sh" };
         output = new CopyOnWriteArrayList<>();
+        runWithNoOutput();
     }
 
-    @Override
-    public void run() {
+    public void runWithNoOutput() {
         execute();
         emailReport.append("Running script...\n");
 
@@ -75,13 +69,15 @@ public final class BashHandler extends Thread {
         }
     }
 
-    public List<String> startAndReturnOutput() {
+    public List<String> startAndReturnOutput(String[] input) {
+        this.input = input;
+        output = new ArrayList<>();
         execute();
         return output;
     }
 
     private void emailOutput() {
-        new EmailService().sendEmail(
+        emailService.sendEmail(
             new Email(
                 System.getProperty("emailRecipient"),
                 "Script report for " + LocalDateTime.now().toString().substring(0, 16),

@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.andruy.backend.model.Directory;
@@ -36,6 +38,10 @@ public class ShellTaskService {
     private EmailService emailService;
     @Autowired
     private ShellTaskRepository shellTaskRepository;
+    @Autowired
+    private DirectoryList directoryList;
+    @Autowired
+    private BashHandler bashHandler;
     private Map<Directory, List<String>> doNotExist;
     private ShellScriptBuilder scriptBuilder;
     private List<Directory> directories;
@@ -45,10 +51,11 @@ public class ShellTaskService {
     private Page page;
     private ShellTask task;
 
-    public void ytTask(Map<Directory, List<String>> map) {
+    @Async
+    public CompletableFuture<Void> ytTask(Map<Directory, List<String>> map) {
         task = ShellTask.YOUTUBE;
         scriptBuilder = new ShellScriptBuilder(task);
-        directories = new DirectoryList().getDirectories();
+        directories = directoryList.getDirectories();
         doNotExist = new HashMap<>();
 
         for (Entry<Directory, List<String>> entry : map.entrySet()) {
@@ -68,7 +75,7 @@ public class ShellTaskService {
         if (!doNotExist.isEmpty()) {
             emailService.sendEmail(
                 new Email(
-                    receiver == null ? System.getProperty("emailRecipient") : receiver,
+                    receiver,
                     "The following directories do not exist today " + LocalDateTime.now().toString().substring(0, 16),
                     doNotExist.toString()
                 )
@@ -77,10 +84,11 @@ public class ShellTaskService {
 
         scriptBuilder.build();
         taskResponse = scriptBuilder.getReport();
-        new BashHandler(taskResponse.toString()).start();
+        bashHandler.init(taskResponse.toString());
+        return CompletableFuture.completedFuture(null);
     }
 
-    public void assignAndProcess(Map<String, List<String>> body) {
+    public Map<Directory, List<String>> assignDirectories(Map<String, List<String>> body) {
         List<String> list = body.get("links");
 
         Map<Directory, List<String>> mapForTask = new HashMap<>();
@@ -118,7 +126,7 @@ public class ShellTaskService {
             playwright.close();
         }
 
-        ytTask(mapForTask);
+        return mapForTask;
     }
 
     private String getDirectory(String address) {
@@ -143,11 +151,5 @@ public class ShellTaskService {
             logger.error(e.getMessage());
             return "";
         }
-    }
-
-    public List<String> getTaskResponse () {
-        return List.of(
-            taskResponse.get(0), taskResponse.get(1)
-        );
     }
 }

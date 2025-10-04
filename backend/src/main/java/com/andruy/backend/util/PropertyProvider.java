@@ -19,18 +19,10 @@ public class PropertyProvider {
     private String sshUsername;
     @Value("${my.ssh.password}")
     private String sshPassword;
-    @Value("${my.email.username}")
-    private String username;
-    @Value("${my.email.password}")
-    private String password;
-    @Value("${my.email.host}")
-    private String host;
-    @Value("${my.email.port}")
-    private String port;
     @Value("${my.email.recipient}")
     private String recipient;
-    @Value("${my.ntfy.url}")
-    private String ntfyUrl;
+    @Value("${my.app.timezone}")
+    private String timezone;
 
     @PostConstruct
     public void init() {
@@ -40,11 +32,7 @@ public class PropertyProvider {
         System.setProperty("sshHost", sshHost);
         System.setProperty("sshUsername", sshUsername);
         System.setProperty("sshPassword", sshPassword);
-        System.setProperty("emailUsername", username);
-        System.setProperty("emailPassword", password);
-        System.setProperty("emailHost", host);
-        System.setProperty("emailPort", port);
         System.setProperty("emailRecipient", recipient);
-        System.setProperty("ntfyUrl", ntfyUrl);
+        System.setProperty("appTimezone", timezone);
     }
 }

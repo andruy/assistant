@@ -18,23 +18,26 @@ import com.andruy.backend.util.DirectoryList;
 public class ShellTaskController {
     @Autowired
     private ShellTaskService shellTaskService;
+    @Autowired
+    private DirectoryList directoryList;
 
     @GetMapping("/ytd")
     public ResponseEntity<List<Directory>> printDirectories() {
-        return ResponseEntity.ok().body(new DirectoryList().getDirectories());
+        return ResponseEntity.ok().body(directoryList.getDirectories());
     }
 
     @PostMapping("/yt")
     public ResponseEntity<Map<String, String>> gatherLinks(@RequestBody Map<Directory, List<String>> body) {
         shellTaskService.ytTask(body);
 
-        return ResponseEntity.ok().body(Map.of("report", shellTaskService.getTaskResponse().get(1)));
+        return ResponseEntity.ok(Map.of("report", "You will be notified when the task is done"));
     }
 
     @PostMapping("/yte")
     public ResponseEntity<Map<String, String>> assignDirectories(@RequestBody Map<String, List<String>> body) {
-        shellTaskService.assignAndProcess(body);
+        Map<Directory, List<String>> map = shellTaskService.assignDirectories(body);
+        shellTaskService.ytTask(map);
 
-        return ResponseEntity.ok().body(Map.of("report", shellTaskService.getTaskResponse().get(1)));
+        return ResponseEntity.ok(Map.of("report", "You will be notified when the task is done"));
     }
 }

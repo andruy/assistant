@@ -3,21 +3,24 @@ package com.andruy.backend.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.andruy.backend.model.Directory;
 
+@Component
 public class DirectoryList {
+    @Autowired
+    private BashHandler bashHandler;
     private List<Directory> directories = new ArrayList<>();
 
-    public DirectoryList() {
-        BashHandler bash = new BashHandler(new String[] { Constants.LIST, System.getProperty("programmingDirectory") });
-        List<String> list = bash.startAndReturnOutput();
+    public List<Directory> getDirectories() {
+        List<String> list = bashHandler.startAndReturnOutput(new String[] { Constants.LIST, System.getProperty("programmingDirectory") });
 
         for (String s : list) {
             directories.add(new Directory(s));
         }
-    }
 
-    public List<Directory> getDirectories() {
         return directories;
     }
 }
