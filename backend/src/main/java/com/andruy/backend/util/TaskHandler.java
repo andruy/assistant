@@ -14,10 +14,10 @@ import com.andruy.backend.service.PushNotificationService;
 
 @Component
 public class TaskHandler extends Thread {
-    private EmailTask task;
-    private Thread thread;
     @Autowired
     private EmailService emailService;
+    private EmailTask task;
+    private Thread thread;
 
     public void init(EmailTask task) {
         this.task = task;
