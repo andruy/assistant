@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.andruy.backend.model.Directory;
@@ -49,7 +51,8 @@ public class ShellTaskService {
     private Page page;
     private ShellTask task;
 
-    public void ytTask(Map<Directory, List<String>> map) {
+    @Async
+    public CompletableFuture<Void> ytTask(Map<Directory, List<String>> map) {
         task = ShellTask.YOUTUBE;
         scriptBuilder = new ShellScriptBuilder(task);
         directories = directoryList.getDirectories();
@@ -82,9 +85,10 @@ public class ShellTaskService {
         scriptBuilder.build();
         taskResponse = scriptBuilder.getReport();
         bashHandler.init(taskResponse.toString());
+        return CompletableFuture.completedFuture(null);
     }
 
-    public void assignAndProcess(Map<String, List<String>> body) {
+    public Map<Directory, List<String>> assignDirectories(Map<String, List<String>> body) {
         List<String> list = body.get("links");
 
         Map<Directory, List<String>> mapForTask = new HashMap<>();
@@ -122,7 +126,7 @@ public class ShellTaskService {
             playwright.close();
         }
 
-        ytTask(mapForTask);
+        return mapForTask;
     }
 
     private String getDirectory(String address) {
@@ -147,11 +151,5 @@ public class ShellTaskService {
             logger.error(e.getMessage());
             return "";
         }
-    }
-
-    public List<String> getTaskResponse () {
-        return List.of(
-            taskResponse.get(0), taskResponse.get(1)
-        );
     }
 }

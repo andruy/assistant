@@ -7,11 +7,9 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,11 +40,10 @@ public class BashHandler {
         emailReport = new StringBuffer();
         input = new String[] { "./script.sh" };
         output = new CopyOnWriteArrayList<>();
-        runAsync(); // Executes bash script test.sh asynchronously (without returning output)
+        runWithNoOutput();
     }
 
-    @Async
-    public CompletableFuture<Void> runAsync() {
+    public void runWithNoOutput() {
         execute();
         emailReport.append("Running script...\n");
 
@@ -70,8 +67,6 @@ public class BashHandler {
             }
             emailOutput();
         }
-
-        return CompletableFuture.completedFuture(null);
     }
 
     public List<String> startAndReturnOutput(String[] input) {
