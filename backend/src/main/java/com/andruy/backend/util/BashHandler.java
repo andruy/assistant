@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,8 @@ public class BashHandler {
     private BufferedReader reader;
     private StringBuffer emailReport;
     private StringBuilder outputBuffer;
+    @Autowired
+    private EmailService emailService;
     private final String OS = System.getProperty("os.name").toLowerCase();
 
     public void init(String report) {
@@ -79,7 +82,7 @@ public class BashHandler {
     }
 
     private void emailOutput() {
-        new EmailService().sendEmail(
+        emailService.sendEmail(
             new Email(
                 System.getProperty("emailRecipient"),
                 "Script report for " + LocalDateTime.now().toString().substring(0, 16),
