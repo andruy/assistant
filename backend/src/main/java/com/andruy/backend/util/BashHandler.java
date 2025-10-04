@@ -7,7 +7,11 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Properties;
@@ -18,7 +22,8 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
-public final class BashHandler extends Thread {
+@Component
+public class BashHandler {
     private String line;
     private String report;
     private String[] input;
@@ -29,27 +34,16 @@ public final class BashHandler extends Thread {
     private StringBuilder outputBuffer;
     private final String OS = System.getProperty("os.name").toLowerCase();
 
-    /**
-     * Executes a bash command straight away
-     * @param input the command to execute
-     */
-    public BashHandler(String[] input) {
-        this.input = input;
-        output = new ArrayList<>();
-    }
-
-    /**
-     * Executes bash script test.sh (without returning output)
-     */
-    public BashHandler(String report) {
+    public void init(String report) {
         this.report = report;
         emailReport = new StringBuffer();
         input = new String[] { "./script.sh" };
         output = new CopyOnWriteArrayList<>();
+        runAsync(); // Executes bash script test.sh asynchronously (without returning output)
     }
 
-    @Override
-    public void run() {
+    @Async
+    public CompletableFuture<Void> runAsync() {
         execute();
         emailReport.append("Running script...\n");
 
@@ -73,9 +67,13 @@ public final class BashHandler extends Thread {
             }
             emailOutput();
         }
+
+        return CompletableFuture.completedFuture(null);
     }
 
-    public List<String> startAndReturnOutput() {
+    public List<String> startAndReturnOutput(String[] input) {
+        this.input = input;
+        output = new ArrayList<>();
         execute();
         return output;
     }

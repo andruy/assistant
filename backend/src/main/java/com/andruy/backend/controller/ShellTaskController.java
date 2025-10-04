@@ -18,10 +18,12 @@ import com.andruy.backend.util.DirectoryList;
 public class ShellTaskController {
     @Autowired
     private ShellTaskService shellTaskService;
+    @Autowired
+    private DirectoryList directoryList;
 
     @GetMapping("/ytd")
     public ResponseEntity<List<Directory>> printDirectories() {
-        return ResponseEntity.ok().body(new DirectoryList().getDirectories());
+        return ResponseEntity.ok().body(directoryList.getDirectories());
     }
 
     @PostMapping("/yt")

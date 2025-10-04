@@ -36,6 +36,10 @@ public class ShellTaskService {
     private EmailService emailService;
     @Autowired
     private ShellTaskRepository shellTaskRepository;
+    @Autowired
+    private DirectoryList directoryList;
+    @Autowired
+    private BashHandler bashHandler;
     private Map<Directory, List<String>> doNotExist;
     private ShellScriptBuilder scriptBuilder;
     private List<Directory> directories;
@@ -48,7 +52,7 @@ public class ShellTaskService {
     public void ytTask(Map<Directory, List<String>> map) {
         task = ShellTask.YOUTUBE;
         scriptBuilder = new ShellScriptBuilder(task);
-        directories = new DirectoryList().getDirectories();
+        directories = directoryList.getDirectories();
         doNotExist = new HashMap<>();
 
         for (Entry<Directory, List<String>> entry : map.entrySet()) {
@@ -77,7 +81,7 @@ public class ShellTaskService {
 
         scriptBuilder.build();
         taskResponse = scriptBuilder.getReport();
-        new BashHandler(taskResponse.toString()).start();
+        bashHandler.init(taskResponse.toString());
     }
 
     public void assignAndProcess(Map<String, List<String>> body) {

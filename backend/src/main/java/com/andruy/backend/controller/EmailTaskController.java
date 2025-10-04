@@ -28,8 +28,7 @@ public class EmailTaskController {
 
     @DeleteMapping("/deletetask")
     public ResponseEntity<Map<String, String>> deleteTask(@RequestBody TaskId body) {
-        emailTaskService.deleteThread(body);
-        return ResponseEntity.ok().body(Map.of("report", emailTaskService.getDeletionReport()));
+        return ResponseEntity.ok().body(Map.of("report", emailTaskService.deleteThread(body)));
     }
 
     @GetMapping("/emailtasks")
@@ -40,9 +39,9 @@ public class EmailTaskController {
     @PostMapping("/emailtask")
     public ResponseEntity<Map<String, String>> sendTask(@RequestBody List<EmailTask> body) {
         for (EmailTask task : body) {
-            emailTaskService.setTask(task);
-            emailTaskService.sendTaskAsync();
+            emailTaskService.sendTaskAsync(task);
         }
+
         return ResponseEntity.ok().body(Map.of("report", "Tasks sent successfully"));
     }
 }

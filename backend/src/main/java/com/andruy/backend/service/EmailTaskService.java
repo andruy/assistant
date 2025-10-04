@@ -19,12 +19,8 @@ public class EmailTaskService {
     private PushNotificationService pushNotificationService;
     @Autowired
     private EmailTaskRepository emailTaskRepository;
-    private EmailTask task;
-    private String deletionReport;
-
-    public void setTask(EmailTask task) {
-        this.task = task;
-    }
+    @Autowired
+    private TaskHandler taskHandler;
 
     public List<String> getTaskTemplate() {
         return emailTaskRepository.getEmailActions();
@@ -34,22 +30,13 @@ public class EmailTaskService {
         return Promise.getThreads().keySet();
     }
 
-    public void sendTaskAsync() {
-        new TaskHandler(task);
+    public void sendTaskAsync(EmailTask task) {
+        taskHandler.init(task);
     }
 
-    public void deleteThread(TaskId params) {
+    public String deleteThread(TaskId params) {
         Promise.killThread(params);
-        deletionReport = "Thread " + params.id() + " killed";
         pushNotificationService.push(new PushNotification("Suspended", params.name() + " (" + params.time() + ")"));
-    }
-
-    public String report() {
-        return task.timeframe() < System.currentTimeMillis() ? "Sending email now" :
-            "Sending email on " + task.getTime();
-    }
-
-    public String getDeletionReport() {
-        return deletionReport;
+        return "Thread " + params.id() + " killed";
     }
 }
