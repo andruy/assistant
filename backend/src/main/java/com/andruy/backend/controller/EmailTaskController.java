@@ -41,11 +41,9 @@ public class EmailTaskController {
     }
 
     @PostMapping("/emailtask")
-    public ResponseEntity<Map<String, String>> sendTask(@RequestBody List<EmailTask> body) {
-        for (EmailTask task : body) {
-            emailTaskService.scheduleTask(task);
-        }
+    public ResponseEntity<Map<String, String>> sendTask(@RequestBody EmailTask body) {
+        emailTaskService.scheduleTask(body);
 
-        return ResponseEntity.ok().body(Map.of("report", "Tasks sent successfully"));
+        return ResponseEntity.ok().body(Map.of("report", "Task sent successfully"));
     }
 }

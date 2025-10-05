@@ -10,29 +10,36 @@ const Hourglass = forwardRef(({ isDisabled }, ref) => {
     const buttonRef = useRef(null)
     const inputRef = useRef(null)
 
-    async function send() {
+    function send() {
+        let success = true
         const currentTime = Date.now()
         const taskList = [...tasksArray]
-        taskList.forEach(task => {
+        taskList.forEach(async task => {
             task.timeframe += currentTime
-        })
 
-        const response = await fetch('/emailtask', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(taskList)
+            const response = await fetch('/emailtask', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(task)
+            })
+            if (response.ok) {
+                const result = await response.json()
+                console.log(result.report)
+                success = success && true
+            } else {
+                console.error(response)
+                console.log("Failed task: " + task)
+                success = false
+            }
         })
-        if (response.ok) {
-            const result = await response.json()
-            console.log(result.report)
+        if (success) {
             setTasksArray([])
-            return result
+            return { report: "All tasks sent successfully" }
         } else {
-            console.error(response)
             console.log(taskList)
-            return "Something went wrong"
+            return "Some tasks may have not been sent"
         }
     }
 
@@ -55,19 +62,9 @@ const Hourglass = forwardRef(({ isDisabled }, ref) => {
                 }
             }
 
-            setTasksArray([...tasksArray, tasksArray.length > 0 ? newItemUpdated(newItem) : newItem])
+            setTasksArray([...tasksArray, newItem])
             setInputValue('')
         }
-    }
-
-    function newItemUpdated(newTask) {
-        if (tasksArray[tasksArray.length - 1].email.subject === "Turn AC on" && newTask.email.subject === "Turn AC on") {
-            newTask.timeframe += minutesToMilliseconds(120)
-        }
-
-        newTask.timeframe += tasksArray[tasksArray.length - 1].timeframe
-
-        return newTask
     }
 
     const handleKeyDown = event => {
