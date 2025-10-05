@@ -65,8 +65,10 @@ public class EmailTaskService {
                         callback.run();
                     }
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                logger.trace("Thread interrupted: " + taskId.id());
+            } catch (Exception e) {
                 logger.error("Thread issue\n" + e.getMessage());
             } finally {
                 activeThreads.remove(taskId);
