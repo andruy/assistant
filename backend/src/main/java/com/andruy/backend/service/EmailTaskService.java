@@ -34,11 +34,7 @@ public class EmailTaskService {
     }
 
     public Set<TaskId> getThreads() {
-        for (Map.Entry<TaskId, Thread> entry : activeThreads.entrySet()) {
-            if (!entry.getValue().isAlive()) {
-                activeThreads.remove(entry.getKey());
-            }
-        }
+        logger.trace("Active threads: " + activeThreads.size());
 
         return activeThreads.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
@@ -84,6 +80,7 @@ public class EmailTaskService {
         if (vThread != null) {
             vThread.interrupt();
             activeThreads.remove(taskId);
+            logger.trace("Task cancelled: " + taskId.id());
             pushNotificationService.push(new PushNotification("Suspended", taskId.name() + " (" + taskId.time() + ")"));
             return true;
         }
