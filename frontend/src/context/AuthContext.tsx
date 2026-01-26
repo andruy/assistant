@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 interface User {
   username: string
@@ -20,7 +20,7 @@ const API_BASE_URL = '/api'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const login = async (username: string, password: string) => {
     const response = await fetch('/login', {
@@ -52,7 +52,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Kept for manual use if needed, but not called automatically
   const checkAuth = async () => {
     setIsLoading(true)
     try {
@@ -71,6 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkAuth()
+  }, [])
 
   return (
     <AuthContext.Provider
