@@ -2,24 +2,18 @@ package com.andruy.backend.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Properties;
 
 import com.andruy.backend.model.Email;
 import com.andruy.backend.service.EmailService;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 
 @Component
 public class BashHandler {
@@ -30,7 +24,6 @@ public class BashHandler {
     private List<String> output;
     private BufferedReader reader;
     private StringBuffer emailReport;
-    private StringBuilder outputBuffer;
     @Autowired
     private EmailService emailService;
     private final String OS = System.getProperty("os.name").toLowerCase();
@@ -88,78 +81,18 @@ public class BashHandler {
 
     private void execute() {
         if (OS.contains("mac") || OS.contains("win")) {
-            try {
-                JSch jsch = new JSch();
-                Session session = jsch.getSession(System.getProperty("sshUsername"), System.getProperty("sshHost"));
-                session.setPassword(System.getProperty("sshPassword"));
+            throw new UnsupportedOperationException("This operation is only supported on Linux systems.");
+        }
 
-                // Avoid asking for key confirmation
-                Properties config = new Properties();
-                config.put("StrictHostKeyChecking", "no");
-                session.setConfig(config);
+        try {
+            process = Runtime.getRuntime().exec(input);
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-                session.connect();
-
-                System.out.println("Connected to the server!");
-
-                // Execute a command
-                outputBuffer = new StringBuilder();
-                for (String s : input) {
-                    if (s.contains(" ")) {
-                        outputBuffer.append("'").append(s).append("'");
-                    } else {
-                        outputBuffer.append(s).append(" ");
-                    }
-                }
-
-                ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
-                channelExec.setCommand(outputBuffer.toString());
-                channelExec.setErrStream(System.err);
-
-                InputStream in = channelExec.getInputStream();
-                channelExec.connect();
-
-                // Read the output from the command
-                outputBuffer = new StringBuilder();
-                byte[] tmp = new byte[1024];
-                while (true) {
-                    while (in.available() > 0) {
-                        int i = in.read(tmp, 0, 1024);
-                        if (i < 0) break;
-                        outputBuffer.append(new String(tmp, 0, i));
-                    }
-                    if (channelExec.isClosed()) {
-                        if (in.available() > 0) continue;
-                        System.out.println("Exit status: " + channelExec.getExitStatus());
-                        break;
-                    }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                channelExec.disconnect();
-                session.disconnect();
-
-                // Split the output into lines
-                output = Arrays.asList(outputBuffer.toString().split("\n"));
-                System.out.println("Disconnected from the server!");
-            } catch (Exception e) {
-                e.printStackTrace();
+            while ((line = reader.readLine()) != null) {
+                output.add(line);
             }
-        } else {
-            try {
-                process = Runtime.getRuntime().exec(input);
-                reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    
-                while ((line = reader.readLine()) != null) {
-                    output.add(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
