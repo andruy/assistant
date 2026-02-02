@@ -2,22 +2,27 @@ package com.andruy.backend.controller;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.andruy.backend.model.Directory;
 import com.andruy.backend.service.DirectoryService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
+@RequestMapping("/api/directory")
 public class DirectoryController {
-    @Autowired
-    private DirectoryService directoryService;
+    private final DirectoryService directoryService;
 
-    @PostMapping("newDirectory")
+    public DirectoryController(DirectoryService directoryService) {
+        this.directoryService = directoryService;
+    }
+
+    @PostMapping
     public ResponseEntity<Map<String, String>> createFolder(@RequestParam Directory name) {
-        return ResponseEntity.ok().body(Map.of("report", directoryService.createFolder(name)));
+        String result = directoryService.createFolder(name);
+        return ResponseEntity.ok(Map.of("report", result));
     }
 }
