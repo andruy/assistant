@@ -20,8 +20,6 @@ public class DirectoryService {
     public String createFolder(Directory name) {
         List<String> output = bashHandler.startAndReturnOutput(new String[] { Constants.MAKE_DIR, base + name.name() });
 
-        // if (!output.isEmpty()) {
-        // }
         return output.isEmpty() ? "Created folder " + name.name() : output.get(0);
     }
 }
