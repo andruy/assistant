@@ -37,6 +37,7 @@ public class InstagramController {
     @GetMapping("/compare")
     public ResponseEntity<Map<String, String>> getFollowersAndFollowingComparison() {
         instagramService.getComparison();
+
         return ResponseEntity.accepted().body(Map.of("message", "Task started. You will be notified when complete."));
     }
 
@@ -62,6 +63,7 @@ public class InstagramController {
             @RequestParam("date") Date date,
             @RequestBody List<String> accounts) {
         instagramService.deleteAccounts("nmf", date, accounts);
+
         return ResponseEntity.accepted().body(Map.of("message", "Deletion started. You will be notified when complete."));
     }
 

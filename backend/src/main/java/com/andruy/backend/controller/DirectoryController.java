@@ -23,6 +23,7 @@ public class DirectoryController {
     @PostMapping
     public ResponseEntity<Map<String, String>> createFolder(@RequestParam Directory name) {
         String result = directoryService.createFolder(name);
+
         return ResponseEntity.ok(Map.of("report", result));
     }
 }

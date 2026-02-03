@@ -22,6 +22,7 @@ public class PolloController {
     @PostMapping
     public ResponseEntity<Map<String, String>> pollo(@RequestBody Map<String, String> payload) {
         String response = polloService.pollo(payload);
+
         return ResponseEntity.ok(Map.of("report", response));
     }
 }

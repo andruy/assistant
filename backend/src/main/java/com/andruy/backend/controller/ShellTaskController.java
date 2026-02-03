@@ -33,6 +33,7 @@ public class ShellTaskController {
     @PostMapping("/youtube")
     public ResponseEntity<Map<String, String>> processYoutubeLinks(@RequestBody Map<Directory, List<String>> body) {
         shellTaskService.ytTask(body);
+
         return ResponseEntity.accepted().body(Map.of("message", "Task started. You will be notified when complete."));
     }
 
@@ -40,6 +41,7 @@ public class ShellTaskController {
     public ResponseEntity<Map<String, String>> processYoutubeLinksAuto(@RequestBody Map<String, List<String>> body) {
         Map<Directory, List<String>> map = shellTaskService.assignDirectories(body);
         shellTaskService.ytTask(map);
+
         return ResponseEntity.accepted().body(Map.of("message", "Task started. You will be notified when complete."));
     }
 }
