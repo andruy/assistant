@@ -47,7 +47,7 @@ public class InstagramController {
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<Map<String, String>> getListOfAccounts(@RequestParam("date") Date date) {
+    public ResponseEntity<Map<String, String>> getListOfAccounts(@RequestParam Date date) {
         return ResponseEntity.ok(instagramService.getListOfAccounts("nmf", date));
     }
 
