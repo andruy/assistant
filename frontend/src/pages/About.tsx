@@ -5,10 +5,10 @@ export default function About() {
         <div className="bg-gray-900/60 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-500/5">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-wider bg-gradient-to-r from-blue-400 via-purple-400 to-violet-400 bg-clip-text text-transparent mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-400 to-violet-400 bg-clip-text text-transparent mb-4">
               ABOUT NEXUS
             </h1>
-            <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+            <div className="h-1 w-20 bg-linear-to-r from-blue-500 to-purple-500 rounded-full" />
           </div>
 
           {/* Content */}

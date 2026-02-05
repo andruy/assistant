@@ -29,7 +29,7 @@ export default function Login() {
         <div className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 shadow-2xl shadow-purple-500/5">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold tracking-wider bg-gradient-to-r from-blue-400 via-purple-400 to-violet-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-400 to-violet-400 bg-clip-text text-transparent">
               ACCESS PORTAL
             </h1>
             <p className="mt-2 text-gray-400 text-sm tracking-wide">
@@ -79,7 +79,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 rounded-lg font-medium tracking-wider text-white bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 hover:from-blue-500 hover:via-purple-500 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-purple-500/25"
+              className="w-full py-3 px-4 rounded-lg font-medium tracking-wider text-white bg-linear-to-r from-blue-600 via-purple-600 to-blue-600 hover:from-blue-500 hover:via-purple-500 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-purple-500/25"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -97,14 +97,14 @@ export default function Login() {
 
           {/* Decorative Elements */}
           <div className="mt-8 flex items-center justify-center gap-2">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+            <div className="h-px flex-1 bg-linear-to-r from-transparent via-gray-700 to-transparent" />
             <span className="text-xs text-gray-500 tracking-widest">SECURE</span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+            <div className="h-px flex-1 bg-linear-to-r from-transparent via-gray-700 to-transparent" />
           </div>
         </div>
 
         {/* Bottom Glow */}
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-purple-500/50 to-transparent" />
       </div>
     </div>
   )
