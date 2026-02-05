@@ -5,9 +5,6 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(() => {
-  const outDirArg = process.argv.find(arg => arg.startsWith('--outDir='))
-  const outDir = outDirArg == '1' ? path.resolve(__dirname, '../backend/src/main/resources/static') : 'dist'
-
   return {
     plugins: [
       tailwindcss(),
@@ -18,7 +15,8 @@ export default defineConfig(() => {
       }),
     ],
     build: {
-      outDir,
+      outDir: path.resolve(__dirname, '../backend/src/main/resources/static'),
+      emptyOutDir: true,
     },
     server: {
       proxy: {
