@@ -235,6 +235,7 @@ public class InstagramService {
     }
 
     public List<Date> getListOfDates() {
+        logger.trace("Called to retrieve list of dates");
         List <Date> dateList = instagramRepository.getDates();
         Collections.sort(dateList, Collections.reverseOrder());
 
@@ -242,6 +243,7 @@ public class InstagramService {
     }
 
     public Map<String, String> getListOfAccounts(String suffix, Date date) {
+        logger.trace("Called to retrieve list of accounts with suffix [" + suffix + "] and date " + date.toString());
         List <String> list = instagramRepository.getUsers(suffix, date);
 
         Map<String, String> map = new HashMap<>();
