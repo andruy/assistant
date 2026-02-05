@@ -53,14 +53,14 @@ public class InstagramController {
 
     @GetMapping("/compare-dates")
     public ResponseEntity<Map<String, String>> getComparisonBetweenDates(
-            @RequestParam("dateFollowers") Date dateFollowers,
-            @RequestParam("dateFollowing") Date dateFollowing) {
+            @RequestParam Date dateFollowers,
+            @RequestParam Date dateFollowing) {
         return ResponseEntity.ok(instagramService.getComparisonBetweenDates(dateFollowers, dateFollowing));
     }
 
     @DeleteMapping("/accounts")
     public ResponseEntity<Map<String, String>> deleteAccounts(
-            @RequestParam("date") Date date,
+            @RequestParam Date date,
             @RequestBody List<String> accounts) {
         instagramService.deleteAccounts("nmf", date, accounts);
 
@@ -69,7 +69,7 @@ public class InstagramController {
 
     @PutMapping("/accounts/protect")
     public ResponseEntity<Map<String, String>> protectAccounts(
-            @RequestParam("date") Date date,
+            @RequestParam Date date,
             @RequestBody List<String> accounts) {
         return ResponseEntity.ok(instagramService.protectAccounts(date, accounts));
     }
