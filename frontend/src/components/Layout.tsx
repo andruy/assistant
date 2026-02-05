@@ -2,7 +2,12 @@ import { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 
-const navCategories = [
+const publicLinks = [
+  { to: '/', label: 'Home', icon: '⌂' },
+  { to: '/about', label: 'About', icon: 'ℹ' },
+]
+
+const privateCategories = [
   {
     name: 'General',
     links: [
@@ -15,7 +20,7 @@ const navCategories = [
   {
     name: 'Tools',
     links: [
-      { to: '/apple', label: 'Apple', icon: '' },
+      { to: '/apple', label: 'Apple', icon: '' },
       { to: '/microsoft', label: 'Microsoft', icon: '⊞' },
       { to: '/folder', label: 'Folder', icon: '📁' },
       { to: '/instagram', label: 'Instagram', icon: '📷' },
@@ -117,13 +122,40 @@ export default function Layout() {
 
           {/* Scrollable Menu Content */}
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
-            {navCategories.map((category) => (
-              <div key={category.name}>
+            {isAuthenticated ? (
+              // Private menu - categorized
+              privateCategories.map((category) => (
+                <div key={category.name}>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
+                    {category.name}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {category.links.map((link) => (
+                      <Link
+                        key={link.to}
+                        to={link.to}
+                        onClick={() => setMenuOpen(false)}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all duration-200 border ${
+                          location.pathname === link.to
+                            ? 'bg-purple-500/20 border-purple-500/50 text-purple-300'
+                            : 'bg-gray-800/50 border-gray-700 hover:border-purple-500/30 hover:bg-gray-800 text-gray-300 hover:text-white'
+                        }`}
+                      >
+                        <span className="text-xl mb-1">{link.icon}</span>
+                        <span className="text-xs font-medium">{link.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              // Public menu - simple list
+              <div>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
-                  {category.name}
+                  Menu
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {category.links.map((link) => (
+                  {publicLinks.map((link) => (
                     <Link
                       key={link.to}
                       to={link.to}
@@ -140,7 +172,7 @@ export default function Layout() {
                   ))}
                 </div>
               </div>
-            ))}
+            )}
           </div>
 
           {/* Auth Section at Bottom */}

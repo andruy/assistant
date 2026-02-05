@@ -19,7 +19,7 @@ export default function Welcome() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             <span className="text-gray-100">Welcome back,</span>
             <br />
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-400 via-purple-400 to-violet-400 bg-clip-text text-transparent">
               {user?.username || 'User'}
             </span>
           </h1>
@@ -32,7 +32,7 @@ export default function Welcome() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
             <Link
               to="/dashboard"
-              className="group px-6 py-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-300"
+              className="group px-6 py-4 rounded-xl bg-linear-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-300"
             >
               <div className="text-blue-400 font-semibold tracking-wide group-hover:text-blue-300 transition-colors">
                 Dashboard
@@ -42,7 +42,7 @@ export default function Welcome() {
 
             <Link
               to="/settings"
-              className="group px-6 py-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-300"
+              className="group px-6 py-4 rounded-xl bg-linear-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-300"
             >
               <div className="text-purple-400 font-semibold tracking-wide group-hover:text-purple-300 transition-colors">
                 Settings
@@ -54,11 +54,11 @@ export default function Welcome() {
 
         {/* Decorative Grid Lines */}
         <div className="mt-12 flex items-center justify-center gap-4 text-gray-700">
-          <div className="h-px w-16 bg-gradient-to-r from-transparent to-gray-700" />
+          <div className="h-px w-16 bg-linear-to-r from-transparent to-gray-700" />
           <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 0l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z" />
           </svg>
-          <div className="h-px w-16 bg-gradient-to-l from-transparent to-gray-700" />
+          <div className="h-px w-16 bg-linear-to-l from-transparent to-gray-700" />
         </div>
       </div>
     </div>
