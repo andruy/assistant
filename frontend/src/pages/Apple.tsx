@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Apple() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, authFetch } = useAuth()
   const [linksArray, setLinksArray] = useState<string[]>([])
   const [inputValue, setInputValue] = useState('')
 
@@ -26,7 +26,7 @@ export default function Apple() {
         links: linksArray
     }
 
-    const response = await fetch(`${API_BASE_URL}/youtube/auto`, {
+    const response = await authFetch(`${API_BASE_URL}/youtube/auto`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

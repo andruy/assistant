@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 
 interface User {
   username: string
@@ -12,6 +12,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
+  authFetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data ?? { username })
   }
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await fetch('/logout', {
         method: 'POST',
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setUser(null)
     }
-  }
+  }, [])
 
   const checkAuth = async () => {
     setIsLoading(true)
@@ -71,6 +72,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // Authenticated fetch wrapper that handles session expiry
+  const authFetch = useCallback(async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    const response = await fetch(input, {
+      ...init,
+      credentials: 'include',
+    })
+
+    // Check if session expired (401 Unauthorized or redirect to login)
+    if (response.status === 401 || response.status === 403) {
+      setUser(null)
+    }
+
+    // Check for redirect responses (Spring Security redirects to login page)
+    if (response.redirected && response.url.includes('/login')) {
+      setUser(null)
+    }
+
+    return response
+  }, [])
+
   useEffect(() => {
     checkAuth()
   }, [])
@@ -84,6 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         checkAuth,
+        authFetch,
       }}
     >
       {children}

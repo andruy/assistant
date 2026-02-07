@@ -9,7 +9,7 @@ interface TaskId {
 }
 
 export default function Notepad() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, authFetch } = useAuth()
   const [loadingTasks, setLoadingTasks] = useState(true)
   const [tasks, setTasks] = useState<TaskId[]>([])
   const [selectedTask, setSelectedTask] = useState<TaskId | null>(null)
@@ -20,7 +20,7 @@ export default function Notepad() {
   useEffect(() => {
     async function fetchRunningTasks() {
       try {
-        const response = await fetch(`${API_BASE_URL}/running`)
+        const response = await authFetch(`${API_BASE_URL}/running`)
         if (response.ok) {
           const data: TaskId[] = await response.json()
           setTasks(data)
@@ -35,7 +35,7 @@ export default function Notepad() {
     if (isAuthenticated) {
       fetchRunningTasks()
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, authFetch])
 
   if (isLoading) {
     return (
@@ -52,7 +52,7 @@ export default function Notepad() {
   async function send() {
     if (!selectedTask) return
 
-    const response = await fetch(`${API_BASE_URL}/task`, {
+    const response = await authFetch(`${API_BASE_URL}/task`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
