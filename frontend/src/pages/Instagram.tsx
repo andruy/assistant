@@ -98,7 +98,7 @@ export default function Instagram() {
           <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : Object.keys(accounts).length > 0 ? (
-        <div className="space-y-2">
+        <div className="space-y-2 text-center">
           {Object.entries(accounts).map(([name, url]) => (
             <a
               key={name}
