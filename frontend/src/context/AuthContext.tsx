@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 
 interface User {
   username: string
@@ -11,7 +11,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   login: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
-  checkAuth: () => Promise<void>
+  checkAuth: (showLoading?: boolean) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -52,8 +52,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const checkAuth = async () => {
-    setIsLoading(true)
+  const checkAuth = useCallback(async (showLoading = false) => {
+    if (showLoading) {
+      setIsLoading(true)
+    }
     try {
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
         credentials: 'include',
@@ -67,12 +69,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       setUser(null)
     } finally {
-      setIsLoading(false)
+      if (showLoading) {
+        setIsLoading(false)
+      }
     }
-  }
+  }, [])
 
   useEffect(() => {
-    checkAuth()
+    checkAuth(true)
   }, [])
 
   return (

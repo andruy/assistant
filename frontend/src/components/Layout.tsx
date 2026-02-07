@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 
@@ -39,8 +39,13 @@ const privateCategories = [
 
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const { isAuthenticated, logout, user } = useAuth()
+  const { isAuthenticated, logout, user, checkAuth } = useAuth()
   const location = useLocation()
+
+  // Check auth status on every route change
+  useEffect(() => {
+    checkAuth()
+  }, [location.pathname, checkAuth])
 
   const handleLogout = async () => {
     await logout()
