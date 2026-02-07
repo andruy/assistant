@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Microsoft() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, checkAuth } = useAuth()
   const [directories, setDirectories] = useState<string[]>([])
   const [selectedDirectory, setSelectedDirectory] = useState<string>('')
   const [linksMap, setLinksMap] = useState<Record<string, string[]>>({})
@@ -15,11 +15,13 @@ export default function Microsoft() {
     async function fetchDirectories() {
       try {
         const response = await fetch(`${API_BASE_URL}/directories`)
-        if (response.ok) {
-          const data: { name: string }[] = await response.json()
-          data.sort((a, b) => a.name.localeCompare(b.name))
-          setDirectories(data.map(item => item.name))
+        if (!response.ok) {
+          await checkAuth()
+          return
         }
+        const data: { name: string }[] = await response.json()
+        data.sort((a, b) => a.name.localeCompare(b.name))
+        setDirectories(data.map(item => item.name))
       } catch (error) {
         console.error('Failed to fetch directories:', error)
       } finally {
@@ -82,16 +84,15 @@ export default function Microsoft() {
       body: JSON.stringify(linksMap)
     })
 
-    if (response.ok) {
-      const result = await response.json()
-      console.log(result.message)
-      setLinksMap({})
-      setSelectedDirectory('')
-      return result
-    } else {
-      console.error(response)
-      return 'Something went wrong'
+    if (!response.ok) {
+      await checkAuth()
+      return
     }
+    const result = await response.json()
+    console.log(result.message)
+    setLinksMap({})
+    setSelectedDirectory('')
+    return result
   }
 
   const totalLinks = Object.values(linksMap).reduce((sum, links) => sum + links.length, 0)

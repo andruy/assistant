@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Instagram() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, checkAuth } = useAuth()
   const [selectedDate, setSelectedDate] = useState('')
   const [loadingDateList, setLoadingDateList] = useState(true)
   const [dateList, setDateList] = useState<string[]>([])
@@ -16,10 +16,12 @@ export default function Instagram() {
     async function fetchList() {
       try {
         const response = await fetch(`${API_BASE_URL}/dates`)
-        if (response.ok) {
-          const data: string[] = await response.json()
-          setDateList(data)
+        if (!response.ok) {
+          await checkAuth()
+          return
         }
+        const data: string[] = await response.json()
+        setDateList(data)
       } catch (error) {
         console.error('Failed to fetch list of dates:', error)
       } finally {
@@ -54,10 +56,12 @@ export default function Instagram() {
       const params = new URLSearchParams({ date: selectedDate })
       const response = await fetch(`${API_BASE_URL}/accounts?${params}`)
 
-      if (response.ok) {
-        const data: Record<string, string> = await response.json()
-        setAccounts(data)
+      if (!response.ok) {
+        await checkAuth()
+        return
       }
+      const data: Record<string, string> = await response.json()
+      setAccounts(data)
     } catch (error) {
       console.error('Failed to fetch accounts:', error)
     } finally {

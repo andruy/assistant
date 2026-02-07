@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Folder() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, checkAuth } = useAuth()
   const [folderName, setFolderName] = useState('')
   const [message, setMessage] = useState('')
 
@@ -29,14 +29,13 @@ export default function Folder() {
       method: 'POST'
     })
 
-    if (response.ok) {
-      const result = await response.json()
-      setMessage(result.report || 'Folder created successfully')
-      setFolderName('')
-    } else {
-      console.error(response)
-      setMessage('Something went wrong')
+    if (!response.ok) {
+      await checkAuth()
+      return
     }
+    const result = await response.json()
+    setMessage(result.report || 'Folder created successfully')
+    setFolderName('')
   }
 
   return (

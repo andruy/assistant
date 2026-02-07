@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Apple() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, checkAuth } = useAuth()
   const [linksArray, setLinksArray] = useState<string[]>([])
   const [inputValue, setInputValue] = useState('')
 
@@ -34,16 +34,14 @@ export default function Apple() {
         body: JSON.stringify(data)
     })
 
-    if (response.ok) {
-        const result = await response.json()
-        console.log(result.report)
-        setLinksArray([])
-        return result
-    } else {
-        console.error(response)
-        console.log(data)
-        return "Something went wrong"
+    if (!response.ok) {
+        await checkAuth()
+        return
     }
+    const result = await response.json()
+    console.log(result.report)
+    setLinksArray([])
+    return result
   }
 
   return (

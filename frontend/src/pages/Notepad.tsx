@@ -9,7 +9,7 @@ interface TaskId {
 }
 
 export default function Notepad() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, checkAuth } = useAuth()
   const [loadingTasks, setLoadingTasks] = useState(true)
   const [tasks, setTasks] = useState<TaskId[]>([])
   const [selectedTask, setSelectedTask] = useState<TaskId | null>(null)
@@ -21,10 +21,12 @@ export default function Notepad() {
     async function fetchRunningTasks() {
       try {
         const response = await fetch(`${API_BASE_URL}/running`)
-        if (response.ok) {
-          const data: TaskId[] = await response.json()
-          setTasks(data)
+        if (!response.ok) {
+          await checkAuth()
+          return
         }
+        const data: TaskId[] = await response.json()
+        setTasks(data)
       } catch (error) {
         console.error('Failed to fetch threads:', error)
       } finally {
@@ -60,15 +62,14 @@ export default function Notepad() {
       body: JSON.stringify(selectedTask)
     })
 
-    if (response.ok) {
-      const result = await response.json()
-      setMessage(result.report || 'Task cancelled successfully')
-      setTasks(tasks.filter(t => t.id !== selectedTask.id))
-      setSelectedTask(null)
-    } else {
-      console.error(response)
-      setMessage('Failed to cancel task')
+    if (!response.ok) {
+      await checkAuth()
+      return
     }
+    const result = await response.json()
+    setMessage(result.report || 'Task cancelled successfully')
+    setTasks(tasks.filter(t => t.id !== selectedTask.id))
+    setSelectedTask(null)
   }
 
   return (

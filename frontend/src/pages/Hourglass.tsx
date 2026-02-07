@@ -12,7 +12,7 @@ interface Task {
 }
 
 export default function Hourglass() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, checkAuth } = useAuth()
   const [inputValue, setInputValue] = useState('')
   const [isAcOff, setIsAcOff] = useState(true)
   const [message, setMessage] = useState('')
@@ -54,14 +54,13 @@ export default function Hourglass() {
       body: JSON.stringify(task)
     })
 
-    if (response.ok) {
-      const result = await response.json()
-      setMessage(result.report || 'Task sent successfully')
-      setInputValue('')
-    } else {
-      console.error(response)
-      setMessage('Something went wrong')
+    if (!response.ok) {
+      await checkAuth()
+      return
     }
+    const result = await response.json()
+    setMessage(result.report || 'Task sent successfully')
+    setInputValue('')
   }
 
   return (

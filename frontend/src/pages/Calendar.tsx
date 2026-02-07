@@ -12,7 +12,7 @@ interface Task {
 }
 
 export default function Calendar() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, checkAuth } = useAuth()
   const [actions, setActions] = useState<string[]>([])
   const [loadingActions, setLoadingActions] = useState(true)
   const [task, setTask] = useState<Task | null>(null)
@@ -26,10 +26,12 @@ export default function Calendar() {
     async function fetchActions() {
       try {
         const response = await fetch(`${API_BASE_URL}/tasks`)
-        if (response.ok) {
-          const data: string[] = await response.json()
-          setActions(data)
+        if (!response.ok) {
+          await checkAuth()
+          return
         }
+        const data: string[] = await response.json()
+        setActions(data)
       } catch (error) {
         console.error('Failed to fetch actions:', error)
       } finally {
@@ -78,16 +80,15 @@ export default function Calendar() {
       body: JSON.stringify(task)
     })
 
-    if (response.ok) {
-      const result = await response.json()
-      setMessage(result.report || 'Task scheduled successfully')
-      setSelectValue('')
-      setDateInput('')
-      setTask(null)
-    } else {
-      console.error(response)
-      setMessage('Something went wrong')
+    if (!response.ok) {
+      await checkAuth()
+      return
     }
+    const result = await response.json()
+    setMessage(result.report || 'Task scheduled successfully')
+    setSelectValue('')
+    setDateInput('')
+    setTask(null)
   }
 
   return (
