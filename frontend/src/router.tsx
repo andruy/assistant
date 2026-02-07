@@ -2,8 +2,6 @@ import { createBrowserRouter } from "react-router"
 import Layout from "./components/Layout"
 import Home from "./pages/Home"
 import About from "./pages/About"
-import Dashboard from "./pages/Dashboard"
-import Settings from "./pages/Settings"
 import Apple from "./pages/Apple"
 import Microsoft from "./pages/Microsoft"
 import Folder from "./pages/Folder"
@@ -12,6 +10,7 @@ import Calendar from "./pages/Calendar"
 import Notepad from "./pages/Notepad"
 import Instagram from "./pages/Instagram"
 import Terminal from "./pages/Terminal"
+import Example from "./pages/Example"
 
 export const router = createBrowserRouter([
     {
@@ -25,14 +24,6 @@ export const router = createBrowserRouter([
             {
                 path: "about",
                 element: <About />
-            },
-            {
-                path: "dashboard",
-                element: <Dashboard />
-            },
-            {
-                path: "settings",
-                element: <Settings />
             },
             {
                 path: "apple",
@@ -65,6 +56,10 @@ export const router = createBrowserRouter([
             {
                 path: "terminal",
                 element: <Terminal />
+            },
+            {
+                path: "example",
+                element: <Example />
             }
         ]
     }

@@ -13,8 +13,6 @@ const privateCategories = [
     links: [
       { to: '/', label: 'Home', icon: '⌂' },
       { to: '/about', label: 'About', icon: 'ℹ' },
-      { to: '/dashboard', label: 'Dashboard', icon: '◧' },
-      { to: '/settings', label: 'Settings', icon: '⚙' },
     ]
   },
   {

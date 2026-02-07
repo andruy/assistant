@@ -1,4 +1,3 @@
-import { Link } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 
 export default function Welcome() {
@@ -27,29 +26,6 @@ export default function Welcome() {
           <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto leading-relaxed">
             Your session is active. Access all system features from the navigation menu.
           </p>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
-            <Link
-              to="/dashboard"
-              className="group px-6 py-4 rounded-xl bg-linear-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-300"
-            >
-              <div className="text-blue-400 font-semibold tracking-wide group-hover:text-blue-300 transition-colors">
-                Dashboard
-              </div>
-              <div className="text-xs text-gray-500 mt-1">View analytics</div>
-            </Link>
-
-            <Link
-              to="/settings"
-              className="group px-6 py-4 rounded-xl bg-linear-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-300"
-            >
-              <div className="text-purple-400 font-semibold tracking-wide group-hover:text-purple-300 transition-colors">
-                Settings
-              </div>
-              <div className="text-xs text-gray-500 mt-1">Configure system</div>
-            </Link>
-          </div>
         </div>
 
         {/* Decorative Grid Lines */}
