@@ -107,7 +107,7 @@ export default function Microsoft() {
             onChange={(e) => setSelectedDirectory(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-800"
           >
-            <option value="">-- Select a directory --</option>
+            <option value="" hidden>-- Select a directory --</option>
             {directories.map((dir) => (
               <option key={dir} value={dir}>
                 {dir} {linksMap[dir] ? `(${linksMap[dir].length})` : ''}

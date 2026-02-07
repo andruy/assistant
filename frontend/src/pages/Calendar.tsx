@@ -102,7 +102,7 @@ export default function Calendar() {
               onChange={(e) => setSelectValue(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-800"
             >
-              <option value="">-- Select an action --</option>
+              <option value="" hidden>-- Select an action --</option>
               {actions.map((action) => (
                 <option key={action} value={action}>
                   {action}
