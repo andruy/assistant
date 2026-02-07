@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Microsoft() {
-  const { isAuthenticated, isLoading, authFetch } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const [directories, setDirectories] = useState<string[]>([])
   const [selectedDirectory, setSelectedDirectory] = useState<string>('')
   const [linksMap, setLinksMap] = useState<Record<string, string[]>>({})
@@ -14,7 +14,7 @@ export default function Microsoft() {
   useEffect(() => {
     async function fetchDirectories() {
       try {
-        const response = await authFetch(`${API_BASE_URL}/directories`)
+        const response = await fetch(`${API_BASE_URL}/directories`)
         if (response.ok) {
           const data: { name: string }[] = await response.json()
           data.sort((a, b) => a.name.localeCompare(b.name))
@@ -30,7 +30,7 @@ export default function Microsoft() {
     if (isAuthenticated) {
       fetchDirectories()
     }
-  }, [isAuthenticated, authFetch])
+  }, [isAuthenticated])
 
   if (isLoading) {
     return (
@@ -74,7 +74,7 @@ export default function Microsoft() {
   async function send() {
     if (Object.keys(linksMap).length === 0) return
 
-    const response = await authFetch(`${API_BASE_URL}/youtube`, {
+    const response = await fetch(`${API_BASE_URL}/youtube`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

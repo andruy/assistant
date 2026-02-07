@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Folder() {
-  const { isAuthenticated, isLoading, authFetch } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const [folderName, setFolderName] = useState('')
   const [message, setMessage] = useState('')
 
@@ -25,7 +25,7 @@ export default function Folder() {
     if (!folderName.trim()) return
 
     const params = new URLSearchParams({ name: folderName })
-    const response = await authFetch(`${API_BASE_URL}?${params}`, {
+    const response = await fetch(`${API_BASE_URL}?${params}`, {
       method: 'POST'
     })
 

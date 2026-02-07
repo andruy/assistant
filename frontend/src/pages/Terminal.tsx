@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Terminal() {
-  const { isAuthenticated, isLoading, authFetch } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -13,7 +13,7 @@ export default function Terminal() {
   const fetchLogs = async () => {
     setLoading(true)
     try {
-      const response = await authFetch(API_BASE_URL)
+      const response = await fetch(API_BASE_URL)
       const data: { report: string } = await response.json()
       setOutput(data.report || 'No logs available')
       setLastUpdated(new Date())
@@ -28,7 +28,7 @@ export default function Terminal() {
     if (isAuthenticated) {
       fetchLogs()
     }
-  }, [isAuthenticated, authFetch])
+  }, [isAuthenticated])
 
   if (isLoading) {
     return (

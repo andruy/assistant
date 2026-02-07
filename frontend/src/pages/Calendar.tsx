@@ -12,7 +12,7 @@ interface Task {
 }
 
 export default function Calendar() {
-  const { isAuthenticated, isLoading, authFetch } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const [actions, setActions] = useState<string[]>([])
   const [loadingActions, setLoadingActions] = useState(true)
   const [task, setTask] = useState<Task | null>(null)
@@ -25,7 +25,7 @@ export default function Calendar() {
   useEffect(() => {
     async function fetchActions() {
       try {
-        const response = await authFetch(`${API_BASE_URL}/tasks`)
+        const response = await fetch(`${API_BASE_URL}/tasks`)
         if (response.ok) {
           const data: string[] = await response.json()
           setActions(data)
@@ -40,7 +40,7 @@ export default function Calendar() {
     if (isAuthenticated) {
       fetchActions()
     }
-  }, [isAuthenticated, authFetch])
+  }, [isAuthenticated])
 
   if (isLoading) {
     return (
@@ -70,7 +70,7 @@ export default function Calendar() {
   async function send() {
     if (!task || !selectValue || !dateInput) return
 
-    const response = await authFetch(`${API_BASE_URL}/task`, {
+    const response = await fetch(`${API_BASE_URL}/task`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

@@ -12,7 +12,7 @@ interface Task {
 }
 
 export default function Hourglass() {
-  const { isAuthenticated, isLoading, authFetch } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const [inputValue, setInputValue] = useState('')
   const [isAcOff, setIsAcOff] = useState(true)
   const [message, setMessage] = useState('')
@@ -46,7 +46,7 @@ export default function Hourglass() {
   async function send() {
     if (!inputValue.trim() || isNaN(Number(inputValue))) return
 
-    const response = await authFetch(`${API_BASE_URL}/task`, {
+    const response = await fetch(`${API_BASE_URL}/task`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

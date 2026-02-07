@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Instagram() {
-  const { isAuthenticated, isLoading, authFetch } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const [selectedDate, setSelectedDate] = useState('')
   const [loadingDateList, setLoadingDateList] = useState(true)
   const [dateList, setDateList] = useState<string[]>([])
@@ -15,7 +15,7 @@ export default function Instagram() {
   useEffect(() => {
     async function fetchList() {
       try {
-        const response = await authFetch(`${API_BASE_URL}/dates`)
+        const response = await fetch(`${API_BASE_URL}/dates`)
         if (response.ok) {
           const data: string[] = await response.json()
           setDateList(data)
@@ -30,7 +30,7 @@ export default function Instagram() {
     if (isAuthenticated) {
       fetchList()
     }
-  }, [isAuthenticated, authFetch])
+  }, [isAuthenticated])
 
   if (isLoading) {
     return (
@@ -52,7 +52,7 @@ export default function Instagram() {
 
     try {
       const params = new URLSearchParams({ date: selectedDate })
-      const response = await authFetch(`${API_BASE_URL}/accounts?${params}`)
+      const response = await fetch(`${API_BASE_URL}/accounts?${params}`)
 
       if (response.ok) {
         const data: Record<string, string> = await response.json()
