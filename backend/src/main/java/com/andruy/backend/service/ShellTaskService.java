@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +26,6 @@ import com.andruy.backend.repository.ShellTaskRepository;
 import com.andruy.backend.util.BashHandler;
 import com.andruy.backend.util.DirectoryList;
 import com.andruy.backend.util.ShellScriptBuilder;
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 
 @Service
 public class ShellTaskService {
@@ -46,9 +44,6 @@ public class ShellTaskService {
     private ShellScriptBuilder scriptBuilder;
     private List<Directory> directories;
     private List<String> taskResponse;
-    private Playwright playwright;
-    private Browser browser;
-    private Page page;
     private ShellTask task;
 
     @Async
@@ -95,10 +90,6 @@ public class ShellTaskService {
         List<DirectoryCorrection> corrections = shellTaskRepository.getDirectories();
 
         try {
-            playwright = Playwright.create();
-            browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-            page = browser.newPage();
-
             for (String url : list) {
                 Directory directory = new Directory(getDirectory(url));
 
@@ -121,35 +112,25 @@ public class ShellTaskService {
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
-        } finally {
-            browser.close();
-            playwright.close();
         }
 
         return mapForTask;
     }
 
     private String getDirectory(String address) {
+        String response = "";
+
         try {
-            page.navigate(address);
+            Document document = Jsoup.connect(address).get();
+            Element element = document.selectFirst("link[itemprop=name]");
 
-            String name = page.locator("a.yt-simple-endpoint.style-scope.yt-formatted-string").first().textContent();
-
-            if (name.equals("#Shorts")) {
-                Locator l = page.locator("link").all().stream()
-                    .filter(element -> element.getAttribute("itemprop") != null && element.getAttribute("itemprop").equals("name"))
-                    .findFirst()
-                    .orElse(null);
-
-                if (l != null) {
-                    name = l.getAttribute("content");
-                }
+            if (element != null) {
+                response = element.attr("content");
             }
-
-            return name;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return "";
         }
+
+        return response;
     }
 }

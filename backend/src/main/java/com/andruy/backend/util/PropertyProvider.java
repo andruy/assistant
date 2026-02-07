@@ -13,12 +13,6 @@ public class PropertyProvider {
     private String ytd;
     @Value("${my.bin.bash}")
     private String bin;
-    @Value("${my.ssh.host}")
-    private String sshHost;
-    @Value("${my.ssh.username}")
-    private String sshUsername;
-    @Value("${my.ssh.password}")
-    private String sshPassword;
     @Value("${my.email.recipient}")
     private String recipient;
     @Value("${my.app.timezone}")
@@ -29,9 +23,6 @@ public class PropertyProvider {
         System.setProperty("programmingDirectory", programmingDirectory);
         System.setProperty("ytd", ytd);
         System.setProperty("bin", bin);
-        System.setProperty("sshHost", sshHost);
-        System.setProperty("sshUsername", sshUsername);
-        System.setProperty("sshPassword", sshPassword);
         System.setProperty("emailRecipient", recipient);
         System.setProperty("appTimezone", timezone);
     }
