@@ -10,7 +10,6 @@ import Calendar from "./pages/Calendar"
 import Notepad from "./pages/Notepad"
 import Instagram from "./pages/Instagram"
 import Terminal from "./pages/Terminal"
-import Example from "./pages/Example"
 
 export const router = createBrowserRouter([
     {
@@ -56,10 +55,6 @@ export const router = createBrowserRouter([
             {
                 path: "terminal",
                 element: <Terminal />
-            },
-            {
-                path: "example",
-                element: <Example />
             }
         ]
     }
