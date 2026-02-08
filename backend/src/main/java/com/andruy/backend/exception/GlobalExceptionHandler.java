@@ -34,9 +34,18 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req, null);
     }
 
+    @ExceptionHandler({
+        com.webauthn4j.converter.exception.DataConversionException.class,
+        com.webauthn4j.verifier.exception.VerificationException.class
+    })
+    public ResponseEntity<ApiError> handleWebAuthn(Exception ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req, null);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", req, null);
+        ex.printStackTrace();
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), req, null);
     }
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message, HttpServletRequest req, Map<String, String> fieldErrors) {

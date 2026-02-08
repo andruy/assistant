@@ -11,6 +11,7 @@ import Notepad from "./pages/Notepad"
 import Instagram from "./pages/Instagram"
 import Terminal from "./pages/Terminal"
 import Example from "./pages/Example"
+import Settings from "./pages/Settings"
 
 export const router = createBrowserRouter([
     {
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
             {
                 path: "example",
                 element: <Example />
+            },
+            {
+                path: "settings",
+                element: <Settings />
             }
         ]
     }
