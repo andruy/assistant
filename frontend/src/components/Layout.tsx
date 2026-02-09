@@ -22,6 +22,7 @@ const privateCategories = [
       { to: '/microsoft', label: 'Microsoft', icon: '⊞' },
       { to: '/folder', label: 'Folder', icon: '📁' },
       { to: '/instagram', label: 'Instagram', icon: '📷' },
+      { to: '/media', label: 'Media', icon: '🎬' },
     ]
   },
   {

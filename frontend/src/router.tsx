@@ -10,6 +10,7 @@ import Calendar from "./pages/Calendar"
 import Notepad from "./pages/Notepad"
 import Instagram from "./pages/Instagram"
 import Terminal from "./pages/Terminal"
+import Media from "./pages/Media"
 
 export const router = createBrowserRouter([
     {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
             {
                 path: "terminal",
                 element: <Terminal />
+            },
+            {
+                path: "media",
+                element: <Media />
             }
         ]
     }
