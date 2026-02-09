@@ -19,7 +19,6 @@ import com.andruy.backend.model.MediaFile;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 class MediaServiceTest {
-
     private MediaService mediaService;
     private File mediaDir;
 

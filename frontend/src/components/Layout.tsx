@@ -41,8 +41,9 @@ export default function Layout() {
   const { isAuthenticated, logout, user, checkAuth } = useAuth()
   const location = useLocation()
 
-  // Check auth status on every route change
+  // Check auth status and scroll to top on every route change
   useEffect(() => {
+    window.scrollTo(0, 0)
     checkAuth()
   }, [location.pathname, checkAuth])
 
