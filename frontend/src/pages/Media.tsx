@@ -24,21 +24,22 @@ export default function Media() {
 
   const API_BASE_URL = '/api/media'
 
-  useEffect(() => {
-    async function fetchFiles() {
-      try {
-        const response = await fetch(API_BASE_URL)
-        if (response.ok) {
-          const data: MediaFile[] = await response.json()
-          setFiles(data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch media files:', error)
-      } finally {
-        setLoadingFiles(false)
+  async function fetchFiles() {
+    setLoadingFiles(true)
+    try {
+      const response = await fetch(API_BASE_URL)
+      if (response.ok) {
+        const data: MediaFile[] = await response.json()
+        setFiles(data)
       }
+    } catch (error) {
+      console.error('Failed to fetch media files:', error)
+    } finally {
+      setLoadingFiles(false)
     }
+  }
 
+  useEffect(() => {
     if (isAuthenticated) {
       fetchFiles()
     }
@@ -79,6 +80,16 @@ export default function Media() {
           />
         </div>
       )}
+
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={fetchFiles}
+          disabled={loadingFiles}
+          className="px-4 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg hover:border-purple-500/50 text-gray-300 hover:text-white transition-all disabled:opacity-50"
+        >
+          {loadingFiles ? 'Refreshing...' : 'Refresh'}
+        </button>
+      </div>
 
       {loadingFiles ? (
         <div className="flex items-center justify-center py-8">
