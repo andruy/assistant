@@ -1,12 +1,35 @@
 import { useState, type FormEvent } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { Navigate } from 'react-router'
 
 export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { login } = useAuth()
+  const { login, isAuthenticated, isLoading } = useAuth()
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative w-16 h-16">
+            <div className="absolute inset-0 rounded-full border-2 border-gray-700" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-blue-400 animate-spin" />
+            <div className="absolute inset-2 rounded-full border-2 border-transparent border-t-purple-400 animate-spin animation-delay-150" style={{ animationDirection: 'reverse' }} />
+            <div className="absolute inset-4 rounded-full border-2 border-transparent border-t-violet-400 animate-spin" />
+          </div>
+          <p className="text-sm text-gray-400 tracking-wider animate-pulse font-mono">
+            INITIALIZING...
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -23,8 +46,21 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-slate-950 text-gray-100 font-mono flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-500 to-violet-400 bg-clip-text text-transparent font-[Orbitron]">
+            NEXUS
+          </h2>
+        </div>
+
         {/* Card */}
         <div className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 shadow-2xl shadow-purple-500/5">
           {/* Header */}
@@ -103,8 +139,10 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Bottom Glow */}
-        <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-purple-500/50 to-transparent" />
+        {/* Bottom decorative line */}
+        <div className="mt-6 flex items-center justify-center">
+          <div className="h-px w-32 bg-linear-to-r from-transparent via-purple-500/30 to-transparent" />
+        </div>
       </div>
     </div>
   )

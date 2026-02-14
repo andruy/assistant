@@ -2,11 +2,6 @@ import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 
-const publicLinks = [
-  { to: '/', label: 'Home', icon: '⌂' },
-  { to: '/about', label: 'About', icon: 'ℹ' },
-]
-
 const privateCategories = [
   {
     name: 'General',
@@ -41,6 +36,8 @@ export default function Layout() {
   const { isAuthenticated, logout, user, checkAuth } = useAuth()
   const location = useLocation()
 
+  const isLoginPage = location.pathname === '/login'
+
   // Check auth status and scroll to top on every route change
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -52,8 +49,13 @@ export default function Layout() {
     setMenuOpen(false)
   }
 
+  // Login page renders without any chrome
+  if (isLoginPage) {
+    return <Outlet />
+  }
+
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 font-mono">
+    <div className="min-h-screen bg-slate-950 text-gray-100 font-mono">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
@@ -127,40 +129,13 @@ export default function Layout() {
 
           {/* Scrollable Menu Content */}
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
-            {isAuthenticated ? (
-              // Private menu - categorized
-              privateCategories.map((category) => (
-                <div key={category.name}>
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
-                    {category.name}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {category.links.map((link) => (
-                      <Link
-                        key={link.to}
-                        to={link.to}
-                        onClick={() => setMenuOpen(false)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all duration-200 border ${
-                          location.pathname === link.to
-                            ? 'bg-purple-500/20 border-purple-500/50 text-purple-300'
-                            : 'bg-gray-800/50 border-gray-700 hover:border-purple-500/30 hover:bg-gray-800 text-gray-300 hover:text-white'
-                        }`}
-                      >
-                        <span className="text-xl mb-1">{link.icon}</span>
-                        <span className="text-xs font-medium">{link.label}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))
-            ) : (
-              // Public menu - simple list
-              <div>
+            {privateCategories.map((category) => (
+              <div key={category.name}>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
-                  Menu
+                  {category.name}
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {publicLinks.map((link) => (
+                  {category.links.map((link) => (
                     <Link
                       key={link.to}
                       to={link.to}
@@ -177,38 +152,28 @@ export default function Layout() {
                   ))}
                 </div>
               </div>
-            )}
+            ))}
           </div>
 
           {/* Auth Section at Bottom */}
           <div className="p-4 border-t border-gray-800">
-            {isAuthenticated ? (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 px-2">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-sm">
-                    {user?.username?.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-white truncate">{user?.username}</div>
-                    <div className="text-xs text-gray-500">Logged in</div>
-                  </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 px-2">
+                <div className="w-8 h-8 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-sm">
+                  {user?.username?.charAt(0).toUpperCase()}
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 transition-all duration-200 text-sm font-medium"
-                >
-                  Logout
-                </button>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-white truncate">{user?.username}</div>
+                  <div className="text-xs text-gray-500">Logged in</div>
+                </div>
               </div>
-            ) : (
-              <Link
-                to="/"
-                onClick={() => setMenuOpen(false)}
-                className="block w-full px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:border-purple-500/50 transition-all duration-200 text-sm font-medium text-center"
+              <button
+                onClick={handleLogout}
+                className="w-full px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 transition-all duration-200 text-sm font-medium"
               >
-                Login
-              </Link>
-            )}
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </nav>
