@@ -68,11 +68,9 @@ export default function Layout() {
             </>
             :
             // Logo
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-500 to-violet-400 bg-clip-text text-transparent font-[Orbitron]">
-                NEXUS
-              </h2>
-            </div>
+            <h2 className="text-2xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-500 to-violet-400 bg-clip-text text-transparent font-[Orbitron]">
+              NEXUS
+            </h2>
           }
         </h1>
 
