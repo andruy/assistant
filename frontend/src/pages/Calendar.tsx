@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 interface Task {
   timeframe: number
@@ -13,12 +14,12 @@ interface Task {
 
 export default function Calendar() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [actions, setActions] = useState<string[]>([])
   const [loadingActions, setLoadingActions] = useState(true)
   const [task, setTask] = useState<Task | null>(null)
   const [selectValue, setSelectValue] = useState('')
   const [dateInput, setDateInput] = useState('')
-  const [message, setMessage] = useState('')
 
   const API_BASE_URL = '/api/email'
 
@@ -32,6 +33,7 @@ export default function Calendar() {
         }
       } catch (error) {
         console.error('Failed to fetch actions:', error)
+        toast('Failed to load actions')
       } finally {
         setLoadingActions(false)
       }
@@ -80,13 +82,13 @@ export default function Calendar() {
 
     if (response.ok) {
       const result = await response.json()
-      setMessage(result.report || 'Task scheduled successfully')
+      toast(result.report || 'Task scheduled')
       setSelectValue('')
       setDateInput('')
       setTask(null)
     } else {
       console.error(response)
-      setMessage('Something went wrong')
+      toast('Something went wrong')
     }
   }
 
@@ -129,12 +131,6 @@ export default function Calendar() {
       >
         Schedule
       </button>
-
-      {message && (
-        <div className="mt-4 p-3 bg-cyan-800 rounded-lg">
-          {message}
-        </div>
-      )}
     </div>
   )
 }

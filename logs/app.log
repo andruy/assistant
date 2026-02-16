@@ -1,40 +1,27 @@
-2026-02-14T01:55:01.220-05:00  INFO 34969 --- [backend] [restartedMain] com.andruy.backend.BackendApplication    : Starting BackendApplication using Java 21.0.9 with PID 34969 (/Users/andruy/Documents/dev/assistant/backend/target/classes started by andruy in /Users/andruy/Documents/dev/assistant)
-2026-02-14T01:55:01.221-05:00 DEBUG 34969 --- [backend] [restartedMain] com.andruy.backend.BackendApplication    : Running with Spring Boot v3.5.10, Spring v6.2.15
-2026-02-14T01:55:01.221-05:00  INFO 34969 --- [backend] [restartedMain] com.andruy.backend.BackendApplication    : No active profile set, falling back to 1 default profile: "default"
-2026-02-14T01:55:01.247-05:00  INFO 34969 --- [backend] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-02-14T01:55:01.248-05:00  INFO 34969 --- [backend] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-02-14T01:55:01.775-05:00  INFO 34969 --- [backend] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-14T01:55:01.802-05:00  INFO 34969 --- [backend] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 20 ms. Found 1 JPA repository interface.
-2026-02-14T01:55:02.038-05:00  INFO 34969 --- [backend] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-14T01:55:02.044-05:00  INFO 34969 --- [backend] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-14T01:55:02.044-05:00  INFO 34969 --- [backend] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
-2026-02-14T01:55:02.063-05:00  INFO 34969 --- [backend] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-14T01:55:02.063-05:00  INFO 34969 --- [backend] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 814 ms
-2026-02-14T01:55:02.187-05:00  INFO 34969 --- [backend] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-02-14T01:55:02.474-05:00  INFO 34969 --- [backend] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@15a88124
-2026-02-14T01:55:02.475-05:00  INFO 34969 --- [backend] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-02-14T01:55:02.493-05:00  INFO 34969 --- [backend] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-14T01:55:02.521-05:00  INFO 34969 --- [backend] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.41.Final
-2026-02-14T01:55:02.535-05:00  INFO 34969 --- [backend] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-14T01:55:02.634-05:00  INFO 34969 --- [backend] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-14T01:55:02.701-05:00  INFO 34969 --- [backend] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 17.6
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-02-14T01:55:03.001-05:00  INFO 34969 --- [backend] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-14T01:55:03.002-05:00  INFO 34969 --- [backend] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-14T01:55:03.198-05:00  WARN 34969 --- [backend] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-14T01:55:03.207-05:00  INFO 34969 --- [backend] [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
-2026-02-14T01:55:03.325-05:00  INFO 34969 --- [backend] [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
-2026-02-14T01:55:03.340-05:00  INFO 34969 --- [backend] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name dbUserDetailsService
-2026-02-14T01:55:03.527-05:00  INFO 34969 --- [backend] [restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:postgresql://10.0.0.189:5432/postgres'
-2026-02-14T01:55:03.536-05:00  INFO 34969 --- [backend] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2026-02-14T01:55:03.567-05:00  INFO 34969 --- [backend] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-02-14T01:55:03.576-05:00  INFO 34969 --- [backend] [restartedMain] com.andruy.backend.BackendApplication    : Started BackendApplication in 2.534 seconds (process running for 3.526)
-2026-02-14T01:55:04.482-05:00  INFO 34969 --- [backend] [RMI TCP Connection(2)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-14T01:55:04.482-05:00  INFO 34969 --- [backend] [RMI TCP Connection(2)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-02-14T01:55:04.482-05:00  INFO 34969 --- [backend] [RMI TCP Connection(2)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-02-16T00:56:55.521-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-7] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T00:56:55.636-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-10] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T00:57:01.402-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-1] c.a.backend.service.InstagramService     : Called to retrieve list of accounts with suffix [nmf] and date 2026-01-04
+2026-02-16T00:58:16.499-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-2] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T00:58:16.636-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-5] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T00:58:18.514-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-3] c.a.backend.service.InstagramService     : Called to retrieve list of accounts with suffix [nmf] and date 2026-01-04
+2026-02-16T00:59:06.967-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-7] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T00:59:07.122-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-10] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T00:59:09.225-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-1] c.a.backend.service.InstagramService     : Called to retrieve list of accounts with suffix [nmf] and date 2026-01-04
+2026-02-16T01:23:02.236-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-8] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T01:23:02.302-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-7] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T01:23:11.842-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-10] c.a.backend.service.InstagramService     : Called to retrieve list of accounts with suffix [nmf] and date 2026-01-04
+2026-02-16T01:47:21.571-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:47:21.581-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:49:33.644-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:49:33.651-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:52:51.278-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:52:51.285-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-5] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:52:58.190-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:52:58.195-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:56:03.977-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-9] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:56:03.984-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:56:45.593-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T01:56:45.599-05:00  WARN 34969 --- [backend] [http-nio-8080-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException: This operation is only supported on Linux systems.]
+2026-02-16T02:07:07.195-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-2] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T02:07:07.247-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-5] c.a.backend.service.InstagramService     : Called to retrieve list of dates
+2026-02-16T02:07:09.883-05:00 TRACE 34969 --- [backend] [http-nio-8080-exec-3] c.a.backend.service.InstagramService     : Called to retrieve list of accounts with suffix [nmf] and date 2026-01-04

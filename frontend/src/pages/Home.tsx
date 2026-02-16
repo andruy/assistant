@@ -2,11 +2,11 @@ import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Home() {
-  const { isAuthenticated, isLoading, user } = useAuth()
+  const { isAuthenticated, isLoading, user, logout } = useAuth()
 
   if (isLoading) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           {/* Loading Spinner */}
           <div className="relative w-16 h-16">
@@ -28,7 +28,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+    <div className="flex-1 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center">
         {/* Welcome Card */}
         <div className="bg-gray-900/60 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-500/5">
@@ -50,15 +50,19 @@ export default function Home() {
           <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto leading-relaxed">
             Your session is active. Access all system features from the navigation menu.
           </p>
-        </div>
 
-        {/* Decorative Grid Lines */}
-        <div className="mt-12 flex items-center justify-center gap-4 text-gray-700">
-          <div className="h-px w-16 bg-linear-to-r from-transparent to-gray-700" />
-          <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 0l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z" />
-          </svg>
-          <div className="h-px w-16 bg-linear-to-l from-transparent to-gray-700" />
+          <button
+            onClick={logout}
+            className="
+              px-6 py-2 rounded-lg
+              bg-white/10 backdrop-blur-md
+              border border-white/20
+              text-sm text-gray-300
+              hover:bg-white/20 transition-colors
+            "
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>

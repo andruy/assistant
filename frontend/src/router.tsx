@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router"
 import Layout from "./components/Layout"
 import Home from "./pages/Home"
-import About from "./pages/About"
 import Apple from "./pages/Apple"
 import Microsoft from "./pages/Microsoft"
 import Folder from "./pages/Folder"
@@ -25,10 +24,6 @@ export const router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login />
-            },
-            {
-                path: "about",
-                element: <About />
             },
             {
                 path: "apple",
