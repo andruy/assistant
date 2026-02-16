@@ -1,11 +1,10 @@
 import { useOutlet, useLocation } from "react-router"
-import { useState, useEffect } from "react"
+import { useState, useEffect, cloneElement } from "react"
 import { AnimatePresence } from "framer-motion"
 import BackgroundCanvas from "../components/BackgroundCanvas"
 import Menu, { pages } from "./Menu"
 import PageTransition from "../components/PageTransition"
 import { useAuth } from '../context/AuthContext'
-import { cloneElement } from "react"
 
 export default function Layout() {
   const { isAuthenticated, checkAuth } = useAuth()
@@ -67,7 +66,7 @@ export default function Layout() {
               )}
             </>
             :
-            // Logo
+            // Nexus logo
             <h2 className="text-2xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-500 to-violet-400 bg-clip-text text-transparent font-[Orbitron]">
               NEXUS
             </h2>
@@ -103,16 +102,29 @@ export default function Layout() {
         </AnimatePresence>
       </main>
 
-      {/* ================= FOOTER ================= */}
-      {/* Always present for toast positioning */}
-      <footer
-        className="
-          h-16
-          flex items-center justify-center
-          text-xs text-gray-500
-        "
-      >
-        Nexus v1.0 — React + Spring Boot
+      {/* ================= LOWER THIRD ================= */}
+      <footer className="h-10 overflow-hidden relative backdrop-blur-md bg-white/5 border-t border-white/10">
+        <style>{`
+          @keyframes scroll-left {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+        `}</style>
+        <div
+          className="w-max flex items-center h-full whitespace-nowrap text-xs text-gray-400 tracking-widest uppercase"
+          style={{ animation: 'scroll-left 25s linear infinite' }}
+        >
+          {[0, 1].map(i => (
+            <span key={i} className="shrink-0 min-w-screen flex items-center justify-around">
+              <span>Nexus v1.0</span>
+              <span className="text-purple-400/60">◆</span>
+              <span>React + Spring Boot</span>
+              <span className="text-purple-400/60">◆</span>
+              <span>Personal Assistant</span>
+              <span className="text-purple-400/60">◆</span>
+            </span>
+          ))}
+        </div>
       </footer>
     </div>
   )
