@@ -146,3 +146,258 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ===== Apple Watch menu button ===== */
+.watch-btn {
+  font-size: 7px;
+  display: inline-block;
+  text-decoration: none;
+  position: relative;
+}
+
+.watch-btn .watch {
+  position: relative;
+  margin: 0 auto;
+  width: 22.8em;
+  padding: 7.3em 0;
+}
+
+.watch-btn .case {
+  position: relative;
+  z-index: 2;
+  background: #030303;
+  width: 21.2em;
+  height: 24.7em;
+  border-radius: 4em;
+  box-shadow: inset 0 0 0 0.1em #bdbdbd, inset 0 0 0.2em 0.2em #bebebe, inset 0 0.3em 0.3em 0.4em #070707, inset 0 -0.3em 0.1em 0.1em #070707, inset 0 0 0 0.9em #fff, inset 0 0 0 1.05em #313131, inset 3.5em -0.5em 2em -2em #a4a4a4, inset -1.2em 0 0.5em 0 #a4a4a4, inset -0.4em -1.1em 0.5em 0 #a4a4a4;
+}
+
+.watch-btn .case::before {
+  content: '';
+  position: absolute;
+  top: 0.3em;
+  left: 2.5em;
+  right: 2.5em;
+  height: 8%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.5) 1%, rgba(255,255,255,0.5) 41%, rgba(255,255,255,0.2) 100%);
+  border-radius: 10em 10em 11em 11em / 4em 4em 4em 4em;
+}
+
+.watch-btn .crown {
+  position: absolute;
+  background: #f6f6f6;
+  width: 1.5em;
+  height: 4.2em;
+  top: 5.3em;
+  right: -0.9em;
+  box-shadow: -0.26em 0 0 -0.1em #060606, inset -0.1em 0 0.1em 0 #747474, inset 0 -0.1em 0 #fefefe, inset 0 0.1em 0 #fefefe, inset 0 0.2em 0.1em 0 #eee, inset 0.1em 1.1em 0.6em -0.3em #040404, inset 0.1em -1.1em 0.6em -0.3em #040404;
+  border-radius: 0.8em 0.6em 0.6em 0.8em / 1em 0.6em 0.6em 1em;
+  overflow: hidden;
+}
+
+.watch-btn .crown::before {
+  content: '';
+  position: absolute;
+  top: 0.1em;
+  right: 0;
+  height: 0.1em;
+  width: 0.5em;
+  background: rgba(0,0,0,0.2);
+  box-shadow:
+    0 0.1em 0 rgba(255,255,255,0.2),
+    0 0.3em 0 rgba(0,0,0,0.2),
+    0 0.4em 0 rgba(255,255,255,0.2),
+    0 0.6em 0 rgba(0,0,0,0.2),
+    0 0.7em 0 rgba(255,255,255,0.2),
+    0 0.9em 0 rgba(0,0,0,0.2),
+    0 1em 0 rgba(255,255,255,0.2),
+    0 1.2em 0 rgba(0,0,0,0.2),
+    0 1.3em 0 rgba(255,255,255,0.2),
+    0 1.5em 0 rgba(0,0,0,0.2),
+    0 1.6em 0 rgba(255,255,255,0.2),
+    0 1.8em 0 rgba(0,0,0,0.2),
+    0 1.9em 0 rgba(255,255,255,0.2),
+    0 2.1em 0 rgba(0,0,0,0.2),
+    0 2.2em 0 rgba(255,255,255,0.2),
+    0 2.4em 0 rgba(0,0,0,0.2),
+    0 2.5em 0 rgba(255,255,255,0.2),
+    0 2.7em 0 rgba(0,0,0,0.2),
+    0 2.8em 0 rgba(255,255,255,0.2),
+    0 3em 0 rgba(0,0,0,0.2),
+    0 3.1em 0 rgba(255,255,255,0.2),
+    0 3.3em 0 rgba(0,0,0,0.2),
+    0 3.4em 0 rgba(255,255,255,0.2),
+    0 3.6em 0 rgba(0,0,0,0.2),
+    0 3.7em 0 rgba(255,255,255,0.2),
+    0 3.9em 0 rgba(0,0,0,0.2),
+    0 4em 0 rgba(255,255,255,0.2),
+    0 4.2em 0 rgba(0,0,0,0.2),
+    0 4.3em 0 rgba(255,255,255,0.2),
+    0 4.5em 0 rgba(0,0,0,0.2),
+    0 4.6em 0 rgba(255,255,255,0.2),
+    0 4.8em 0 rgba(0,0,0,0.2),
+    0 4.9em 0 rgba(255,255,255,0.2),
+    0 5.1em 0 rgba(0,0,0,0.2),
+    0 5.2em 0 rgba(255,255,255,0.2);
+}
+
+.watch-btn .power {
+  position: absolute;
+  right: -0.3em;
+  top: 13em;
+  height: 6.5em;
+  width: 0.5em;
+  background: #e4e4e4;
+  border-radius: 0.3em 0.1em 0.1em 0.3em / 0.9em 0.1em 0.1em 0.9em;
+  box-shadow: inset 0.1em 0.05em 0 #afafaf, inset -0.2em 0.5em 0.2em -0.2em #fff, inset -0.25em 0.8em 0.2em -0.2em #000, inset 0.1em -0.6em 0.2em -0.2em #000;
+}
+
+.watch-btn .strap {
+  position: absolute;
+  z-index: 1;
+  left: 2.5em;
+  width: 16.2em;
+  height: 7.6em;
+}
+
+.watch-btn .strap.strap-top {
+  top: 0;
+}
+
+.watch-btn .strap.strap-bottom {
+  bottom: 0;
+  transform: rotate(180deg);
+}
+
+.watch-btn .strap::before {
+  content: '';
+  position: absolute;
+  left: -3.2em;
+  bottom: -0.3em;
+  height: 3.7em;
+  width: 3.7em;
+  border-radius: 50%;
+  box-shadow: 2.2em 2.2em 0 -0.5em #b8b8b8;
+}
+
+.watch-btn .strap::after {
+  content: '';
+  position: absolute;
+  right: -3.2em;
+  bottom: -0.3em;
+  height: 3.7em;
+  width: 3.7em;
+  border-radius: 50%;
+  box-shadow: -2.2em 2.2em 0 -0.5em #a0a0a0;
+}
+
+.watch-btn .mesh {
+  position: absolute;
+  box-shadow: inset 0 0.1em 0 #fff, 0 -0.7em 0 -0.6em rgba(0,0,0,0.6), 0 -0.75em 0 -0.6em rgba(255,255,255,0.5);
+}
+
+.watch-btn .mesh:nth-child(1) {
+  z-index: 5;
+  bottom: -0.5em;
+  left: 0;
+  width: 100%;
+  height: 2.5em;
+  background: linear-gradient(to top, #a1a1a1 1%, #eee 100%);
+  border-radius: 2em 2em 0 0 / 2.5em 2.5em 0 0;
+  overflow: hidden;
+}
+
+.watch-btn .mesh:nth-child(1)::before {
+  content: '';
+  position: absolute;
+  bottom: -1em;
+  width: 100%;
+  height: 5em;
+  left: 0;
+  box-shadow: inset 0 -2.6em 1em -0.5em rgba(0,0,0,0.3);
+  transform: rotate(-4deg);
+}
+
+.watch-btn .mesh:nth-child(2) {
+  z-index: 4;
+  bottom: 1.5em;
+  width: 90%;
+  left: 5%;
+  height: 2.5em;
+  background: linear-gradient(to bottom, #d2d2d2 1%, #e9e9e9 100%);
+  border-radius: 1.5em 1.5em 0 0 / 2.5em 2.5em 0 0;
+  box-shadow: inset 0 0.1em 0 #fff, 0 -0.4em 0 -0.3em rgba(0,0,0,0.6), 0 -0.75em 0 -0.6em rgba(255,255,255,0.5);
+}
+
+.watch-btn .mesh:nth-child(3) {
+  z-index: 3;
+  bottom: 3.5em;
+  width: 82%;
+  left: 9%;
+  height: 2.3em;
+  background: linear-gradient(to bottom, #d7d7d7 1%, #ececec 100%);
+  border-radius: 1.1em 1.1em 0 0 / 2.2em 2.2em 0 0;
+  box-shadow: inset 0 0.1em 0 #fff, 0 -0.25em 0 -0.15em rgba(0,0,0,0.6), 0 -0.75em 0 -0.6em rgba(255,255,255,0.5);
+}
+
+.watch-btn .mesh:nth-child(4) {
+  z-index: 2;
+  bottom: 5.1em;
+  width: 78%;
+  left: 11%;
+  height: 2em;
+  background: linear-gradient(to bottom, #d5d5d5 1%, #ebebeb 100%);
+  border-radius: 1em 1em 0 0 / 1.9em 1.9em 0 0;
+  box-shadow: inset 0 0.1em 0 #fff, 0 -0.25em 0 -0.15em rgba(0,0,0,0.6), 0 -0.75em 0 -0.6em rgba(255,255,255,0.5);
+}
+
+.watch-btn .mesh:nth-child(5) {
+  z-index: 1;
+  bottom: 6.75em;
+  width: 74%;
+  left: 13%;
+  height: 1.2em;
+  background: linear-gradient(to bottom, #c3c3c3 1%, #e2e2e2 100%);
+  border-radius: 0.7em 0.7em 0 0 / 1.2em 1.2em 0 0;
+  box-shadow: inset 0 0.1em 0 #fff, 0 -0.75em 0 -0.6em rgba(255,255,255,0.5);
+}
+
+.watch-btn .screen {
+  position: absolute;
+  inset: 2.5em;
+  border-radius: 0.5em;
+  overflow: hidden;
+  color: #fff;
+}
+
+.watch-btn .screen-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watch-scrollbar {
+  position: absolute;
+  right: -1.8em;
+  width: 0.4em;
+  height: 4em;
+  border-radius: 0.2em;
+  background: rgba(255, 255, 255, 0.45);
+  transition: top 0.25s ease;
+  z-index: 10;
+  cursor: grab;
+  touch-action: none;
+}
+
+/* wider invisible hit area */
+.watch-scrollbar::before {
+  content: '';
+  position: absolute;
+  inset: -1em -2.5em;
+}
+
+.watch-scrollbar:active {
+  cursor: grabbing;
+}

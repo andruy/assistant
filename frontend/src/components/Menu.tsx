@@ -21,90 +21,131 @@ export const pages = [
   { name: <FaTerminal size={64} />, path: "/terminal" },
 ]
 
-const btnClass = `
-  w-[100px] h-[100px]
-  rounded-2xl
-  bg-white/10 backdrop-blur-md
-  border border-white/20
-  flex items-center justify-center
-  text-lg text-gray-200
-`
-
-const arrowClass = `
-  w-10 h-10 rounded-full
-  bg-white/10 backdrop-blur-md border border-white/20
-  flex items-center justify-center
-  text-gray-200 text-lg
-  transition-opacity
-`
+const screenVariants = {
+  enter: (dir: number) => ({ y: dir === 0 ? 0 : dir > 0 ? "100%" : "-100%", opacity: 0 }),
+  center: { y: 0, opacity: 1 },
+  exit: (dir: number) => ({ y: dir > 0 ? "-100%" : "100%", opacity: 0 }),
+}
 
 export default function Menu({ open, onClose }: Props) {
   const location = useLocation()
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const screenRef = useRef<HTMLDivElement>(null)
+  const scrollbarRef = useRef<HTMLDivElement>(null)
+  const watchBtnRef = useRef<HTMLDivElement>(null)
   const indexRef = useRef(0)
-  const isScrolling = useRef(false)
+  const cooldown = useRef(false)
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [direction, setDirection] = useState(0)
 
-  const scrollToIndex = useCallback((index: number, smooth = true) => {
-    const container = scrollRef.current
-    if (!container) return
-    const clamped = Math.max(0, Math.min(index, pages.length - 1))
-    if (smooth && (isScrolling.current || clamped === indexRef.current)) return
+
+  const navigate = useCallback((newIndex: number) => {
+    const clamped = Math.max(0, Math.min(newIndex, pages.length - 1))
+    if (clamped === indexRef.current || cooldown.current) return
+    setDirection(clamped > indexRef.current ? 1 : -1)
     indexRef.current = clamped
     setCurrentIndex(clamped)
-    if (smooth) {
-      isScrolling.current = true
-      container.scrollTo({ top: clamped * container.clientHeight, behavior: "smooth" })
-      setTimeout(() => { isScrolling.current = false }, 450)
-    } else {
-      container.scrollTo({ top: clamped * container.clientHeight, behavior: "instant" })
-    }
+    cooldown.current = true
+    setTimeout(() => { cooldown.current = false }, 350)
   }, [])
 
-  // On open: jump to the current page's button
+  // On open: jump to the current page & lock body scroll
   useEffect(() => {
     if (!open) return
     const idx = pages.findIndex(p => p.path === location.pathname)
     const startIndex = idx >= 0 ? idx : 0
-    // Use rAF to ensure the scroll container is rendered and sized
-    requestAnimationFrame(() => scrollToIndex(startIndex, false))
-  }, [open, location.pathname, scrollToIndex])
+    indexRef.current = startIndex
+    setCurrentIndex(startIndex)
+    setDirection(0)
+    document.body.style.overflow = "hidden"
+    return () => { document.body.style.overflow = "" }
+  }, [open, location.pathname])
 
-  // Wheel
+  // Wheel — navigate every ~3 scroll lines (3 × 100px deltaY)
   useEffect(() => {
     if (!open) return
-    const container = scrollRef.current
-    if (!container) return
+    const el = screenRef.current
+    if (!el) return
+    let accumulated = 0
     function onWheel(e: WheelEvent) {
       e.preventDefault()
-      if (e.deltaY > 0) scrollToIndex(indexRef.current + 1)
-      else if (e.deltaY < 0) scrollToIndex(indexRef.current - 1)
+      accumulated += e.deltaY
+      if (Math.abs(accumulated) < 10) return
+      if (accumulated > 0) navigate(indexRef.current + 1)
+      else navigate(indexRef.current - 1)
+      accumulated = 0
     }
-    container.addEventListener("wheel", onWheel, { passive: false })
-    return () => container.removeEventListener("wheel", onWheel)
-  }, [open, scrollToIndex])
+    el.addEventListener("wheel", onWheel, { passive: false })
+    return () => el.removeEventListener("wheel", onWheel)
+  }, [open, navigate])
 
-  // Touch
+  // Touch — prevent background scroll & navigate on swipe
   useEffect(() => {
     if (!open) return
-    const container = scrollRef.current
-    if (!container) return
+    const el = screenRef.current
+    if (!el) return
     let startY = 0
-    function onTouchStart(e: TouchEvent) { startY = e.touches[0].clientY }
+    function onTouchStart(e: TouchEvent) {
+      startY = e.touches[0].clientY
+    }
+    function onTouchMove(e: TouchEvent) {
+      e.preventDefault()
+    }
     function onTouchEnd(e: TouchEvent) {
       const delta = startY - e.changedTouches[0].clientY
       if (Math.abs(delta) > 50) {
-        if (delta > 0) scrollToIndex(indexRef.current + 1)
-        else scrollToIndex(indexRef.current - 1)
+        if (delta > 0) navigate(indexRef.current + 1)
+        else navigate(indexRef.current - 1)
       }
     }
-    container.addEventListener("touchstart", onTouchStart, { passive: true })
-    container.addEventListener("touchend", onTouchEnd, { passive: true })
+    el.addEventListener("touchstart", onTouchStart, { passive: false })
+    el.addEventListener("touchmove", onTouchMove, { passive: false })
+    el.addEventListener("touchend", onTouchEnd, { passive: true })
     return () => {
-      container.removeEventListener("touchstart", onTouchStart)
-      container.removeEventListener("touchend", onTouchEnd)
+      el.removeEventListener("touchstart", onTouchStart)
+      el.removeEventListener("touchmove", onTouchMove)
+      el.removeEventListener("touchend", onTouchEnd)
     }
-  }, [open, scrollToIndex])
+  }, [open, navigate])
+
+  // Scrollbar drag
+  useEffect(() => {
+    if (!open) return
+    const thumb = scrollbarRef.current
+    const container = watchBtnRef.current
+    if (!thumb || !container) return
+
+    const fontSize = 7
+    const trackTop = 9.3 * fontSize
+    const trackHeight = 16.7 * fontSize
+
+    function calcIndex(clientY: number) {
+      const rect = container!.getBoundingClientRect()
+      const ratio = Math.max(0, Math.min(1, (clientY - rect.top - trackTop) / trackHeight))
+      return Math.round(ratio * (pages.length - 1))
+    }
+
+    function onPointerDown(e: PointerEvent) {
+      e.preventDefault()
+      e.stopPropagation()
+      function onPointerMove(e: PointerEvent) {
+        const newIndex = calcIndex(e.clientY)
+        if (newIndex === indexRef.current) return
+        setDirection(newIndex > indexRef.current ? 1 : -1)
+        indexRef.current = newIndex
+        setCurrentIndex(newIndex)
+      }
+      function onPointerUp() {
+        window.removeEventListener("pointermove", onPointerMove)
+        window.removeEventListener("pointerup", onPointerUp)
+      }
+      window.addEventListener("pointermove", onPointerMove)
+      window.addEventListener("pointerup", onPointerUp)
+    }
+
+    thumb.addEventListener("pointerdown", onPointerDown)
+    return () => thumb.removeEventListener("pointerdown", onPointerDown)
+  }, [open])
 
   // Keyboard
   useEffect(() => {
@@ -112,30 +153,29 @@ export default function Menu({ open, onClose }: Props) {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "ArrowDown") {
         e.preventDefault()
-        scrollToIndex(indexRef.current + 1)
+        navigate(indexRef.current + 1)
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
-        scrollToIndex(indexRef.current - 1)
+        navigate(indexRef.current - 1)
       } else if (e.key === "Escape") {
         onClose()
       }
     }
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [open, scrollToIndex, onClose])
+  }, [open, navigate, onClose])
 
-  const atFirst = currentIndex === 0
-  const atLast = currentIndex === pages.length - 1
+  const page = pages[currentIndex]
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 bg-black/70 backdrop-blur-lg z-50"
+          ref={overlayRef}
+          className="fixed inset-0 bg-black/70 backdrop-blur-lg z-50 flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
         >
           {/* Close button */}
           <button
@@ -151,48 +191,48 @@ export default function Menu({ open, onClose }: Props) {
             &times;
           </button>
 
-          {/* Up arrow */}
-          <button
-            onClick={(e) => { e.stopPropagation(); scrollToIndex(indexRef.current - 1) }}
-            className={`fixed top-[calc(50%-106px)] left-1/2 -translate-x-1/2 z-10 ${arrowClass} ${atFirst ? "opacity-0 pointer-events-none" : "opacity-100"}`}
-          >
-            &#x25B2;
-          </button>
-
-          {/* Down arrow */}
-          <button
-            onClick={(e) => { e.stopPropagation(); scrollToIndex(indexRef.current + 1) }}
-            className={`fixed top-[calc(50%+66px)] left-1/2 -translate-x-1/2 z-10 ${arrowClass} ${atLast ? "opacity-0 pointer-events-none" : "opacity-100"}`}
-          >
-            &#x25BC;
-          </button>
-
-          <div
-            ref={scrollRef}
-            onClick={e => e.stopPropagation()}
-            className="
-              h-full overflow-y-auto
-              [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-            "
-            style={{ touchAction: "none" }}
-          >
-            {pages.map((p, i) => (
-              <div
-                key={p.path}
-                className="h-screen flex items-center justify-center"
-              >
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  viewport={{ amount: 0.5 }}
-                  transition={{ duration: 0.3, delay: i === currentIndex && !isScrolling.current ? 0.15 : 0 }}
-                >
-                  <Link to={p.path} onClick={onClose} className={btnClass}>
-                    {p.name}
-                  </Link>
-                </motion.div>
+          {/* Static watch */}
+          <div ref={watchBtnRef} className="watch-btn">
+            <div className="watch">
+              <div className="strap strap-top">
+                <div className="mesh" /><div className="mesh" /><div className="mesh" />
+                <div className="mesh" /><div className="mesh" />
               </div>
-            ))}
+              <div className="case">
+                <div className="crown" />
+                <div className="power" />
+                <div ref={screenRef} className="screen">
+                  <AnimatePresence custom={direction} mode="popLayout">
+                    <motion.div
+                      key={page.path}
+                      className="screen-slide"
+                      custom={direction}
+                      variants={screenVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Link to={page.path} onClick={onClose}>
+                        {page.name}
+                      </Link>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+              <div className="strap strap-bottom">
+                <div className="mesh" /><div className="mesh" /><div className="mesh" />
+                <div className="mesh" /><div className="mesh" />
+              </div>
+            </div>
+            {/* iOS-style scrollbar */}
+            <div
+              ref={scrollbarRef}
+              className="watch-scrollbar"
+              style={{
+                top: `${7.3 + 2 + (currentIndex / (pages.length - 1)) * (24.7 - 4 - 4)}em`,
+              }}
+            />
           </div>
         </motion.div>
       )}
