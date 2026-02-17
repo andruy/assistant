@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
+import { useToast } from './ToastContext'
 
 interface User {
   username: string
@@ -21,6 +22,8 @@ const API_BASE_URL = '/api'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const toast = useToast()
+  const wasAuthenticated = useRef(false)
 
   const login = async (username: string, password: string) => {
     const response = await fetch('/login', {
@@ -32,7 +35,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Login failed' }))
-      throw new Error(error.message || 'Login failed')
+      const message = error.message || 'Login failed'
+      toast(message)
+      throw new Error(message)
     }
 
     // Set user from response if your backend returns user data,
@@ -63,7 +68,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const data = await response.json()
         setUser(data)
+        wasAuthenticated.current = true
       } else {
+        if (wasAuthenticated.current) {
+          toast('Session expired')
+          wasAuthenticated.current = false
+        }
         setUser(null)
       }
     } catch {

@@ -1,13 +1,12 @@
 import { useAuth } from '../context/AuthContext'
-import Welcome from '../components/Welcome'
-import Login from '../components/Login'
+import { Navigate } from 'react-router'
 
 export default function Home() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, user, logout } = useAuth()
 
   if (isLoading) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           {/* Loading Spinner */}
           <div className="relative w-16 h-16">
@@ -24,5 +23,48 @@ export default function Home() {
     )
   }
 
-  return isAuthenticated ? <Welcome /> : <Login />
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+
+  return (
+    <div className="flex-1 flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full text-center">
+        {/* Welcome Card */}
+        <div className="bg-gray-900/60 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-500/5">
+          {/* Status Indicator */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 mb-6">
+            <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+            <span className="text-xs font-medium text-purple-400 tracking-wider">SYSTEM ONLINE</span>
+          </div>
+
+          {/* Greeting */}
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="text-gray-100">Welcome back,</span>
+            <br />
+            <span className="bg-linear-to-r from-blue-400 via-purple-400 to-violet-400 bg-clip-text text-transparent">
+              {user?.username || 'User'}
+            </span>
+          </h1>
+
+          <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto leading-relaxed">
+            Your session is active. Access all system features from the navigation menu.
+          </p>
+
+          <button
+            onClick={logout}
+            className="
+              px-6 py-2 rounded-lg
+              bg-white/10 backdrop-blur-md
+              border border-white/20
+              text-sm text-gray-300
+              hover:bg-white/20 transition-colors
+            "
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }

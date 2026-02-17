@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 interface Task {
   timeframe: number
@@ -13,9 +14,9 @@ interface Task {
 
 export default function Hourglass() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [inputValue, setInputValue] = useState('')
   const [isAcOff, setIsAcOff] = useState(true)
-  const [message, setMessage] = useState('')
   const [task, setTask] = useState<Task | null>(null)
 
   if (isLoading) {
@@ -56,11 +57,11 @@ export default function Hourglass() {
 
     if (response.ok) {
       const result = await response.json()
-      setMessage(result.report || 'Task sent successfully')
+      toast(result.report || 'Task sent')
       setInputValue('')
     } else {
       console.error(response)
-      setMessage('Something went wrong')
+      toast('Something went wrong')
     }
   }
 
@@ -106,11 +107,6 @@ export default function Hourglass() {
           Submit
         </button>
       </div>
-      {message && (
-        <div className="p-3 bg-cyan-800 rounded-lg">
-          {message}
-        </div>
-      )}
     </div>
   )
 }

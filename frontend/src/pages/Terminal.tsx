@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 export default function Terminal() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -18,6 +20,8 @@ export default function Terminal() {
       setOutput(data.report || 'No logs available')
       setLastUpdated(new Date())
     } catch (error) {
+      console.error('Failed to fetch logs:', error)
+      toast('Failed to fetch logs')
       setOutput('Error fetching logs')
     } finally {
       setLoading(false)

@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router"
 import Layout from "./components/Layout"
 import Home from "./pages/Home"
-import About from "./pages/About"
 import Apple from "./pages/Apple"
 import Microsoft from "./pages/Microsoft"
 import Folder from "./pages/Folder"
@@ -11,6 +10,7 @@ import Notepad from "./pages/Notepad"
 import Instagram from "./pages/Instagram"
 import Terminal from "./pages/Terminal"
 import Media from "./pages/Media"
+import Login from "./pages/Login"
 
 export const router = createBrowserRouter([
     {
@@ -22,8 +22,8 @@ export const router = createBrowserRouter([
                 element: <Home />
             },
             {
-                path: "about",
-                element: <About />
+                path: "login",
+                element: <Login />
             },
             {
                 path: "apple",

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 interface TaskId {
   id: string
@@ -10,10 +11,10 @@ interface TaskId {
 
 export default function Notepad() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [loadingTasks, setLoadingTasks] = useState(true)
   const [tasks, setTasks] = useState<TaskId[]>([])
   const [selectedTask, setSelectedTask] = useState<TaskId | null>(null)
-  const [message, setMessage] = useState('')
 
   const API_BASE_URL = '/api/email'
 
@@ -27,6 +28,7 @@ export default function Notepad() {
         }
       } catch (error) {
         console.error('Failed to fetch threads:', error)
+        toast('Failed to load tasks')
       } finally {
         setLoadingTasks(false)
       }
@@ -62,12 +64,12 @@ export default function Notepad() {
 
     if (response.ok) {
       const result = await response.json()
-      setMessage(result.report || 'Task cancelled successfully')
+      toast(result.report || 'Task cancelled')
       setTasks(tasks.filter(t => t.id !== selectedTask.id))
       setSelectedTask(null)
     } else {
       console.error(response)
-      setMessage('Failed to cancel task')
+      toast('Failed to cancel task')
     }
   }
 
@@ -116,12 +118,6 @@ export default function Notepad() {
       >
         Cancel Task
       </button>
-
-      {message && (
-        <div className="mt-4 p-3 bg-cyan-800 rounded-lg">
-          {message}
-        </div>
-      )}
     </div>
   )
 }

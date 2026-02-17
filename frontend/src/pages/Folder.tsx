@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 export default function Folder() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [folderName, setFolderName] = useState('')
-  const [message, setMessage] = useState('')
 
   if (isLoading) {
     return (
@@ -31,11 +32,11 @@ export default function Folder() {
 
     if (response.ok) {
       const result = await response.json()
-      setMessage(result.report || 'Folder created successfully')
+      toast(result.report || 'Folder created')
       setFolderName('')
     } else {
       console.error(response)
-      setMessage('Something went wrong')
+      toast('Something went wrong')
     }
   }
 
@@ -62,11 +63,6 @@ export default function Folder() {
           Create
         </button>
       </div>
-      {message && (
-        <div className="p-3 bg-cyan-800 rounded-lg">
-          {message}
-        </div>
-      )}
     </div>
   )
 }

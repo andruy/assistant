@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 interface MediaFile {
   name: string
@@ -18,6 +19,7 @@ function formatFileSize(bytes: number): string {
 
 export default function Media() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [files, setFiles] = useState<MediaFile[]>([])
   const [loadingFiles, setLoadingFiles] = useState(true)
   const [selectedFile, setSelectedFile] = useState<MediaFile | null>(null)
@@ -34,6 +36,7 @@ export default function Media() {
       }
     } catch (error) {
       console.error('Failed to fetch media files:', error)
+      toast('Failed to load media')
     } finally {
       setLoadingFiles(false)
     }

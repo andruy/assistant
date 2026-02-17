@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 export default function Instagram() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [selectedDate, setSelectedDate] = useState('')
   const [loadingDateList, setLoadingDateList] = useState(true)
   const [dateList, setDateList] = useState<string[]>([])
@@ -22,6 +24,7 @@ export default function Instagram() {
         }
       } catch (error) {
         console.error('Failed to fetch list of dates:', error)
+        toast('Failed to load dates')
       } finally {
         setLoadingDateList(false)
       }
@@ -60,6 +63,7 @@ export default function Instagram() {
       }
     } catch (error) {
       console.error('Failed to fetch accounts:', error)
+      toast('Failed to load accounts')
     } finally {
       setLoadingAccounts(false)
     }
@@ -111,10 +115,6 @@ export default function Instagram() {
               <span className="text-gray-500 text-sm ml-2">↗</span>
             </a>
           ))}
-        </div>
-      ) : selectedDate && !loadingAccounts ? (
-        <div className="text-center py-8 text-gray-400">
-          No accounts found for this date
         </div>
       ) : null}
     </div>

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 export default function Apple() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [linksArray, setLinksArray] = useState<string[]>([])
   const [inputValue, setInputValue] = useState('')
 
@@ -37,11 +39,13 @@ export default function Apple() {
     if (response.ok) {
         const result = await response.json()
         console.log(result.report)
+        toast('Links submitted')
         setLinksArray([])
         return result
     } else {
         console.error(response)
         console.log(data)
+        toast('Something went wrong')
         return "Something went wrong"
     }
   }

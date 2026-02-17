@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
+import { useToast } from '../context/ToastContext'
 
 export default function Microsoft() {
   const { isAuthenticated, isLoading } = useAuth()
+  const toast = useToast()
   const [directories, setDirectories] = useState<string[]>([])
   const [selectedDirectory, setSelectedDirectory] = useState<string>('')
   const [linksMap, setLinksMap] = useState<Record<string, string[]>>({})
@@ -22,6 +24,7 @@ export default function Microsoft() {
         }
       } catch (error) {
         console.error('Failed to fetch directories:', error)
+        toast('Failed to load directories')
       } finally {
         setLoadingDirectories(false)
       }
@@ -85,11 +88,13 @@ export default function Microsoft() {
     if (response.ok) {
       const result = await response.json()
       console.log(result.message)
+      toast('Links submitted')
       setLinksMap({})
       setSelectedDirectory('')
       return result
     } else {
       console.error(response)
+      toast('Something went wrong')
       return 'Something went wrong'
     }
   }
