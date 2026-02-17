@@ -103,7 +103,7 @@ export default function Layout() {
       </main>
 
       {/* ================= LOWER THIRD ================= */}
-      <footer className="h-10 overflow-hidden relative backdrop-blur-md bg-white/5 border-t border-white/10">
+      <footer className="h-10 mb-4 overflow-hidden relative backdrop-blur-md bg-white/5 border-t border-white/10">
         <style>{`
           @keyframes scroll-left {
             from { transform: translateX(0); }
