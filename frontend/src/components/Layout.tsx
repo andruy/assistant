@@ -5,6 +5,7 @@ import BackgroundCanvas from "../components/BackgroundCanvas"
 import Menu, { pages } from "./Menu"
 import PageTransition from "../components/PageTransition"
 import { useAuth } from '../context/AuthContext'
+import TickerContent from './TickerContent'
 
 export default function Layout() {
   const { isAuthenticated, checkAuth } = useAuth()
@@ -116,12 +117,7 @@ export default function Layout() {
         >
           {[0, 1].map(i => (
             <span key={i} className="shrink-0 min-w-screen flex items-center justify-around">
-              <span>Nexus v1.0</span>
-              <span className="text-purple-400/60">◆</span>
-              <span>React + Spring Boot</span>
-              <span className="text-purple-400/60">◆</span>
-              <span>Personal Assistant</span>
-              <span className="text-purple-400/60">◆</span>
+              <TickerContent />
             </span>
           ))}
         </div>
