@@ -38,7 +38,6 @@ export default function Menu({ open, onClose }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState(0)
 
-
   const navigate = useCallback((newIndex: number) => {
     const clamped = Math.max(0, Math.min(newIndex, pages.length - 1))
     if (clamped === indexRef.current || cooldown.current) return

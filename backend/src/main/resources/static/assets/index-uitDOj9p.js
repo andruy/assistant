@@ -125,11 +125,7 @@ void main() {
         bg-white/10
         shadow-lg
         shadow-purple-500/10
-        `,f=`text-lg font-semibold capitalize flex items-center gap-2`,p=t?(0,$.jsx)($.Fragment,{children:n&&typeof n.name==`object`&&(0,b.cloneElement)(n.name,{size:32})}):(0,$.jsx)(`h2`,{className:`text-2xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-500 to-violet-400 bg-clip-text text-transparent font-[Orbitron]`,children:`NEXUS`}),e[5]=t,e[6]=a.pathname,e[7]=r,e[8]=f,e[9]=p,e[10]=m,e[11]=h,e[12]=g,e[13]=_}else f=e[8],p=e[9],m=e[10],h=e[11],g=e[12],_=e[13];let v;e[18]!==f||e[19]!==p?(v=(0,$.jsx)(`h1`,{className:f,children:p}),e[18]=f,e[19]=p,e[20]=v):v=e[20];let y;e[21]===t?y=e[22]:(y=t&&(0,$.jsx)(`button`,{onClick:()=>i(!0),className:`
-              text-xl
-              hover:text-white
-              transition-colors
-            `,children:`☰`}),e[21]=t,e[22]=y);let x;e[23]!==y||e[24]!==m||e[25]!==v?(x=(0,$.jsxs)(`header`,{className:m,children:[v,y]}),e[23]=y,e[24]=m,e[25]=v,e[26]=x):x=e[26];let S=`
+        `,f=`text-lg font-semibold capitalize flex items-center gap-2`,p=t?(0,$.jsx)($.Fragment,{children:n&&typeof n.name==`object`&&(0,b.cloneElement)(n.name,{size:32})}):(0,$.jsx)(`h2`,{className:`text-2xl font-bold tracking-wider bg-linear-to-r from-blue-400 via-purple-500 to-violet-400 bg-clip-text text-transparent font-[Orbitron]`,children:`NEXUS`}),e[5]=t,e[6]=a.pathname,e[7]=r,e[8]=f,e[9]=p,e[10]=m,e[11]=h,e[12]=g,e[13]=_}else f=e[8],p=e[9],m=e[10],h=e[11],g=e[12],_=e[13];let v;e[18]!==f||e[19]!==p?(v=(0,$.jsx)(`h1`,{className:f,children:p}),e[18]=f,e[19]=p,e[20]=v):v=e[20];let y;e[21]===t?y=e[22]:(y=t&&(0,$.jsx)(`button`,{onClick:e=>{let t=e.currentTarget.querySelector(`img`);t.classList.add(`boost`),setTimeout(()=>t.classList.remove(`boost`),600),i(!0)},className:`menu-logo`,children:(0,$.jsx)(`img`,{src:`/assets/react-CHdo91hT.svg`,alt:`Menu`})}),e[21]=t,e[22]=y);let x;e[23]!==y||e[24]!==m||e[25]!==v?(x=(0,$.jsxs)(`header`,{className:m,children:[v,y]}),e[23]=y,e[24]=m,e[25]=v,e[26]=x):x=e[26];let S=`
           flex-1
           px-4
           ${!t||d===`Home`?`flex items-center justify-center`:``}

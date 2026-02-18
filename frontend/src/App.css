@@ -1,1 +1,25 @@
 /* App-specific styles - most styling is in index.css and Tailwind classes */
+@keyframes react-spin-ccw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.menu-logo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 0;
+}
+
+.menu-logo img {
+  height: 2rem;
+  width: 2rem;
+  animation: react-spin-ccw 6s linear infinite;
+  will-change: transform;
+  transition: filter 0.3s ease;
+}
+
+.menu-logo img.boost {
+  animation: react-spin-ccw 0.5s linear infinite;
+}

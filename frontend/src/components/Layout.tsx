@@ -6,6 +6,8 @@ import Menu, { pages } from "./Menu"
 import PageTransition from "../components/PageTransition"
 import { useAuth } from '../context/AuthContext'
 import TickerContent from './TickerContent'
+import reactLogo from '../assets/react.svg'
+import '../App.css'
 
 export default function Layout() {
   const { isAuthenticated, checkAuth } = useAuth()
@@ -76,14 +78,15 @@ export default function Layout() {
 
         {isAuthenticated && (
           <button
-            onClick={() => setMenuOpen(true)}
-            className="
-              text-xl
-              hover:text-white
-              transition-colors
-            "
+            onClick={(e) => {
+              const img = e.currentTarget.querySelector('img')!
+              img.classList.add('boost')
+              setTimeout(() => img.classList.remove('boost'), 600)
+              setMenuOpen(true)
+            }}
+            className="menu-logo"
           >
-            ☰
+            <img src={reactLogo} alt="Menu" />
           </button>
         )}
       </header>
