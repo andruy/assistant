@@ -4,3 +4,4 @@
 
 # General ignores
 /.DS_Store
+logs/
