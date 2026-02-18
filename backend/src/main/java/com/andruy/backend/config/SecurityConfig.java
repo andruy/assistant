@@ -18,7 +18,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/", "/index.html", "/assets/**", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .requestMatchers("/api/health").permitAll()
                     .anyRequest().authenticated()
