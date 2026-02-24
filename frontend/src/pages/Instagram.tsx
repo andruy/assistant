@@ -11,8 +11,16 @@ export default function Instagram() {
   const [dateList, setDateList] = useState<string[]>([])
   const [accounts, setAccounts] = useState<Record<string, string>>({})
   const [loadingAccounts, setLoadingAccounts] = useState(false)
+  const [showCompare, setShowCompare] = useState(false)
 
   const API_BASE_URL = '/api/instagram'
+
+  useEffect(() => {
+    if (!showCompare) return
+    function handleClick() { setShowCompare(false) }
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [showCompare])
 
   useEffect(() => {
     async function fetchList() {
@@ -71,6 +79,29 @@ export default function Instagram() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
+      <div className="flex justify-center mb-6">
+        {showCompare ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              fetch(`${API_BASE_URL}/compare`)
+              toast('Compare started')
+              setShowCompare(false)
+            }}
+            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          >
+            Compare
+          </button>
+        ) : (
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowCompare(true) }}
+            className="text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            &#x2026;
+          </button>
+        )}
+      </div>
+
       <div className="flex gap-2 mb-6">
         {loadingDateList ? (
           <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
