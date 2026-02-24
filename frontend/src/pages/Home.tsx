@@ -65,7 +65,7 @@ export default function Home() {
               disabled:opacity-50
             "
           >
-            {loggingOut ? 'Logging out...' : 'Logout'}
+            {loggingOut ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Logout'}
           </button>
         </div>
       </div>

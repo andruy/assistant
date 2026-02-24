@@ -135,7 +135,7 @@ export default function Calendar() {
         disabled={!selectValue || !dateInput || sending}
         className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400"
       >
-        {sending ? 'Scheduling...' : 'Schedule'}
+        {sending ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Schedule'}
       </button>
     </div>
   )
