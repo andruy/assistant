@@ -10,6 +10,7 @@ export default function Microsoft() {
   const [selectedDirectory, setSelectedDirectory] = useState<string>('')
   const [linksMap, setLinksMap] = useState<Record<string, string[]>>({})
   const [loadingDirectories, setLoadingDirectories] = useState(true)
+  const [sending, setSending] = useState(false)
 
   const API_BASE_URL = '/api/shell'
 
@@ -77,25 +78,30 @@ export default function Microsoft() {
   async function send() {
     if (Object.keys(linksMap).length === 0) return
 
-    const response = await fetch(`${API_BASE_URL}/youtube`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(linksMap)
-    })
+    setSending(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/youtube`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(linksMap)
+      })
 
-    if (response.ok) {
-      const result = await response.json()
-      console.log(result.message)
-      toast('Links submitted')
-      setLinksMap({})
-      setSelectedDirectory('')
-      return result
-    } else {
-      console.error(response)
-      toast('Something went wrong')
-      return 'Something went wrong'
+      if (response.ok) {
+        const result = await response.json()
+        console.log(result.message)
+        toast('Links submitted')
+        setLinksMap({})
+        setSelectedDirectory('')
+        return result
+      } else {
+        console.error(response)
+        toast('Something went wrong')
+        return 'Something went wrong'
+      }
+    } finally {
+      setSending(false)
     }
   }
 
@@ -182,10 +188,10 @@ export default function Microsoft() {
 
       <button
         onClick={send}
-        disabled={totalLinks === 0}
+        disabled={totalLinks === 0 || sending}
         className="mt-6 px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400"
       >
-        Send {totalLinks > 0 && `(${totalLinks} link${totalLinks > 1 ? 's' : ''})`}
+        {sending ? 'Sending...' : `Send${totalLinks > 0 ? ` (${totalLinks} link${totalLinks > 1 ? 's' : ''})` : ''}`}
       </button>
     </div>
   )

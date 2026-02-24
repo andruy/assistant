@@ -12,15 +12,16 @@ export default function Instagram() {
   const [accounts, setAccounts] = useState<Record<string, string>>({})
   const [loadingAccounts, setLoadingAccounts] = useState(false)
   const [showCompare, setShowCompare] = useState(false)
+  const [comparing, setComparing] = useState(false)
 
   const API_BASE_URL = '/api/instagram'
 
   useEffect(() => {
-    if (!showCompare) return
+    if (!showCompare || comparing) return
     function handleClick() { setShowCompare(false) }
     document.addEventListener('click', handleClick)
     return () => document.removeEventListener('click', handleClick)
-  }, [showCompare])
+  }, [showCompare, comparing])
 
   useEffect(() => {
     async function fetchList() {
@@ -82,15 +83,27 @@ export default function Instagram() {
       <div className="flex justify-center mb-6">
         {showCompare ? (
           <button
-            onClick={(e) => {
+            disabled={comparing}
+            onClick={async (e) => {
               e.stopPropagation()
-              fetch(`${API_BASE_URL}/compare`)
-              toast('Compare started')
-              setShowCompare(false)
+              setComparing(true)
+              try {
+                const response = await fetch(`${API_BASE_URL}/compare`)
+                if (response.ok) {
+                  toast('Compare started')
+                  setShowCompare(false)
+                } else {
+                  toast('Compare failed')
+                }
+              } catch {
+                toast('Compare failed')
+              } finally {
+                setComparing(false)
+              }
             }}
-            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400"
           >
-            Compare
+            {comparing ? 'Comparing...' : 'Compare'}
           </button>
         ) : (
           <button

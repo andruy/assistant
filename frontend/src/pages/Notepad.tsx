@@ -15,6 +15,7 @@ export default function Notepad() {
   const [loadingTasks, setLoadingTasks] = useState(true)
   const [tasks, setTasks] = useState<TaskId[]>([])
   const [selectedTask, setSelectedTask] = useState<TaskId | null>(null)
+  const [sending, setSending] = useState(false)
 
   const API_BASE_URL = '/api/email'
 
@@ -54,22 +55,27 @@ export default function Notepad() {
   async function send() {
     if (!selectedTask) return
 
-    const response = await fetch(`${API_BASE_URL}/task`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(selectedTask)
-    })
+    setSending(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/task`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(selectedTask)
+      })
 
-    if (response.ok) {
-      const result = await response.json()
-      toast(result.report || 'Task cancelled')
-      setTasks(tasks.filter(t => t.id !== selectedTask.id))
-      setSelectedTask(null)
-    } else {
-      console.error(response)
-      toast('Failed to cancel task')
+      if (response.ok) {
+        const result = await response.json()
+        toast(result.report || 'Task cancelled')
+        setTasks(tasks.filter(t => t.id !== selectedTask.id))
+        setSelectedTask(null)
+      } else {
+        console.error(response)
+        toast('Failed to cancel task')
+      }
+    } finally {
+      setSending(false)
     }
   }
 
@@ -113,10 +119,10 @@ export default function Notepad() {
 
       <button
         onClick={send}
-        disabled={!selectedTask}
+        disabled={!selectedTask || sending}
         className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 transition-colors"
       >
-        Cancel Task
+        {sending ? 'Cancelling...' : 'Cancel Task'}
       </button>
     </div>
   )

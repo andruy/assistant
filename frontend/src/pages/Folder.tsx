@@ -7,6 +7,7 @@ export default function Folder() {
   const { isAuthenticated, isLoading } = useAuth()
   const toast = useToast()
   const [folderName, setFolderName] = useState('')
+  const [sending, setSending] = useState(false)
 
   if (isLoading) {
     return (
@@ -25,18 +26,23 @@ export default function Folder() {
   async function send() {
     if (!folderName.trim()) return
 
-    const params = new URLSearchParams({ name: folderName })
-    const response = await fetch(`${API_BASE_URL}?${params}`, {
-      method: 'POST'
-    })
+    setSending(true)
+    try {
+      const params = new URLSearchParams({ name: folderName })
+      const response = await fetch(`${API_BASE_URL}?${params}`, {
+        method: 'POST'
+      })
 
-    if (response.ok) {
-      const result = await response.json()
-      toast(result.report || 'Folder created')
-      setFolderName('')
-    } else {
-      console.error(response)
-      toast('Something went wrong')
+      if (response.ok) {
+        const result = await response.json()
+        toast(result.report || 'Folder created')
+        setFolderName('')
+      } else {
+        console.error(response)
+        toast('Something went wrong')
+      }
+    } finally {
+      setSending(false)
     }
   }
 
@@ -57,10 +63,10 @@ export default function Folder() {
         />
         <button
           onClick={send}
-          disabled={!folderName.trim()}
+          disabled={!folderName.trim() || sending}
           className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400"
         >
-          Create
+          {sending ? 'Creating...' : 'Create'}
         </button>
       </div>
     </div>

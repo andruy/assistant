@@ -20,6 +20,7 @@ export default function Calendar() {
   const [task, setTask] = useState<Task | null>(null)
   const [selectValue, setSelectValue] = useState('')
   const [dateInput, setDateInput] = useState('')
+  const [sending, setSending] = useState(false)
 
   const API_BASE_URL = '/api/email'
 
@@ -72,23 +73,28 @@ export default function Calendar() {
   async function send() {
     if (!task || !selectValue || !dateInput) return
 
-    const response = await fetch(`${API_BASE_URL}/task`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(task)
-    })
+    setSending(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/task`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(task)
+      })
 
-    if (response.ok) {
-      const result = await response.json()
-      toast(result.report || 'Task scheduled')
-      setSelectValue('')
-      setDateInput('')
-      setTask(null)
-    } else {
-      console.error(response)
-      toast('Something went wrong')
+      if (response.ok) {
+        const result = await response.json()
+        toast(result.report || 'Task scheduled')
+        setSelectValue('')
+        setDateInput('')
+        setTask(null)
+      } else {
+        console.error(response)
+        toast('Something went wrong')
+      }
+    } finally {
+      setSending(false)
     }
   }
 
@@ -126,10 +132,10 @@ export default function Calendar() {
 
       <button
         onClick={send}
-        disabled={!selectValue || !dateInput}
+        disabled={!selectValue || !dateInput || sending}
         className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400"
       >
-        Schedule
+        {sending ? 'Scheduling...' : 'Schedule'}
       </button>
     </div>
   )

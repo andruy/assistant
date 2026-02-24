@@ -18,6 +18,7 @@ export default function Hourglass() {
   const [inputValue, setInputValue] = useState('')
   const [isAcOff, setIsAcOff] = useState(true)
   const [task, setTask] = useState<Task | null>(null)
+  const [sending, setSending] = useState(false)
 
   if (isLoading) {
     return (
@@ -47,21 +48,26 @@ export default function Hourglass() {
   async function send() {
     if (!inputValue.trim() || isNaN(Number(inputValue))) return
 
-    const response = await fetch(`${API_BASE_URL}/task`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(task)
-    })
+    setSending(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/task`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(task)
+      })
 
-    if (response.ok) {
-      const result = await response.json()
-      toast(result.report || 'Task sent')
-      setInputValue('')
-    } else {
-      console.error(response)
-      toast('Something went wrong')
+      if (response.ok) {
+        const result = await response.json()
+        toast(result.report || 'Task sent')
+        setInputValue('')
+      } else {
+        console.error(response)
+        toast('Something went wrong')
+      }
+    } finally {
+      setSending(false)
     }
   }
 
@@ -101,10 +107,10 @@ export default function Hourglass() {
         </span>
         <button
           onClick={send}
-          disabled={!inputValue.trim() || isNaN(Number(inputValue))}
+          disabled={!inputValue.trim() || isNaN(Number(inputValue)) || sending}
           className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400"
         >
-          Submit
+          {sending ? 'Submitting...' : 'Submit'}
         </button>
       </div>
     </div>

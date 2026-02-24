@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
 
 export default function Home() {
   const { isAuthenticated, isLoading, user, logout } = useAuth()
+  const [loggingOut, setLoggingOut] = useState(false)
 
   if (isLoading) {
     return (
@@ -52,16 +54,18 @@ export default function Home() {
           </p>
 
           <button
-            onClick={logout}
+            onClick={async () => { setLoggingOut(true); await logout().finally(() => setLoggingOut(false)) }}
+            disabled={loggingOut}
             className="
               px-6 py-2 rounded-lg
               bg-white/10 backdrop-blur-md
               border border-white/20
               text-sm text-gray-300
               hover:bg-white/20 transition-colors
+              disabled:opacity-50
             "
           >
-            Logout
+            {loggingOut ? 'Logging out...' : 'Logout'}
           </button>
         </div>
       </div>

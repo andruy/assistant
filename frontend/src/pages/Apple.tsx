@@ -8,6 +8,7 @@ export default function Apple() {
   const toast = useToast()
   const [linksArray, setLinksArray] = useState<string[]>([])
   const [inputValue, setInputValue] = useState('')
+  const [sending, setSending] = useState(false)
 
   if (isLoading) {
     return (
@@ -28,25 +29,30 @@ export default function Apple() {
         links: linksArray
     }
 
-    const response = await fetch(`${API_BASE_URL}/youtube/auto`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
+    setSending(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/youtube/auto`, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+      })
 
-    if (response.ok) {
-        const result = await response.json()
-        console.log(result.report)
-        toast('Links submitted')
-        setLinksArray([])
-        return result
-    } else {
-        console.error(response)
-        console.log(data)
-        toast('Something went wrong')
-        return "Something went wrong"
+      if (response.ok) {
+          const result = await response.json()
+          console.log(result.report)
+          toast('Links submitted')
+          setLinksArray([])
+          return result
+      } else {
+          console.error(response)
+          console.log(data)
+          toast('Something went wrong')
+          return "Something went wrong"
+      }
+    } finally {
+      setSending(false)
     }
   }
 
@@ -94,10 +100,10 @@ export default function Apple() {
       </div>
       <button
         onClick={send}
-        disabled={linksArray.length === 0}
+        disabled={linksArray.length === 0 || sending}
         className="mt-6 px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400"
       >
-        Send
+        {sending ? 'Sending...' : 'Send'}
       </button>
     </div>
   )
