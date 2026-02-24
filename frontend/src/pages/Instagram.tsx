@@ -101,7 +101,7 @@ export default function Instagram() {
                 setComparing(false)
               }
             }}
-            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400"
+            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 flex items-center justify-center min-w-[5rem]"
           >
             {comparing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Compare'}
           </button>
@@ -135,7 +135,7 @@ export default function Instagram() {
         <button
           onClick={fetchAccounts}
           disabled={!selectedDate || loadingAccounts}
-          className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400"
+          className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400 flex items-center justify-center min-w-[5rem]"
         >
           {loadingAccounts ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Submit'}
         </button>

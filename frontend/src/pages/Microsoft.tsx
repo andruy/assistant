@@ -189,7 +189,7 @@ export default function Microsoft() {
       <button
         onClick={send}
         disabled={totalLinks === 0 || sending}
-        className="mt-6 px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400"
+        className="mt-6 px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 flex items-center justify-center min-w-[5rem]"
       >
         {sending ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : `Send${totalLinks > 0 ? ` (${totalLinks} link${totalLinks > 1 ? 's' : ''})` : ''}`}
       </button>

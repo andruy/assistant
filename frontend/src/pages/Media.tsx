@@ -88,7 +88,7 @@ export default function Media() {
         <button
           onClick={fetchFiles}
           disabled={loadingFiles}
-          className="px-4 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg hover:border-purple-500/50 text-gray-300 hover:text-white transition-all disabled:opacity-50"
+          className="px-4 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg hover:border-purple-500/50 text-gray-300 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center min-w-[5rem]"
         >
           {loadingFiles ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Refresh'}
         </button>

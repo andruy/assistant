@@ -133,7 +133,7 @@ export default function Calendar() {
       <button
         onClick={send}
         disabled={!selectValue || !dateInput || sending}
-        className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400"
+        className="px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400 flex items-center justify-center min-w-[5rem]"
       >
         {sending ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Schedule'}
       </button>

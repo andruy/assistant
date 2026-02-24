@@ -63,6 +63,7 @@ export default function Home() {
               text-sm text-gray-300
               hover:bg-white/20 transition-colors
               disabled:opacity-50
+              flex items-center justify-center min-w-20
             "
           >
             {loggingOut ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Logout'}
