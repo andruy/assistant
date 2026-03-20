@@ -24,10 +24,10 @@ class LogServiceTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        logService = new LogService();
         logsDir = new File("logs");
         logsDir.mkdirs();
         logFile = new File(logsDir, "app.log");
+        logService = new LogService(logFile.getPath());
     }
 
     @AfterEach

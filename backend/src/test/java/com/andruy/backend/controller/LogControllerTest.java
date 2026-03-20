@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -84,5 +85,21 @@ class LogControllerTest {
         mockMvc.perform(get("/api/logs"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.report").value(logWithSpecialChars));
+    }
+
+    @Test
+    @DisplayName("GET /api/logs/stream returns SSE event stream")
+    @WithMockUser
+    void streamLogs_ReturnsEventStream() throws Exception {
+        mockMvc.perform(get("/api/logs/stream")
+                .accept(MediaType.TEXT_EVENT_STREAM_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("GET /api/logs/stream requires authentication")
+    void streamLogs_WhenNotAuthenticated_RedirectsToLogin() throws Exception {
+        mockMvc.perform(get("/api/logs/stream"))
+                .andExpect(status().is3xxRedirection());
     }
 }

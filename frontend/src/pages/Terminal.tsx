@@ -1,38 +1,44 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router'
-import { useToast } from '../context/ToastContext'
+
+type ConnectionStatus = 'connecting' | 'connected' | 'disconnected'
 
 export default function Terminal() {
   const { isAuthenticated, isLoading } = useAuth()
-  const toast = useToast()
   const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-
-  const API_BASE_URL = '/api/logs'
-
-  const fetchLogs = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch(API_BASE_URL)
-      const data: { report: string } = await response.json()
-      setOutput(data.report || 'No logs available')
-      setLastUpdated(new Date())
-    } catch (error) {
-      console.error('Failed to fetch logs:', error)
-      toast('Failed to fetch logs')
-      setOutput('Error fetching logs')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const [status, setStatus] = useState<ConnectionStatus>('connecting')
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchLogs()
+    if (!isAuthenticated) return
+
+    const eventSource = new EventSource('/api/logs/stream')
+
+    eventSource.addEventListener('init', (event) => {
+      setOutput(event.data || 'No logs available')
+      setLoading(false)
+      setStatus('connected')
+    })
+
+    eventSource.addEventListener('log', (event) => {
+      setOutput(prev => prev + event.data)
+      setStatus('connected')
+    })
+
+    eventSource.onerror = () => {
+      setStatus('disconnected')
     }
+
+    return () => eventSource.close()
   }, [isAuthenticated])
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [output])
 
   if (isLoading) {
     return (
@@ -46,6 +52,18 @@ export default function Terminal() {
     return <Navigate to="/" replace />
   }
 
+  const statusColor = {
+    connecting: 'bg-yellow-500',
+    connected: 'bg-green-500',
+    disconnected: 'bg-red-500',
+  }[status]
+
+  const statusLabel = {
+    connecting: 'Connecting...',
+    connected: 'Live',
+    disconnected: 'Disconnected',
+  }[status]
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-4">
@@ -55,25 +73,14 @@ export default function Terminal() {
           <div className="w-3 h-3 rounded-full bg-green-500" />
           <span className="ml-2 text-sm text-gray-400">logs</span>
         </div>
-        <div className="flex items-center gap-4">
-          {lastUpdated && (
-            <span className="text-xs text-gray-500">
-              Updated: {lastUpdated.toLocaleTimeString()}
-            </span>
-          )}
-          <button
-            onClick={fetchLogs}
-            disabled={loading}
-            className="px-4 py-1.5 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-500 transition-colors text-sm flex items-center gap-2"
-          >
-            <span className={loading ? 'animate-spin' : ''}>↻</span>
-            Refresh
-          </button>
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${statusColor}`} />
+          <span className="text-xs text-gray-500">{statusLabel}</span>
         </div>
       </div>
 
       <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-        <div className="p-4 h-[60vh] overflow-auto font-mono text-sm">
+        <div ref={scrollRef} className="p-4 h-[60vh] overflow-auto font-mono text-sm">
           {loading && !output ? (
             <div className="flex items-center justify-center h-full">
               <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
