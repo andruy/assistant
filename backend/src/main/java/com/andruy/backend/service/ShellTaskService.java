@@ -48,6 +48,9 @@ public class ShellTaskService {
 
     @Async
     public CompletableFuture<Void> ytTask(Map<Directory, List<String>> map) {
+        int totalVideos = map.values().stream().mapToInt(List::size).sum();
+        logger.trace("YouTube task initiated with {} directories and {} total videos", map.size(), totalVideos);
+
         task = ShellTask.YOUTUBE;
         scriptBuilder = new ShellScriptBuilder(task);
         directories = directoryList.getDirectories();
@@ -55,19 +58,23 @@ public class ShellTaskService {
 
         for (Entry<Directory, List<String>> entry : map.entrySet()) {
             if (directories.contains(entry.getKey())) {
+                logger.trace("Processing directory '{}' with {} videos", entry.getKey().name(), entry.getValue().size());
                 scriptBuilder.moveTo(entry.getKey().name());
 
                 for (String s : entry.getValue()) {
+                    logger.trace("Queuing video download: {}", s);
                     scriptBuilder.downloadVideo(s);
                 }
 
                 scriptBuilder.moveUp();
             } else {
+                logger.warn("Directory '{}' does not exist, skipping {} videos", entry.getKey().name(), entry.getValue().size());
                 doNotExist.put(entry.getKey(), entry.getValue());
             }
         }
 
         if (!doNotExist.isEmpty()) {
+            logger.warn("Sending email notification for {} missing directories", doNotExist.size());
             emailService.sendEmail(
                 new Email(
                     receiver,
@@ -80,6 +87,7 @@ public class ShellTaskService {
         scriptBuilder.build();
         taskResponse = scriptBuilder.getReport();
         bashHandler.init(taskResponse.toString());
+        logger.trace("YouTube task completed, script built and executed");
         return CompletableFuture.completedFuture(null);
     }
 

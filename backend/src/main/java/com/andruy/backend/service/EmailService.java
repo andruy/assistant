@@ -12,6 +12,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import com.andruy.backend.model.Email;
 
 @Service
 public class EmailService {
+    private Logger logger = LoggerFactory.getLogger(EmailService.class);
     @Value("${my.email.username}")
     private String username;
     @Value("${my.email.password}")
@@ -74,7 +77,7 @@ public class EmailService {
             System.out.println(feedback);
 
         } catch (MessagingException | UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error("Failed to send email to '{}': {}", email.to(), e.getMessage(), e);
         }
     }
 
@@ -119,7 +122,7 @@ public class EmailService {
             System.out.println(feedback);
 
         } catch (MessagingException | UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error("Failed to send email to '{}': {}", email.to(), e.getMessage(), e);
         }
     }
 
