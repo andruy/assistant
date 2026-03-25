@@ -10,6 +10,7 @@ import Notepad from "./pages/Notepad"
 import Instagram from "./pages/Instagram"
 import Terminal from "./pages/Terminal"
 import Media from "./pages/Media"
+import Screenshots from "./pages/Screenshots"
 import Login from "./pages/Login"
 
 export const router = createBrowserRouter([
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
             {
                 path: "media",
                 element: <Media />
+            },
+            {
+                path: "screenshots",
+                element: <Screenshots />
             }
         ]
     }

@@ -30,6 +30,13 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.AriaRole;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class InstagramService {
     @Autowired
@@ -51,6 +58,7 @@ public class InstagramService {
     private double totalTime;
     private long startTime;
     private Date date;
+    private Path screenshotRunDir;
     @Value("${my.ig.username}")
     private String username;
     @Value("${my.ig.password}")
@@ -77,6 +85,10 @@ public class InstagramService {
         logger.trace("Starting comparison process");
         startTime = System.currentTimeMillis();
         date = new Date(startTime);
+        String runName = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+                .withZone(ZoneId.systemDefault())
+                .format(Instant.ofEpochMilli(startTime));
+        screenshotRunDir = Paths.get("screenshots", runName);
         try {
             getList("followers", true);
             if (secondIteration) {
@@ -352,6 +364,17 @@ public class InstagramService {
         return Map.of("report", response);
     }
 
+    private void takeScreenshot(String label) {
+        try {
+            Files.createDirectories(screenshotRunDir);
+            String filename = label + ".png";
+            page.screenshot(new Page.ScreenshotOptions().setPath(screenshotRunDir.resolve(filename)).setFullPage(true));
+            logger.trace("Screenshot saved: {}/{}", screenshotRunDir.getFileName(), filename);
+        } catch (Exception e) {
+            logger.warn("Failed to take screenshot '{}': {}", label, e.getMessage());
+        }
+    }
+
     private String convertToLink(String str) {
         return ADDRESS + str + "/";
     }
@@ -364,13 +387,17 @@ public class InstagramService {
             BrowserContext context = browser.newContext();
             page = context.newPage();
             page.navigate(ADDRESS);
+            takeScreenshot("after-navigate");
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Mobile number, username or email")).click();
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Mobile number, username or email")).fill(username);
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).click();
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).fill(password);
-            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in").setExact(true)).click();
+            takeScreenshot("after-fill");
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).click();
+            takeScreenshot("after-login");
             logger.trace("Successfully logged into Instagram");
         } catch (Exception e) {
+            takeScreenshot("error");
             logger.error("Error logging in", e);
             browser.close();
             playwright.close();
