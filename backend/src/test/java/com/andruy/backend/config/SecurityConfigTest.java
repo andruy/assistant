@@ -62,9 +62,8 @@ class SecurityConfigTest {
         @Test
         @DisplayName("GET /api/health is accessible without authentication")
         void healthEndpoint_IsPublic() throws Exception {
-            // Endpoint may not exist - just verify it doesn't require authentication (no 302 redirect)
             mockMvc.perform(get("/api/health"))
-                    .andExpect(status().is5xxServerError()); // 500 means endpoint exists but has issues, not 302
+                    .andExpect(status().isOk());
         }
 
         @Test
