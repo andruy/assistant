@@ -14,11 +14,18 @@ export default function Screenshots() {
 
   useEffect(() => {
     if (!isAuthenticated) return
-    fetch(`${API_BASE_URL}/screenshots`)
-      .then(res => res.json())
-      .then(setRuns)
-      .catch(console.error)
-      .finally(() => setLoadingRuns(false))
+    async function fetchRuns() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/screenshots`)
+        const data = await res.json()
+        setRuns(data)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setLoadingRuns(false)
+      }
+    }
+    fetchRuns()
   }, [isAuthenticated])
 
   async function toggleRun(run: string) {

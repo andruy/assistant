@@ -30,6 +30,7 @@
 	<properties>
 		<java.version>21</java.version>
         <springdoc.version>2.6.0</springdoc.version>
+		<git.commit.hash>dev</git.commit.hash>
 	</properties>
 
 	<dependencyManagement>

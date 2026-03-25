@@ -17,6 +17,8 @@ public class PropertyProvider {
     private String recipient;
     @Value("${my.app.timezone}")
     private String timezone;
+    @Value("${my.app.git.commit}")
+    private String gitCommit;
 
     @PostConstruct
     public void init() {
@@ -25,5 +27,6 @@ public class PropertyProvider {
         System.setProperty("bin", bin);
         System.setProperty("emailRecipient", recipient);
         System.setProperty("appTimezone", timezone);
+        System.setProperty("gitCommit", gitCommit);
     }
 }

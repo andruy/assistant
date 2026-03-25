@@ -9,10 +9,20 @@ export default function Terminal() {
   const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
+  const [commit, setCommit] = useState('logs')
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!isAuthenticated) return
+
+    async function fetchCommit() {
+      try {
+        const res = await fetch('/api/health')
+        const data = await res.json()
+        if (data.commit) setCommit(data.commit)
+      } catch { /* ignore */ }
+    }
+    fetchCommit()
 
     const eventSource = new EventSource('/api/logs/stream')
 
@@ -71,7 +81,7 @@ export default function Terminal() {
           <div className="w-3 h-3 rounded-full bg-red-500" />
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
           <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span className="ml-2 text-sm text-gray-400">logs</span>
+          <span className="ml-2 text-sm text-gray-400">{commit}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full ${statusColor}`} />
