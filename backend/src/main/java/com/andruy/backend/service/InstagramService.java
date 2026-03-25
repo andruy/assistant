@@ -393,7 +393,7 @@ public class InstagramService {
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).click();
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).fill(password);
             takeScreenshot("after-fill");
-            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).click();
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).first().click();
             takeScreenshot("after-login");
             logger.trace("Successfully logged into Instagram");
         } catch (Exception e) {
