@@ -113,11 +113,14 @@ public class InstagramService {
         try {
             if (secondIteration) {
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
+                takeScreenshot(target + "-after-close");
             } else {
                 accountLogin();
+                takeScreenshot(target + "-after-login");
             }
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(username + "'s profile picture Profile")).click();
+            takeScreenshot(target + "-profile");
 
             String filler = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).innerText();
 
@@ -126,13 +129,16 @@ public class InstagramService {
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).click();
             Thread.sleep(SHORT_HALT);
+            takeScreenshot(target + "-dialog-open");
 
             Locator scrollingElement = page.locator("xpath=/html/body/div[4]/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]");
             Locator listingElement = page.locator("xpath=/html/body/div[4]/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div");
 
             // Scroll down to load lazy-loaded content
             int initialChildCount = listingElement.locator("xpath=./*").count();
+            logger.trace("Initial child count: " + initialChildCount);
             int lastHeight = (int) scrollingElement.evaluate("element => element.scrollHeight");
+            logger.trace("Initial scroll height: " + lastHeight);
             int newHeight = 0;
             int scrollingIterations = 0;
             boolean contentLoaded = true;
@@ -173,11 +179,13 @@ public class InstagramService {
 
             totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
             logger.trace("Total elapsed time retrieving accounts: " + totalTime + " minutes");
+            takeScreenshot(target + "-after-scroll");
 
             // Process the loaded content
             long newStartTime = System.currentTimeMillis();
 
             List<Locator> elements = listingElement.locator("xpath=./div").all();
+            logger.trace("Found " + elements.size() + " div elements to parse");
 
             Set<String> resultList = new HashSet<>();
 
@@ -226,6 +234,7 @@ public class InstagramService {
             }
 
             response = e.getMessage();
+            takeScreenshot(target + "-error");
             logger.error("Error in getList for target '{}': {}", target, response, e);
             browser.close();
             playwright.close();
