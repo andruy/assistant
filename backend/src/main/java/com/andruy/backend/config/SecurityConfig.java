@@ -20,6 +20,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .requestMatchers("/api/health").permitAll()
+                    .requestMatchers("/api/logs/stream").permitAll()
                     .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
