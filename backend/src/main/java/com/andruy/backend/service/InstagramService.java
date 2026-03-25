@@ -74,14 +74,26 @@ public class InstagramService {
 
     @Async
     public CompletableFuture<Void> getComparison() {
-        logger.trace("New comparison process");
+        logger.trace("Starting comparison process");
         startTime = System.currentTimeMillis();
         date = new Date(startTime);
-        getList("followers", true);
-        if (secondIteration) {
-            getList("following", false);
+        try {
+            getList("followers", true);
+            if (secondIteration) {
+                logger.trace("Followers retrieved, proceeding to get following list");
+                getList("following", false);
+            } else {
+                logger.warn("secondIteration is false after followers retrieval — skipping following list");
+            }
+            logger.trace("Calling compareThem with followersList={}, followingList={}",
+                    followersList == null ? "null" : followersList.size(),
+                    followingList == null ? "null" : followingList.size());
+            compareThem(followersList, followingList);
+            double elapsed = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
+            logger.trace("Comparison process completed in {} minutes", elapsed);
+        } catch (Exception e) {
+            logger.error("Comparison process failed", e);
         }
-        compareThem(followersList, followingList);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -202,15 +214,24 @@ public class InstagramService {
             }
 
             response = e.getMessage();
-            logger.error(response);
+            logger.error("Error in getList for target '{}': {}", target, response, e);
             browser.close();
             playwright.close();
         }
     }
 
     private void compareThem(List<String> followers, List<String> following) {
+        logger.trace("compareThem called — followers: {}, following: {}",
+                followers == null ? "null" : followers.size(),
+                following == null ? "null" : following.size());
+
         if (secondIteration) {
             secondIteration = false;
+        }
+
+        if (followers == null || following == null || followers.isEmpty() || following.isEmpty()) {
+            logger.warn("compareThem skipped — one or both lists are null/empty");
+            return;
         }
 
         if (followers.size() > 0 && following.size() > 0) {
@@ -343,15 +364,17 @@ public class InstagramService {
             BrowserContext context = browser.newContext();
             page = context.newPage();
             page.navigate(ADDRESS);
-            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Phone number, username, or")).click();
-            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Phone number, username, or")).fill(username);
+            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Mobile number, username or email")).click();
+            page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Mobile number, username or email")).fill(username);
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).click();
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password")).fill(password);
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in").setExact(true)).click();
+            logger.trace("Successfully logged into Instagram");
         } catch (Exception e) {
-            logger.error("Error logging in\n" + e.getMessage());
+            logger.error("Error logging in", e);
             browser.close();
             playwright.close();
+            throw e;
         }
     }
 }
