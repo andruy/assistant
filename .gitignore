@@ -1,7 +1,4 @@
-# VS Code ignores
-*.code-workspace
-/.vscode
-
-# General ignores
-/.DS_Store
-logs/
+/*
+!backend/
+!frontend/
+!README.md
