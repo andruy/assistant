@@ -32,6 +32,11 @@ public class InstagramRepository {
         return jdbcTemplate.queryForList(query, String.class, date);
     }
 
+    public Date getLatestDate(String suffix) {
+        String query = "SELECT MAX(" + CREATED_ON + ") FROM public.ig_" + suffix;
+        return jdbcTemplate.queryForObject(query, Date.class);
+    }
+
     public int protectAccount(String user, Date date) {
         String query = "UPDATE public.ig_nmf SET PROTECTED = 1 WHERE " + ACCOUNT_NAME + " = ? AND " + CREATED_ON + " = ?";
 

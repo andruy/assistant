@@ -114,13 +114,13 @@ public class InstagramService {
             if (secondIteration) {
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
                 takeScreenshot(target + "-after-close");
+                // Already on profile page after closing dialog, no need to navigate again
             } else {
                 accountLogin();
                 takeScreenshot(target + "-after-login");
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(username + "'s profile picture")).first().click();
+                takeScreenshot(target + "-profile");
             }
-
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(username + "'s profile picture Profile")).click();
-            takeScreenshot(target + "-profile");
 
             String filler = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).innerText();
 
@@ -131,8 +131,27 @@ public class InstagramService {
             Thread.sleep(SHORT_HALT);
             takeScreenshot(target + "-dialog-open");
 
-            Locator scrollingElement = page.locator("xpath=/html/body/div[4]/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]");
-            Locator listingElement = page.locator("xpath=/html/body/div[4]/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div");
+            // Dynamically find the scrollable container and list inside the dialog
+            page.evaluate("() => {"
+                    + "const dialog = document.querySelector('div[role=\"dialog\"]');"
+                    + "if (!dialog) return;"
+                    + "const divs = dialog.querySelectorAll('div');"
+                    + "for (const div of divs) {"
+                    + "  if (div.scrollHeight > div.clientHeight + 10) {"
+                    + "    div.setAttribute('data-ig-scrollable', 'true');"
+                    + "    const findList = (el) => {"
+                    + "      if (el.children.length > 5) return el;"
+                    + "      for (const c of el.children) { const r = findList(c); if (r) return r; }"
+                    + "      return null;"
+                    + "    };"
+                    + "    const list = findList(div);"
+                    + "    if (list) list.setAttribute('data-ig-list', 'true');"
+                    + "    break;"
+                    + "  }"
+                    + "}"
+                    + "}");
+            Locator scrollingElement = page.locator("[data-ig-scrollable='true']");
+            Locator listingElement = page.locator("[data-ig-list='true']");
 
             // Scroll down to load lazy-loaded content
             int initialChildCount = listingElement.locator("xpath=./*").count();
@@ -191,9 +210,12 @@ public class InstagramService {
 
             for (Locator element : elements) {
                 try {
-                    String alt = element.locator("a").first().getAttribute("href");
-                    int idx = alt.indexOf('?');
-                    resultList.add(alt.substring(1, idx - 1));
+                    String href = element.locator("a").first().getAttribute("href");
+                    // href format: /username/ — strip leading and trailing slashes
+                    String username = href.replaceAll("^/|/$", "");
+                    if (!username.isEmpty()) {
+                        resultList.add(username);
+                    }
                 } catch (Exception e) {
                     logger.warn("Encountered an element with no name?\n" + element.innerHTML() + "\n" + e.getMessage());
                 }
@@ -391,9 +413,13 @@ public class InstagramService {
     private void accountLogin() {
         try {
             playwright = Playwright.create();
-            browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+            browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
+                    .setHeadless(true)
+                    .setArgs(List.of("--disable-blink-features=AutomationControlled")));
 
-            BrowserContext context = browser.newContext();
+            BrowserContext context = browser.newContext(new Browser.NewContextOptions()
+                    .setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"));
+            context.addInitScript("Object.defineProperty(navigator, 'webdriver', { get: () => false });");
             page = context.newPage();
             page.navigate(ADDRESS);
             takeScreenshot("after-navigate");
@@ -404,6 +430,23 @@ public class InstagramService {
             takeScreenshot("after-fill");
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).first().click();
             takeScreenshot("after-login");
+
+            // Dismiss "Save your login info?" dialog
+            try {
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Not now")).click(new Locator.ClickOptions().setTimeout(10000));
+                takeScreenshot("after-save-info-dismiss");
+            } catch (Exception e) {
+                logger.trace("No 'Save login info' dialog appeared");
+            }
+
+            // Dismiss "Turn on Notifications" dialog
+            try {
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Not Now")).click(new Locator.ClickOptions().setTimeout(5000));
+                takeScreenshot("after-notifications-dismiss");
+            } catch (Exception e) {
+                logger.trace("No 'Turn on Notifications' dialog appeared");
+            }
+
             logger.trace("Successfully logged into Instagram");
         } catch (Exception e) {
             takeScreenshot("error");
