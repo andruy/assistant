@@ -378,6 +378,8 @@ public class InstagramService {
     }
 
     public Map<String, String> getComparisonBetweenDates(Date dateFollowers, Date dateFollowing) {
+        startTime = System.currentTimeMillis();
+        date = new Date(startTime);
         List<String> followers = instagramRepository.getUsers("followers", dateFollowers);
         List<String> following = instagramRepository.getUsers("following", dateFollowing);
 
