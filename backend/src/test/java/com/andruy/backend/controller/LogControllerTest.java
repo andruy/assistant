@@ -97,9 +97,9 @@ class LogControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/logs/stream is accessible without authentication")
-    void streamLogs_WhenNotAuthenticated_IsAccessible() throws Exception {
+    @DisplayName("GET /api/logs/stream requires authentication")
+    void streamLogs_WhenNotAuthenticated_RedirectsToLogin() throws Exception {
         mockMvc.perform(get("/api/logs/stream"))
-                .andExpect(status().isOk());
+                .andExpect(status().is3xxRedirection());
     }
 }
