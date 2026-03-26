@@ -91,21 +91,27 @@ public class InstagramService {
         screenshotRunDir = Paths.get("screenshots", runName);
         try {
             getList("followers", true);
+        } catch (Exception e) {
+            logger.error("Followers retrieval failed", e);
+        }
+
+        try {
             if (secondIteration) {
-                logger.trace("Followers retrieved, proceeding to get following list");
                 getList("following", false);
             } else {
-                logger.warn("secondIteration is false after followers retrieval — skipping following list");
+                // Followers failed or browser was closed — start fresh for following
+                getList("following", false);
             }
-            logger.trace("Calling compareThem with followersList={}, followingList={}",
-                    followersList == null ? "null" : followersList.size(),
-                    followingList == null ? "null" : followingList.size());
-            compareThem(followersList, followingList);
-            double elapsed = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
-            logger.trace("Comparison process completed in {} minutes", elapsed);
         } catch (Exception e) {
-            logger.error("Comparison process failed", e);
+            logger.error("Following retrieval failed", e);
         }
+
+        logger.trace("Calling compareThem with followersList={}, followingList={}",
+                followersList == null ? "null" : followersList.size(),
+                followingList == null ? "null" : followingList.size());
+        compareThem(followersList, followingList);
+        double elapsed = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
+        logger.trace("Comparison process completed in {} minutes", elapsed);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -129,6 +135,11 @@ public class InstagramService {
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(target)).click();
             Thread.sleep(SHORT_HALT);
+
+            // Wait for actual content to load (not skeleton placeholders)
+            page.locator("div[role='dialog'] a[href]").first().waitFor(
+                    new Locator.WaitForOptions().setTimeout(15000));
+            Thread.sleep(1000); // Let React finish rendering
             takeScreenshot(target + "-dialog-open");
 
             // Dynamically find the scrollable container and list inside the dialog
