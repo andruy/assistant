@@ -36,6 +36,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
+        String contentType = req.getHeader("Accept");
+        if (contentType != null && contentType.contains("text/event-stream")) {
+            return null;
+        }
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", req, null);
     }
 
