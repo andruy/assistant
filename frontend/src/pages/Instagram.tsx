@@ -13,6 +13,8 @@ export default function Instagram() {
   const [loadingAccounts, setLoadingAccounts] = useState(false)
   const [showCompare, setShowCompare] = useState(false)
   const [comparing, setComparing] = useState(false)
+  const [fetchingFollowers, setFetchingFollowers] = useState(false)
+  const [fetchingFollowing, setFetchingFollowing] = useState(false)
   const [followersDates, setFollowersDates] = useState<string[]>([])
   const [followingDates, setFollowingDates] = useState<string[]>([])
   const [selectedFollowersDate, setSelectedFollowersDate] = useState('')
@@ -23,11 +25,11 @@ export default function Instagram() {
   const API_BASE_URL = '/api/instagram'
 
   useEffect(() => {
-    if (!showCompare || comparing) return
+    if (!showCompare || comparing || fetchingFollowers || fetchingFollowing) return
     function handleClick() { setShowCompare(false) }
     document.addEventListener('click', handleClick)
     return () => document.removeEventListener('click', handleClick)
-  }, [showCompare, comparing])
+  }, [showCompare, comparing, fetchingFollowers, fetchingFollowing])
 
   useEffect(() => {
     async function fetchList() {
@@ -123,29 +125,66 @@ export default function Instagram() {
     <div className="p-6 max-w-2xl mx-auto">
       <div className="flex justify-center mb-6">
         {showCompare ? (
-          <button
-            disabled={comparing}
-            onClick={async (e) => {
-              e.stopPropagation()
-              setComparing(true)
-              try {
-                const response = await fetch(`${API_BASE_URL}/compare`)
-                if (response.ok) {
-                  toast('Comparison task started')
-                  setShowCompare(false)
-                } else {
-                  toast('Comparison task failed')
+          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+            <button
+              disabled={fetchingFollowers}
+              onClick={async () => {
+                setFetchingFollowers(true)
+                try {
+                  const response = await fetch(`${API_BASE_URL}/followers`)
+                  if (response.ok) { toast('Followers task started'); setShowCompare(false) }
+                  else toast('Followers task failed')
+                } catch {
+                  toast('Followers task failed')
+                } finally {
+                  setFetchingFollowers(false)
                 }
-              } catch {
-                toast('Comparison task failed')
-              } finally {
-                setComparing(false)
-              }
-            }}
-            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 flex items-center justify-center min-w-20"
-          >
-            {comparing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Compare'}
-          </button>
+              }}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 disabled:bg-gray-400 flex items-center justify-center min-w-24"
+            >
+              {fetchingFollowers ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Followers'}
+            </button>
+            <button
+              disabled={comparing}
+              onClick={async () => {
+                setComparing(true)
+                try {
+                  const response = await fetch(`${API_BASE_URL}/compare`)
+                  if (response.ok) {
+                    toast('Comparison task started')
+                    setShowCompare(false)
+                  } else {
+                    toast('Comparison task failed')
+                  }
+                } catch {
+                  toast('Comparison task failed')
+                } finally {
+                  setComparing(false)
+                }
+              }}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 flex items-center justify-center min-w-24"
+            >
+              {comparing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Compare'}
+            </button>
+            <button
+              disabled={fetchingFollowing}
+              onClick={async () => {
+                setFetchingFollowing(true)
+                try {
+                  const response = await fetch(`${API_BASE_URL}/following`)
+                  if (response.ok) { toast('Following task started'); setShowCompare(false) }
+                  else toast('Following task failed')
+                } catch {
+                  toast('Following task failed')
+                } finally {
+                  setFetchingFollowing(false)
+                }
+              }}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 disabled:bg-gray-400 flex items-center justify-center min-w-24"
+            >
+              {fetchingFollowing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Following'}
+            </button>
+          </div>
         ) : (
           <button
             onClick={(e) => { e.stopPropagation(); setShowCompare(true) }}

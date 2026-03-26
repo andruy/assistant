@@ -33,12 +33,14 @@ public class InstagramController {
 
     @GetMapping("/followers")
     public ResponseEntity<Map<String, String>> getFollowers() {
-        return ResponseEntity.ok(instagramService.getFollowers());
+        instagramService.getFollowers();
+        return ResponseEntity.accepted().body(Map.of("message", "Task started. You will be notified when complete."));
     }
 
     @GetMapping("/following")
     public ResponseEntity<Map<String, String>> getFollowing() {
-        return ResponseEntity.ok(instagramService.getFollowing());
+        instagramService.getFollowing();
+        return ResponseEntity.accepted().body(Map.of("message", "Task started. You will be notified when complete."));
     }
 
     @GetMapping("/compare")

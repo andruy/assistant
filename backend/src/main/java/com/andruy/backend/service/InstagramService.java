@@ -64,20 +64,22 @@ public class InstagramService {
     @Value("${my.ig.password}")
     private String password;
 
-    public Map<String, String> getFollowers() {
+    @Async
+    public CompletableFuture<Void> getFollowers() {
         logger.trace("Getting followers only");
         startTime = System.currentTimeMillis();
         date = new Date(startTime);
         getList("followers", false);
-        return Map.of("message", response);
+        return CompletableFuture.completedFuture(null);
     }
 
-    public Map<String, String> getFollowing() {
+    @Async
+    public CompletableFuture<Void> getFollowing() {
         logger.trace("Getting following only");
         startTime = System.currentTimeMillis();
         date = new Date(startTime);
         getList("following", false);
-        return Map.of("message", response);
+        return CompletableFuture.completedFuture(null);
     }
 
     @Async
@@ -197,7 +199,7 @@ public class InstagramService {
                     scrollingIterations++;
                     logger.warn("Iteration number " + scrollingIterations);
 
-                    if (scrollingIterations >= 10) {
+                    if (scrollingIterations >= 15) {
                         contentLoaded = false; // No more content is being loaded
                         logger.warn("Reached the end of lazy-loaded content.");
                     }
