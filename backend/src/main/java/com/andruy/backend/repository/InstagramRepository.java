@@ -26,6 +26,12 @@ public class InstagramRepository {
         return jdbcTemplate.queryForList(query, Date.class);
     }
 
+    public List<Date> getDates(String suffix) {
+        String query = "SELECT DISTINCT " + CREATED_ON + " FROM public.ig_" + suffix + " ORDER BY " + CREATED_ON + " DESC";
+
+        return jdbcTemplate.queryForList(query, Date.class);
+    }
+
     public List<String> getUsers(String suffix, Date date) {
         String query = "SELECT " + ACCOUNT_NAME + " FROM public.ig_" + suffix + " WHERE " + CREATED_ON + " = ?";
 

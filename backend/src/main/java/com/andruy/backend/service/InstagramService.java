@@ -306,6 +306,11 @@ public class InstagramService {
         return dateList;
     }
 
+    public List<Date> getListOfDates(String suffix) {
+        logger.trace("Called to retrieve list of dates for ig_{}", suffix);
+        return instagramRepository.getDates(suffix);
+    }
+
     public Map<String, String> getListOfAccounts(String suffix, Date date) {
         logger.trace("Called to retrieve list of accounts with suffix [" + suffix + "] and date " + date.toString());
         List <String> list = instagramRepository.getUsers(suffix, date);

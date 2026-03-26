@@ -13,6 +13,12 @@ export default function Instagram() {
   const [loadingAccounts, setLoadingAccounts] = useState(false)
   const [showCompare, setShowCompare] = useState(false)
   const [comparing, setComparing] = useState(false)
+  const [followersDates, setFollowersDates] = useState<string[]>([])
+  const [followingDates, setFollowingDates] = useState<string[]>([])
+  const [selectedFollowersDate, setSelectedFollowersDate] = useState('')
+  const [selectedFollowingDate, setSelectedFollowingDate] = useState('')
+  const [comparingDates, setComparingDates] = useState(false)
+  const [showDateCompare, setShowDateCompare] = useState(false)
 
   const API_BASE_URL = '/api/instagram'
 
@@ -54,6 +60,41 @@ export default function Instagram() {
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />
+  }
+
+  async function fetchDateOptions() {
+    try {
+      const [fRes, gRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/dates/followers`),
+        fetch(`${API_BASE_URL}/dates/following`),
+      ])
+      if (fRes.ok) setFollowersDates(await fRes.json())
+      if (gRes.ok) setFollowingDates(await gRes.json())
+    } catch (error) {
+      console.error('Failed to fetch date options:', error)
+      toast('Failed to load date options')
+    }
+  }
+
+  async function compareDates() {
+    if (!selectedFollowersDate || !selectedFollowingDate) return
+    setComparingDates(true)
+    try {
+      const params = new URLSearchParams({
+        dateFollowers: selectedFollowersDate,
+        dateFollowing: selectedFollowingDate,
+      })
+      const response = await fetch(`${API_BASE_URL}/compare-dates?${params}`)
+      if (response.ok) {
+        toast('Date comparison completed')
+      } else {
+        toast('Date comparison failed')
+      }
+    } catch {
+      toast('Date comparison failed')
+    } finally {
+      setComparingDates(false)
+    }
   }
 
   async function fetchAccounts() {
@@ -114,6 +155,48 @@ export default function Instagram() {
           </button>
         )}
       </div>
+
+      <div className="flex justify-center mb-6">
+        <button
+          onClick={() => {
+            setShowDateCompare(!showDateCompare)
+            if (!showDateCompare && followersDates.length === 0) fetchDateOptions()
+          }}
+          className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
+        >
+          {showDateCompare ? 'Hide' : 'Compare by date'}
+        </button>
+      </div>
+
+      {showDateCompare && (
+        <div className="mb-6 p-4 border border-gray-700 rounded-lg space-y-3">
+          <div className="flex gap-2">
+            <select
+              value={selectedFollowersDate}
+              onChange={(e) => setSelectedFollowersDate(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-800 text-sm"
+            >
+              <option value="" hidden>Followers date</option>
+              {followersDates.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <select
+              value={selectedFollowingDate}
+              onChange={(e) => setSelectedFollowingDate(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-800 text-sm"
+            >
+              <option value="" hidden>Following date</option>
+              {followingDates.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+          <button
+            onClick={compareDates}
+            disabled={!selectedFollowersDate || !selectedFollowingDate || comparingDates}
+            className="w-full px-4 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 disabled:bg-gray-400 flex items-center justify-center"
+          >
+            {comparingDates ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Compare'}
+          </button>
+        </div>
+      )}
 
       <div className="flex gap-2 mb-6">
         {loadingDateList ? (
