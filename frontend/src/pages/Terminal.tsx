@@ -90,7 +90,7 @@ export default function Terminal() {
       </div>
 
       <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-        <div ref={scrollRef} className="p-4 h-[70vh] overflow-auto font-mono text-sm">
+        <div ref={scrollRef} className="p-4 h-[70vh] overflow-auto font-mono text-sm terminal-scroll">
           {loading && !output ? (
             <div className="flex items-center justify-center h-full">
               <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
