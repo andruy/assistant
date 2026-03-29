@@ -238,8 +238,13 @@ public class InstagramService {
             logger.trace("Total elapsed time adding the names to the list: " + totalTime + " minutes");
 
             // Store the list to database
-            int updatedRecords = instagramRepository.saveUsers(target, resultList, date);
-            logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
+            try {
+                int updatedRecords = instagramRepository.saveUsers(target, resultList, date);
+                logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
+            } catch (Exception e) {
+                logger.error("Database save failed — saving raw HTML fallback", e);
+                saveFallbackFile(target, listingElement.innerHTML());
+            }
 
             if (target.equals("followers")) {
                 followersList = resultList.stream().toList();
