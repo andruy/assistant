@@ -238,10 +238,7 @@ public class InstagramService {
             logger.trace("Total elapsed time adding the names to the list: " + totalTime + " minutes");
 
             // Store the list to database
-            int updatedRecords = 0;
-            for (String s : resultList) {
-                updatedRecords += instagramRepository.saveUser(target, s, date);
-            }
+            int updatedRecords = instagramRepository.saveUsers(target, resultList, date);
             logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
 
             if (target.equals("followers")) {
@@ -300,10 +297,8 @@ public class InstagramService {
             String target = "nmf";
 
             // Store the list to database
-            int updatedRecords = 0;
-            for (String s : result) {
-                updatedRecords += instagramRepository.saveUser(target, s, date == null ? new Timestamp(System.currentTimeMillis()) : date);
-            }
+            Timestamp saveDate = date == null ? new Timestamp(System.currentTimeMillis()) : date;
+            int updatedRecords = instagramRepository.saveUsers(target, result, saveDate);
             logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
             totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
             logger.trace("Total elapsed time: " + totalTime + " minutes");

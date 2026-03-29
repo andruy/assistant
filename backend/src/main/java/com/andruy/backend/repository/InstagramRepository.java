@@ -1,6 +1,7 @@
 package com.andruy.backend.repository;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,24 @@ public class InstagramRepository {
         String query = "INSERT INTO public.ig_" + suffix + " (" + ACCOUNT_NAME + ", " + CREATED_ON + ") VALUES (?, ?)";
 
         return jdbcTemplate.update(query, user, date);
+    }
+
+    public int saveUsers(String suffix, Collection<String> users, Timestamp date) {
+        String query = "INSERT INTO public.ig_" + suffix + " (" + ACCOUNT_NAME + ", " + CREATED_ON + ") VALUES (?, ?)";
+
+        int[][] results = jdbcTemplate.batchUpdate(query, users, users.size(),
+                (ps, user) -> {
+                    ps.setString(1, user);
+                    ps.setTimestamp(2, date);
+                });
+
+        int total = 0;
+        for (int[] batch : results) {
+            for (int count : batch) {
+                total += count;
+            }
+        }
+        return total;
     }
 
     public List<Timestamp> getTimestamps() {
