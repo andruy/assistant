@@ -69,6 +69,7 @@ public class InstagramService {
         logger.trace("Getting followers only");
         startTime = System.currentTimeMillis();
         date = new Timestamp(startTime);
+        initScreenshotDir();
         getList("followers", false);
         return CompletableFuture.completedFuture(null);
     }
@@ -78,6 +79,7 @@ public class InstagramService {
         logger.trace("Getting following only");
         startTime = System.currentTimeMillis();
         date = new Timestamp(startTime);
+        initScreenshotDir();
         getList("following", false);
         return CompletableFuture.completedFuture(null);
     }
@@ -87,10 +89,7 @@ public class InstagramService {
         logger.trace("Starting comparison process");
         startTime = System.currentTimeMillis();
         date = new Timestamp(startTime);
-        String runName = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
-                .withZone(ZoneId.systemDefault())
-                .format(Instant.ofEpochMilli(startTime));
-        screenshotRunDir = Paths.get("screenshots", runName);
+        initScreenshotDir();
         try {
             getList("followers", true);
         } catch (Exception e) {
@@ -221,17 +220,18 @@ public class InstagramService {
 
             Set<String> resultList = new HashSet<>();
 
-            for (Locator element : elements) {
-                try {
+            try {
+                for (Locator element : elements) {
                     String href = element.locator("a").first().getAttribute("href");
                     // href format: /username/ — strip leading and trailing slashes
                     String username = href.replaceAll("^/|/$", "");
                     if (!username.isEmpty()) {
                         resultList.add(username);
                     }
-                } catch (Exception e) {
-                    logger.warn("Encountered an element with no name?\n" + element.innerHTML() + "\n" + e.getMessage());
                 }
+            } catch (Exception e) {
+                logger.error("Name parsing failed — saving raw HTML fallback", e);
+                saveFallbackFile(target, listingElement.innerHTML());
             }
 
             totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), newStartTime);
@@ -242,7 +242,6 @@ public class InstagramService {
             for (String s : resultList) {
                 updatedRecords += instagramRepository.saveUser(target, s, date);
             }
-
             logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
 
             if (target.equals("followers")) {
@@ -428,6 +427,25 @@ public class InstagramService {
 
     private String convertToLink(String str) {
         return ADDRESS + str + "/";
+    }
+
+    private void initScreenshotDir() {
+        String runName = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+                .withZone(ZoneId.systemDefault())
+                .format(Instant.ofEpochMilli(startTime));
+        screenshotRunDir = Paths.get("screenshots", runName);
+    }
+
+    private void saveFallbackFile(String target, String rawHtml) {
+        try {
+            Path fallbackDir = Paths.get("fallback");
+            Files.createDirectories(fallbackDir);
+            String filename = target + "_" + date.getTime() + ".html";
+            Files.writeString(fallbackDir.resolve(filename), rawHtml);
+            logger.trace("Fallback file saved: fallback/{}", filename);
+        } catch (Exception e) {
+            logger.error("Failed to write fallback file for {}", target, e);
+        }
     }
 
     private void accountLogin() {
