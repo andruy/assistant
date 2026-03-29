@@ -273,6 +273,7 @@ export default function Instagram() {
         </div>
       ) : Object.keys(accounts).length > 0 ? (
         <div className="space-y-2 text-center">
+          <p className="text-sm text-gray-500 mb-2">{Object.keys(accounts).length} accounts</p>
           {Object.entries(accounts).map(([name, url]) => (
             <a
               key={name}

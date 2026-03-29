@@ -51,13 +51,15 @@ public class InstagramController {
     }
 
     @GetMapping("/dates")
-    public ResponseEntity<List<Timestamp>> getListOfDates() {
-        return ResponseEntity.ok(instagramService.getListOfDates());
+    public ResponseEntity<List<Long>> getListOfDates() {
+        return ResponseEntity.ok(instagramService.getListOfDates().stream()
+                .map(Timestamp::getTime).toList());
     }
 
     @GetMapping("/dates/{type}")
-    public ResponseEntity<List<Timestamp>> getListOfDatesByType(@PathVariable String type) {
-        return ResponseEntity.ok(instagramService.getListOfDates(type));
+    public ResponseEntity<List<Long>> getListOfDatesByType(@PathVariable String type) {
+        return ResponseEntity.ok(instagramService.getListOfDates(type).stream()
+                .map(Timestamp::getTime).toList());
     }
 
     @GetMapping("/accounts")
