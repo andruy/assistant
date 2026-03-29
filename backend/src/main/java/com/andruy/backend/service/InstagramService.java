@@ -1,6 +1,6 @@
 package com.andruy.backend.service;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class InstagramService {
     private String response = "";
     private double totalTime;
     private long startTime;
-    private Date date;
+    private Timestamp date;
     private Path screenshotRunDir;
     @Value("${my.ig.username}")
     private String username;
@@ -68,7 +68,7 @@ public class InstagramService {
     public CompletableFuture<Void> getFollowers() {
         logger.trace("Getting followers only");
         startTime = System.currentTimeMillis();
-        date = new Date(startTime);
+        date = new Timestamp(startTime);
         getList("followers", false);
         return CompletableFuture.completedFuture(null);
     }
@@ -77,7 +77,7 @@ public class InstagramService {
     public CompletableFuture<Void> getFollowing() {
         logger.trace("Getting following only");
         startTime = System.currentTimeMillis();
-        date = new Date(startTime);
+        date = new Timestamp(startTime);
         getList("following", false);
         return CompletableFuture.completedFuture(null);
     }
@@ -86,7 +86,7 @@ public class InstagramService {
     public CompletableFuture<Void> getComparison() {
         logger.trace("Starting comparison process");
         startTime = System.currentTimeMillis();
-        date = new Date(startTime);
+        date = new Timestamp(startTime);
         String runName = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
                 .withZone(ZoneId.systemDefault())
                 .format(Instant.ofEpochMilli(startTime));
@@ -303,7 +303,7 @@ public class InstagramService {
             // Store the list to database
             int updatedRecords = 0;
             for (String s : result) {
-                updatedRecords += instagramRepository.saveUser(target, s, date == null ? new Date(System.currentTimeMillis()) : date);
+                updatedRecords += instagramRepository.saveUser(target, s, date == null ? new Timestamp(System.currentTimeMillis()) : date);
             }
             logger.trace("Inserted " + updatedRecords + " records to ig_" + target + " table");
             totalTime = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
@@ -311,20 +311,20 @@ public class InstagramService {
         }
     }
 
-    public List<Date> getListOfDates() {
+    public List<Timestamp> getListOfDates() {
         logger.trace("Called to retrieve list of dates");
-        List <Date> dateList = instagramRepository.getDates();
+        List<Timestamp> dateList = instagramRepository.getTimestamps();
         Collections.sort(dateList, Collections.reverseOrder());
 
         return dateList;
     }
 
-    public List<Date> getListOfDates(String suffix) {
+    public List<Timestamp> getListOfDates(String suffix) {
         logger.trace("Called to retrieve list of dates for ig_{}", suffix);
-        return instagramRepository.getDates(suffix);
+        return instagramRepository.getTimestamps(suffix);
     }
 
-    public Map<String, String> getListOfAccounts(String suffix, Date date) {
+    public Map<String, String> getListOfAccounts(String suffix, Timestamp date) {
         logger.trace("Called to retrieve list of accounts with suffix [" + suffix + "] and date " + date.toString());
         List <String> list = instagramRepository.getUsers(suffix, date);
 
@@ -337,10 +337,10 @@ public class InstagramService {
     }
 
     @Async
-    public CompletableFuture<Void> deleteAccounts(String suffix, Date oldDate, List<String> list) {
+    public CompletableFuture<Void> deleteAccounts(String suffix, Timestamp oldDate, List<String> list) {
         logger.trace("Starting to delete accounts dating back to " + oldDate.toString());
         startTime = System.currentTimeMillis();
-        date = new Date(startTime);
+        date = new Timestamp(startTime);
         List<String> listOfDeletedAccounts = new ArrayList<>();
         Map<String, String> map = getListOfAccounts(suffix, oldDate);
 
@@ -390,9 +390,9 @@ public class InstagramService {
         return CompletableFuture.completedFuture(null);
     }
 
-    public Map<String, String> getComparisonBetweenDates(Date dateFollowers, Date dateFollowing) {
+    public Map<String, String> getComparisonBetweenDates(Timestamp dateFollowers, Timestamp dateFollowing) {
         startTime = System.currentTimeMillis();
-        date = new Date(startTime);
+        date = new Timestamp(startTime);
         List<String> followers = instagramRepository.getUsers("followers", dateFollowers);
         List<String> following = instagramRepository.getUsers("following", dateFollowing);
 
@@ -401,7 +401,7 @@ public class InstagramService {
         return Map.of("report", "You may now check the list of accounts that do not follow you back");
     }
 
-    public Map<String, String> protectAccounts(Date date, List<String> list) {
+    public Map<String, String> protectAccounts(Timestamp date, List<String> list) {
         logger.trace("Will protect accounts dating back to " + date.toString());
         int updatedRecords = 0;
         for (String s : list) {

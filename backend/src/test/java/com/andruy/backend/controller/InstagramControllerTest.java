@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -53,9 +53,9 @@ class InstagramControllerTest {
         @DisplayName("Returns list of dates")
         @WithMockUser
         void getDates_ReturnsDates() throws Exception {
-            List<Date> dates = List.of(
-                    Date.valueOf("2024-01-15"),
-                    Date.valueOf("2024-01-10")
+            List<Timestamp> dates = List.of(
+                    Timestamp.valueOf("2024-01-15 10:30:00"),
+                    Timestamp.valueOf("2024-01-10 14:00:00")
             );
             when(instagramService.getListOfDates()).thenReturn(dates);
 
@@ -84,10 +84,10 @@ class InstagramControllerTest {
             Map<String, String> accounts = new TreeMap<>();
             accounts.put("user1", "https://instagram.com/user1/");
             accounts.put("user2", "https://instagram.com/user2/");
-            when(instagramService.getListOfAccounts(eq("nmf"), any(Date.class))).thenReturn(accounts);
+            when(instagramService.getListOfAccounts(eq("nmf"), any(Timestamp.class))).thenReturn(accounts);
 
             mockMvc.perform(get("/api/instagram/accounts")
-                            .param("date", "2024-01-15"))
+                            .param("date", "1705312200000"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.user1").value("https://instagram.com/user1/"))
                     .andExpect(jsonPath("$.user2").value("https://instagram.com/user2/"));
@@ -106,7 +106,7 @@ class InstagramControllerTest {
         @DisplayName("Requires authentication")
         void getAccounts_WhenNotAuthenticated_RedirectsToLogin() throws Exception {
             mockMvc.perform(get("/api/instagram/accounts")
-                            .param("date", "2024-01-15"))
+                            .param("date", "1705312200000"))
                     .andExpect(status().is3xxRedirection());
         }
     }
@@ -142,12 +142,12 @@ class InstagramControllerTest {
         @DisplayName("Compares dates and returns report")
         @WithMockUser
         void compareDates_ReturnsReport() throws Exception {
-            when(instagramService.getComparisonBetweenDates(any(Date.class), any(Date.class)))
+            when(instagramService.getComparisonBetweenDates(any(Timestamp.class), any(Timestamp.class)))
                     .thenReturn(Map.of("report", "Comparison complete"));
 
             mockMvc.perform(get("/api/instagram/compare-dates")
-                            .param("dateFollowers", "2024-01-01")
-                            .param("dateFollowing", "2024-01-15"))
+                            .param("dateFollowers", "1704067200000")
+                            .param("dateFollowing", "1705312200000"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.report").value("Comparison complete"));
         }
@@ -165,8 +165,8 @@ class InstagramControllerTest {
         @DisplayName("Requires authentication")
         void compareDates_WhenNotAuthenticated_RedirectsToLogin() throws Exception {
             mockMvc.perform(get("/api/instagram/compare-dates")
-                            .param("dateFollowers", "2024-01-01")
-                            .param("dateFollowing", "2024-01-15"))
+                            .param("dateFollowers", "1704067200000")
+                            .param("dateFollowing", "1705312200000"))
                     .andExpect(status().is3xxRedirection());
         }
     }
@@ -179,12 +179,12 @@ class InstagramControllerTest {
         @DisplayName("Starts deletion and returns accepted")
         @WithMockUser
         void deleteAccounts_ReturnsAccepted() throws Exception {
-            when(instagramService.deleteAccounts(anyString(), any(Date.class), anyList()))
+            when(instagramService.deleteAccounts(anyString(), any(Timestamp.class), anyList()))
                     .thenReturn(CompletableFuture.completedFuture(null));
             List<String> accounts = List.of("user1", "user2");
 
             mockMvc.perform(delete("/api/instagram/accounts")
-                            .param("date", "2024-01-15")
+                            .param("date", "1705312200000")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(accounts)))
                     .andExpect(status().isAccepted())
@@ -195,7 +195,7 @@ class InstagramControllerTest {
         @DisplayName("Requires authentication")
         void deleteAccounts_WhenNotAuthenticated_RedirectsToLogin() throws Exception {
             mockMvc.perform(delete("/api/instagram/accounts")
-                            .param("date", "2024-01-15")
+                            .param("date", "1705312200000")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("[\"user1\"]"))
                     .andExpect(status().is3xxRedirection());
@@ -210,25 +210,25 @@ class InstagramControllerTest {
         @DisplayName("Protects accounts and returns report")
         @WithMockUser
         void protectAccounts_ReturnsReport() throws Exception {
-            when(instagramService.protectAccounts(any(Date.class), anyList()))
+            when(instagramService.protectAccounts(any(Timestamp.class), anyList()))
                     .thenReturn(Map.of("report", "Protected 2 accounts"));
             List<String> accounts = List.of("user1", "user2");
 
             mockMvc.perform(put("/api/instagram/accounts/protect")
-                            .param("date", "2024-01-15")
+                            .param("date", "1705312200000")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(accounts)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.report").value("Protected 2 accounts"));
 
-            verify(instagramService).protectAccounts(any(Date.class), anyList());
+            verify(instagramService).protectAccounts(any(Timestamp.class), anyList());
         }
 
         @Test
         @DisplayName("Requires authentication")
         void protectAccounts_WhenNotAuthenticated_RedirectsToLogin() throws Exception {
             mockMvc.perform(put("/api/instagram/accounts/protect")
-                            .param("date", "2024-01-15")
+                            .param("date", "1705312200000")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("[\"user1\"]"))
                     .andExpect(status().is3xxRedirection());

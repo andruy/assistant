@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -51,41 +51,42 @@ public class InstagramController {
     }
 
     @GetMapping("/dates")
-    public ResponseEntity<List<Date>> getListOfDates() {
+    public ResponseEntity<List<Timestamp>> getListOfDates() {
         return ResponseEntity.ok(instagramService.getListOfDates());
     }
 
     @GetMapping("/dates/{type}")
-    public ResponseEntity<List<Date>> getListOfDatesByType(@PathVariable String type) {
+    public ResponseEntity<List<Timestamp>> getListOfDatesByType(@PathVariable String type) {
         return ResponseEntity.ok(instagramService.getListOfDates(type));
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<Map<String, String>> getListOfAccounts(@RequestParam Date date) {
-        return ResponseEntity.ok(instagramService.getListOfAccounts("nmf", date));
+    public ResponseEntity<Map<String, String>> getListOfAccounts(@RequestParam Long date) {
+        return ResponseEntity.ok(instagramService.getListOfAccounts("nmf", new Timestamp(date)));
     }
 
     @GetMapping("/compare-dates")
     public ResponseEntity<Map<String, String>> getComparisonBetweenDates(
-            @RequestParam Date dateFollowers,
-            @RequestParam Date dateFollowing) {
-        return ResponseEntity.ok(instagramService.getComparisonBetweenDates(dateFollowers, dateFollowing));
+            @RequestParam Long dateFollowers,
+            @RequestParam Long dateFollowing) {
+        return ResponseEntity.ok(instagramService.getComparisonBetweenDates(
+                new Timestamp(dateFollowers), new Timestamp(dateFollowing)));
     }
 
     @DeleteMapping("/accounts")
     public ResponseEntity<Map<String, String>> deleteAccounts(
-            @RequestParam Date date,
+            @RequestParam Long date,
             @RequestBody List<String> accounts) {
-        instagramService.deleteAccounts("nmf", date, accounts);
+        instagramService.deleteAccounts("nmf", new Timestamp(date), accounts);
 
         return ResponseEntity.accepted().body(Map.of("message", "Deletion started. You will be notified when complete."));
     }
 
     @PutMapping("/accounts/protect")
     public ResponseEntity<Map<String, String>> protectAccounts(
-            @RequestParam Date date,
+            @RequestParam Long date,
             @RequestBody List<String> accounts) {
-        return ResponseEntity.ok(instagramService.protectAccounts(date, accounts));
+        return ResponseEntity.ok(instagramService.protectAccounts(new Timestamp(date), accounts));
     }
 
     @GetMapping("/screenshots")

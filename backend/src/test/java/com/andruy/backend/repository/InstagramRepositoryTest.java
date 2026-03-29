@@ -2,7 +2,7 @@ package com.andruy.backend.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +22,8 @@ class InstagramRepositoryTest {
 
     private InstagramRepository instagramRepository;
 
-    private Date testDate;
-    private Date testDate2;
+    private Timestamp testDate;
+    private Timestamp testDate2;
 
     @BeforeEach
     void setUp() {
@@ -31,8 +31,8 @@ class InstagramRepositoryTest {
         // Use reflection to inject JdbcTemplate since @Autowired won't work in this context
         org.springframework.test.util.ReflectionTestUtils.setField(instagramRepository, "jdbcTemplate", jdbcTemplate);
 
-        testDate = Date.valueOf("2024-01-15");
-        testDate2 = Date.valueOf("2024-01-20");
+        testDate = Timestamp.valueOf("2024-01-15 10:30:00");
+        testDate2 = Timestamp.valueOf("2024-01-20 14:45:00");
 
         // Create test tables
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS public");
@@ -41,7 +41,7 @@ class InstagramRepositoryTest {
             CREATE TABLE IF NOT EXISTS public.ig_followers (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 account_name VARCHAR(255),
-                created_on DATE
+                created_on TIMESTAMP
             )
         """);
 
@@ -49,7 +49,7 @@ class InstagramRepositoryTest {
             CREATE TABLE IF NOT EXISTS public.ig_following (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 account_name VARCHAR(255),
-                created_on DATE
+                created_on TIMESTAMP
             )
         """);
 
@@ -57,7 +57,7 @@ class InstagramRepositoryTest {
             CREATE TABLE IF NOT EXISTS public.ig_nmf (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 account_name VARCHAR(255),
-                created_on DATE,
+                created_on TIMESTAMP,
                 protected INT DEFAULT 0
             )
         """);
@@ -140,7 +140,7 @@ class InstagramRepositoryTest {
             jdbcTemplate.update("INSERT INTO public.ig_nmf (account_name, created_on) VALUES (?, ?)",
                     "user3", testDate2);
 
-            List<Date> dates = instagramRepository.getDates();
+            List<Timestamp> dates = instagramRepository.getTimestamps();
 
             assertThat(dates).hasSize(2);
             assertThat(dates).containsExactlyInAnyOrder(testDate, testDate2);
@@ -149,7 +149,7 @@ class InstagramRepositoryTest {
         @Test
         @DisplayName("Should return empty list when no data")
         void getDates_WhenNoData_ReturnsEmptyList() {
-            List<Date> dates = instagramRepository.getDates();
+            List<Timestamp> dates = instagramRepository.getTimestamps();
 
             assertThat(dates).isEmpty();
         }

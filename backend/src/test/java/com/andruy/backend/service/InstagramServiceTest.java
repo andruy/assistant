@@ -8,7 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +40,11 @@ class InstagramServiceTest {
     @InjectMocks
     private InstagramService instagramService;
 
-    private Date testDate;
+    private Timestamp testDate;
 
     @BeforeEach
     void setUp() {
-        testDate = new Date(System.currentTimeMillis());
+        testDate = new Timestamp(System.currentTimeMillis());
     }
 
     @Nested
@@ -54,12 +54,12 @@ class InstagramServiceTest {
         @Test
         @DisplayName("Should return dates in reverse chronological order")
         void getListOfDates_ReturnsSortedDates() {
-            Date date1 = Date.valueOf("2024-01-01");
-            Date date2 = Date.valueOf("2024-01-15");
-            Date date3 = Date.valueOf("2024-01-10");
-            when(instagramRepository.getDates()).thenReturn(new java.util.ArrayList<>(List.of(date1, date2, date3)));
+            Timestamp date1 = Timestamp.valueOf("2024-01-01 00:00:00");
+            Timestamp date2 = Timestamp.valueOf("2024-01-15 00:00:00");
+            Timestamp date3 = Timestamp.valueOf("2024-01-10 00:00:00");
+            when(instagramRepository.getTimestamps()).thenReturn(new java.util.ArrayList<>(List.of(date1, date2, date3)));
 
-            List<Date> result = instagramService.getListOfDates();
+            List<Timestamp> result = instagramService.getListOfDates();
 
             assertThat(result).hasSize(3);
             assertThat(result.get(0)).isEqualTo(date2); // Most recent first
@@ -70,9 +70,9 @@ class InstagramServiceTest {
         @Test
         @DisplayName("Should return empty list when no dates exist")
         void getListOfDates_WhenNoDates_ReturnsEmptyList() {
-            when(instagramRepository.getDates()).thenReturn(Collections.emptyList());
+            when(instagramRepository.getTimestamps()).thenReturn(Collections.emptyList());
 
-            List<Date> result = instagramService.getListOfDates();
+            List<Timestamp> result = instagramService.getListOfDates();
 
             assertThat(result).isEmpty();
         }
@@ -80,10 +80,10 @@ class InstagramServiceTest {
         @Test
         @DisplayName("Should handle single date")
         void getListOfDates_WithSingleDate_ReturnsSingleElementList() {
-            Date singleDate = Date.valueOf("2024-01-15");
-            when(instagramRepository.getDates()).thenReturn(new java.util.ArrayList<>(List.of(singleDate)));
+            Timestamp singleDate = Timestamp.valueOf("2024-01-15 00:00:00");
+            when(instagramRepository.getTimestamps()).thenReturn(new java.util.ArrayList<>(List.of(singleDate)));
 
-            List<Date> result = instagramService.getListOfDates();
+            List<Timestamp> result = instagramService.getListOfDates();
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0)).isEqualTo(singleDate);
@@ -148,14 +148,14 @@ class InstagramServiceTest {
         @Test
         @DisplayName("Should compare followers and following from different dates")
         void getComparisonBetweenDates_ComparesCorrectly() {
-            Date followersDate = Date.valueOf("2024-01-01");
-            Date followingDate = Date.valueOf("2024-01-15");
+            Timestamp followersDate = Timestamp.valueOf("2024-01-01 00:00:00");
+            Timestamp followingDate = Timestamp.valueOf("2024-01-15 00:00:00");
             List<String> followers = List.of("user1", "user2", "user3");
             List<String> following = List.of("user1", "user4", "user5");
 
             when(instagramRepository.getUsers("followers", followersDate)).thenReturn(followers);
             when(instagramRepository.getUsers("following", followingDate)).thenReturn(following);
-            when(instagramRepository.saveUser(anyString(), anyString(), any(Date.class))).thenReturn(1);
+            when(instagramRepository.saveUser(anyString(), anyString(), any(Timestamp.class))).thenReturn(1);
 
             Map<String, String> result = instagramService.getComparisonBetweenDates(followersDate, followingDate);
 
@@ -167,18 +167,18 @@ class InstagramServiceTest {
         @Test
         @DisplayName("Should save non-followers to nmf table")
         void getComparisonBetweenDates_SavesNonFollowers() {
-            Date followersDate = Date.valueOf("2024-01-01");
-            Date followingDate = Date.valueOf("2024-01-15");
+            Timestamp followersDate = Timestamp.valueOf("2024-01-01 00:00:00");
+            Timestamp followingDate = Timestamp.valueOf("2024-01-15 00:00:00");
             List<String> followers = List.of("user1");
             List<String> following = List.of("user1", "user2", "user3");
 
             when(instagramRepository.getUsers("followers", followersDate)).thenReturn(followers);
             when(instagramRepository.getUsers("following", followingDate)).thenReturn(following);
-            when(instagramRepository.saveUser(anyString(), anyString(), any(Date.class))).thenReturn(1);
+            when(instagramRepository.saveUser(anyString(), anyString(), any(Timestamp.class))).thenReturn(1);
 
             instagramService.getComparisonBetweenDates(followersDate, followingDate);
 
-            verify(instagramRepository, times(2)).saveUser(eq("nmf"), anyString(), any(Date.class));
+            verify(instagramRepository, times(2)).saveUser(eq("nmf"), anyString(), any(Timestamp.class));
         }
     }
 

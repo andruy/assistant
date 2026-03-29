@@ -8,21 +8,25 @@ export default function Instagram() {
   const toast = useToast()
   const [selectedDate, setSelectedDate] = useState('')
   const [loadingDateList, setLoadingDateList] = useState(true)
-  const [dateList, setDateList] = useState<string[]>([])
+  const [dateList, setDateList] = useState<number[]>([])
   const [accounts, setAccounts] = useState<Record<string, string>>({})
   const [loadingAccounts, setLoadingAccounts] = useState(false)
   const [showCompare, setShowCompare] = useState(false)
   const [comparing, setComparing] = useState(false)
   const [fetchingFollowers, setFetchingFollowers] = useState(false)
   const [fetchingFollowing, setFetchingFollowing] = useState(false)
-  const [followersDates, setFollowersDates] = useState<string[]>([])
-  const [followingDates, setFollowingDates] = useState<string[]>([])
+  const [followersDates, setFollowersDates] = useState<number[]>([])
+  const [followingDates, setFollowingDates] = useState<number[]>([])
   const [selectedFollowersDate, setSelectedFollowersDate] = useState('')
   const [selectedFollowingDate, setSelectedFollowingDate] = useState('')
   const [comparingDates, setComparingDates] = useState(false)
   const [showDateCompare, setShowDateCompare] = useState(false)
 
   const API_BASE_URL = '/api/instagram'
+
+  function formatDate(ms: number) {
+    return new Date(ms).toLocaleString()
+  }
 
   useEffect(() => {
     if (!showCompare || comparing || fetchingFollowers || fetchingFollowing) return
@@ -36,7 +40,7 @@ export default function Instagram() {
       try {
         const response = await fetch(`${API_BASE_URL}/dates`)
         if (response.ok) {
-          const data: string[] = await response.json()
+          const data: number[] = await response.json()
           setDateList(data)
         }
       } catch (error) {
@@ -216,7 +220,7 @@ export default function Instagram() {
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-800 text-sm"
             >
               <option value="" hidden>Followers date</option>
-              {followersDates.map((d) => <option key={d} value={d}>{d}</option>)}
+              {followersDates.map((d) => <option key={d} value={d}>{formatDate(d)}</option>)}
             </select>
             <select
               value={selectedFollowingDate}
@@ -224,7 +228,7 @@ export default function Instagram() {
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-800 text-sm"
             >
               <option value="" hidden>Following date</option>
-              {followingDates.map((d) => <option key={d} value={d}>{d}</option>)}
+              {followingDates.map((d) => <option key={d} value={d}>{formatDate(d)}</option>)}
             </select>
           </div>
           <button
@@ -247,9 +251,9 @@ export default function Instagram() {
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-800"
           >
             <option value="" hidden>-- Select a date --</option>
-            {dateList.map((date) => (
-              <option key={date} value={date}>
-                {date}
+            {dateList.map((d) => (
+              <option key={d} value={d}>
+                {formatDate(d)}
               </option>
             ))}
           </select>
