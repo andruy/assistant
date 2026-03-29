@@ -2,6 +2,7 @@ package com.andruy.backend.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -155,7 +156,7 @@ class InstagramServiceTest {
 
             when(instagramRepository.getUsers("followers", followersDate)).thenReturn(followers);
             when(instagramRepository.getUsers("following", followingDate)).thenReturn(following);
-            when(instagramRepository.saveUser(anyString(), anyString(), any(Timestamp.class))).thenReturn(1);
+            when(instagramRepository.saveUsers(anyString(), anyList(), any(Timestamp.class))).thenReturn(2);
 
             Map<String, String> result = instagramService.getComparisonBetweenDates(followersDate, followingDate);
 
@@ -174,11 +175,11 @@ class InstagramServiceTest {
 
             when(instagramRepository.getUsers("followers", followersDate)).thenReturn(followers);
             when(instagramRepository.getUsers("following", followingDate)).thenReturn(following);
-            when(instagramRepository.saveUser(anyString(), anyString(), any(Timestamp.class))).thenReturn(1);
+            when(instagramRepository.saveUsers(anyString(), anyList(), any(Timestamp.class))).thenReturn(2);
 
             instagramService.getComparisonBetweenDates(followersDate, followingDate);
 
-            verify(instagramRepository, times(2)).saveUser(eq("nmf"), anyString(), any(Timestamp.class));
+            verify(instagramRepository).saveUsers(eq("nmf"), anyList(), any(Timestamp.class));
         }
     }
 
