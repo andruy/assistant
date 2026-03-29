@@ -75,7 +75,7 @@ export default function Terminal() {
   }[status]
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500" />
@@ -90,7 +90,7 @@ export default function Terminal() {
       </div>
 
       <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-        <div ref={scrollRef} className="p-4 h-[60vh] overflow-auto font-mono text-sm">
+        <div ref={scrollRef} className="p-4 h-[70vh] overflow-auto font-mono text-sm">
           {loading && !output ? (
             <div className="flex items-center justify-center h-full">
               <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
