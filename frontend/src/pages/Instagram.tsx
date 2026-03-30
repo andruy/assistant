@@ -128,76 +128,76 @@ export default function Instagram() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <div className="flex justify-center mb-6">
-        {showCompare ? (
-          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-            <button
-              disabled={fetchingFollowers}
-              onClick={async () => {
-                setFetchingFollowers(true)
-                try {
-                  const response = await fetch(`${API_BASE_URL}/followers`)
-                  if (response.ok) { toast('Followers task started'); setShowCompare(false) }
-                  else toast('Followers task failed')
-                } catch {
-                  toast('Followers task failed')
-                } finally {
-                  setFetchingFollowers(false)
-                }
-              }}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 disabled:bg-gray-400 flex items-center justify-center min-w-24"
-            >
-              {fetchingFollowers ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Followers'}
-            </button>
-            <button
-              disabled={comparing}
-              onClick={async () => {
-                setComparing(true)
-                try {
-                  const response = await fetch(`${API_BASE_URL}/compare`)
-                  if (response.ok) {
-                    toast('Comparison task started')
-                    setShowCompare(false)
-                  } else {
-                    toast('Comparison task failed')
-                  }
-                } catch {
-                  toast('Comparison task failed')
-                } finally {
-                  setComparing(false)
-                }
-              }}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 flex items-center justify-center min-w-24"
-            >
-              {comparing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Compare'}
-            </button>
-            <button
-              disabled={fetchingFollowing}
-              onClick={async () => {
-                setFetchingFollowing(true)
-                try {
-                  const response = await fetch(`${API_BASE_URL}/following`)
-                  if (response.ok) { toast('Following task started'); setShowCompare(false) }
-                  else toast('Following task failed')
-                } catch {
-                  toast('Following task failed')
-                } finally {
-                  setFetchingFollowing(false)
-                }
-              }}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 disabled:bg-gray-400 flex items-center justify-center min-w-24"
-            >
-              {fetchingFollowing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Following'}
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={(e) => { e.stopPropagation(); setShowCompare(true) }}
-            className="text-gray-500 hover:text-gray-300 transition-colors"
-          >
-            &#x2026;
-          </button>
-        )}
+        <button
+          onClick={(e) => { e.stopPropagation(); setShowCompare(!showCompare) }}
+          className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
+        >
+          {showCompare ? 'Hide' : 'Actions'}
+        </button>
       </div>
+
+      {showCompare && (
+        <div className="flex justify-center gap-2 mb-6" onClick={(e) => e.stopPropagation()}>
+          <button
+            disabled={fetchingFollowers}
+            onClick={async () => {
+              setFetchingFollowers(true)
+              try {
+                const response = await fetch(`${API_BASE_URL}/followers`)
+                if (response.ok) { toast('Followers task started'); setShowCompare(false) }
+                else toast('Followers task failed')
+              } catch {
+                toast('Followers task failed')
+              } finally {
+                setFetchingFollowers(false)
+              }
+            }}
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 disabled:bg-gray-400 flex items-center justify-center min-w-24"
+          >
+            {fetchingFollowers ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Followers'}
+          </button>
+          <button
+            disabled={comparing}
+            onClick={async () => {
+              setComparing(true)
+              try {
+                const response = await fetch(`${API_BASE_URL}/compare`)
+                if (response.ok) {
+                  toast('Comparison task started')
+                  setShowCompare(false)
+                } else {
+                  toast('Comparison task failed')
+                }
+              } catch {
+                toast('Comparison task failed')
+              } finally {
+                setComparing(false)
+              }
+            }}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 flex items-center justify-center min-w-24"
+          >
+            {comparing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Compare'}
+          </button>
+          <button
+            disabled={fetchingFollowing}
+            onClick={async () => {
+              setFetchingFollowing(true)
+              try {
+                const response = await fetch(`${API_BASE_URL}/following`)
+                if (response.ok) { toast('Following task started'); setShowCompare(false) }
+                else toast('Following task failed')
+              } catch {
+                toast('Following task failed')
+              } finally {
+                setFetchingFollowing(false)
+              }
+            }}
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 disabled:bg-gray-400 flex items-center justify-center min-w-24"
+          >
+            {fetchingFollowing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Following'}
+          </button>
+        </div>
+      )}
 
       <div className="flex justify-center mb-6">
         <button
