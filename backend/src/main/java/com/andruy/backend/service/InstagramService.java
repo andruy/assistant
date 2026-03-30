@@ -71,6 +71,7 @@ public class InstagramService {
         date = new Timestamp(startTime);
         initScreenshotDir();
         getList("followers", false);
+        pushNotificationService.push(new PushNotification("Followers complete", response));
         return CompletableFuture.completedFuture(null);
     }
 
@@ -81,6 +82,7 @@ public class InstagramService {
         date = new Timestamp(startTime);
         initScreenshotDir();
         getList("following", false);
+        pushNotificationService.push(new PushNotification("Following complete", response));
         return CompletableFuture.completedFuture(null);
     }
 
@@ -113,6 +115,8 @@ public class InstagramService {
         compareThem(followersList, followingList);
         double elapsed = timeTracker.getTotalMinutes(System.currentTimeMillis(), startTime);
         logger.trace("Comparison process completed in {} minutes", elapsed);
+        pushNotificationService.push(new PushNotification("Comparison complete",
+                String.format("Completed in %.1f minutes", elapsed)));
         return CompletableFuture.completedFuture(null);
     }
 
