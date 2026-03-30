@@ -75,7 +75,7 @@ export default function Terminal() {
   }[status]
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-5 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500" />

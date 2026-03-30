@@ -37,7 +37,7 @@ export default function Layout() {
   const currentPage = getPageData(location.pathname)
 
   return (
-    <div className="min-h-screen flex flex-col text-gray-300">
+    <div className="h-screen flex flex-col text-gray-300 overflow-hidden">
       <BackgroundCanvas />
 
       {/* Menu only when authenticated */}
@@ -93,21 +93,17 @@ export default function Layout() {
 
       {/* ================= MAIN ================= */}
       <main
-        className={`
-          flex-1
-          px-4
-          ${!isAuthenticated || title === "Home" ? "flex items-center justify-center" : ""}
-        `}
+        className="flex-1 min-h-0 overflow-hidden"
       >
         <AnimatePresence mode="wait">
-          <PageTransition key={location.pathname}>
+          <PageTransition key={location.pathname} center={!isAuthenticated || title === "Home"}>
             {useOutlet()}
           </PageTransition>
         </AnimatePresence>
       </main>
 
       {/* ================= LOWER THIRD ================= */}
-      <footer className="h-10 mb-4 overflow-hidden relative backdrop-blur-md bg-white/5 border-t border-white/10">
+      <footer className="h-10 mt-4 mb-4 overflow-hidden relative backdrop-blur-md bg-white/5 border-t border-white/10">
         <style>{`
           @keyframes scroll-left {
             from { transform: translateX(0); }
