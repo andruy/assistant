@@ -147,7 +147,6 @@ function StorageInner() {
         <BinDetail
           bin={selectedBin}
           onBack={() => { setSelectedBin(null); loadAll() }}
-          onDeleted={() => { setSelectedBin(null); loadBins() }}
         />
         {imageModal && <ImageModal src={imageModal} onClose={() => setImageModal(null)} />}
       </div>

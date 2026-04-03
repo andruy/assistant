@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { FaXmark } from 'react-icons/fa6'
 import PhotoDropzone from './PhotoDropzone'
+import BinCombobox from './BinCombobox'
 import { createItem, fetchBins, type Bin } from '../../lib/storage-api'
 
 interface CreateItemModalProps {
@@ -61,16 +62,7 @@ export default function CreateItemModal({ preselectedBinId, onClose, onCreated }
             className="w-full px-4 py-2.5 bg-gray-800/60 border border-gray-700 rounded-xl text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
           />
 
-          <select
-            value={binId}
-            onChange={(e) => setBinId(e.target.value)}
-            className="w-full px-4 py-2.5 bg-gray-800/60 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
-          >
-            <option value="">No bin</option>
-            {bins.map((bin) => (
-              <option key={bin.id} value={bin.id}>{bin.label}</option>
-            ))}
-          </select>
+          <BinCombobox bins={bins} selectedId={binId} onChange={setBinId} />
 
           {error && <p className="text-sm text-red-400">{error}</p>}
 

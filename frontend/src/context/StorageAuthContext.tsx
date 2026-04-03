@@ -13,18 +13,24 @@ interface StorageAuthContextType {
 
 const StorageAuthContext = createContext<StorageAuthContextType | null>(null)
 
+function getRedirectUrl() {
+  return window.location.origin + window.location.pathname
+}
+
 export function StorageAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       setIsLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Fallback: if onAuthStateChange doesn't fire quickly (no stored session, no URL tokens)
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
+      setIsLoading(false)
     })
 
     return () => subscription.unsubscribe()
@@ -33,20 +39,19 @@ export function StorageAuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href },
+      options: { redirectTo: getRedirectUrl() },
     })
   }
 
   const signInWithGithub = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'github',
-      options: { redirectTo: window.location.href },
+      options: { redirectTo: getRedirectUrl() },
     })
   }
 
   const signOut = async () => {
     await supabase.auth.signOut()
-    setUser(null)
   }
 
   return (

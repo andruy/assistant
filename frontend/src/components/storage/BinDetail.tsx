@@ -7,7 +7,6 @@ import ImageModal from './ImageModal'
 interface BinDetailProps {
   bin: Bin
   onBack: () => void
-  onDeleted: () => void
 }
 
 export default function BinDetail({ bin, onBack }: BinDetailProps) {
@@ -54,7 +53,7 @@ export default function BinDetail({ bin, onBack }: BinDetailProps) {
 
       <div className="relative mb-6 cursor-pointer" onClick={() => setImageModal(bin.photo_url)}>
         <img src={bin.photo_url} alt={bin.label} className="w-full h-56 object-cover rounded-2xl" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-2xl" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent rounded-2xl" />
         <h2 className="absolute bottom-4 left-4 text-2xl font-bold text-white">{bin.label}</h2>
       </div>
 
