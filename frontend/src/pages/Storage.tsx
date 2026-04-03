@@ -50,6 +50,7 @@ function StorageInner() {
   const [selectedBin, setSelectedBin] = useState<Bin | null>(null)
   const [imageModal, setImageModal] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [signingIn, setSigningIn] = useState<'google' | 'github' | null>(null)
 
   async function loadBins() {
     try {
@@ -121,17 +122,27 @@ function StorageInner() {
 
           <div className="space-y-3">
             <button
-              onClick={signInWithGoogle}
-              className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl bg-white text-gray-900 font-medium hover:bg-gray-100 transition-colors"
+              onClick={() => { setSigningIn('google'); signInWithGoogle() }}
+              disabled={!!signingIn}
+              className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl bg-white text-gray-900 font-medium hover:bg-gray-100 transition-colors disabled:opacity-60"
             >
-              <FaGoogle className="w-4 h-4" />
+              {signingIn === 'google' ? (
+                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <FaGoogle className="w-4 h-4" />
+              )}
               Sign in with Google
             </button>
             <button
-              onClick={signInWithGithub}
-              className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl bg-[#010409] text-white font-medium hover:bg-[#161b22] transition-colors border border-gray-700"
+              onClick={() => { setSigningIn('github'); signInWithGithub() }}
+              disabled={!!signingIn}
+              className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl bg-[#010409] text-white font-medium hover:bg-[#161b22] transition-colors border border-gray-700 disabled:opacity-60"
             >
-              <FaGithub className="w-4 h-4" />
+              {signingIn === 'github' ? (
+                <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <FaGithub className="w-4 h-4" />
+              )}
               Sign in with GitHub
             </button>
           </div>
