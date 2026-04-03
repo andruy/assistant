@@ -12,6 +12,7 @@ import Terminal from "./pages/Terminal"
 import Media from "./pages/Media"
 import Screenshots from "./pages/Screenshots"
 import Login from "./pages/Login"
+import Storage from "./pages/Storage"
 
 export const router = createBrowserRouter([
     {
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
             {
                 path: "folder",
                 element: <Folder />
+            },
+            {
+                path: "storage",
+                element: <Storage />
             },
             {
                 path: "hourglass",
