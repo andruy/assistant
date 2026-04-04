@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { FaArrowLeft, FaPlus, FaTrash, FaLinkSlash } from 'react-icons/fa6'
+import { FaArrowLeft, FaTrash, FaLinkSlash } from 'react-icons/fa6'
 import { fetchItemsByBin, deleteItem, updateItem, type Item, type Bin } from '../../lib/storage-api'
-import CreateItemModal from './CreateItemModal'
 import ImageModal from './ImageModal'
 
 interface BinDetailProps {
@@ -12,9 +11,9 @@ interface BinDetailProps {
 export default function BinDetail({ bin, onBack }: BinDetailProps) {
   const [items, setItems] = useState<Item[]>([])
   const [loading, setLoading] = useState(true)
-  const [showAddItem, setShowAddItem] = useState(false)
   const [imageModal, setImageModal] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [confirmUnassignAll, setConfirmUnassignAll] = useState(false)
   const [unassigning, setUnassigning] = useState(false)
 
   async function loadItems() {
@@ -42,6 +41,7 @@ export default function BinDetail({ bin, onBack }: BinDetailProps) {
       loadItems()
     } catch { /* ignore */ }
     setUnassigning(false)
+    setConfirmUnassignAll(false)
   }
 
   return (
@@ -66,25 +66,16 @@ export default function BinDetail({ bin, onBack }: BinDetailProps) {
             </span>
           )}
         </div>
-        <div className="flex gap-2">
-          {items.length > 0 && (
-            <button
-              onClick={handleUnassignAll}
-              disabled={unassigning}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-gray-200 transition-colors"
-            >
-              <FaLinkSlash className="w-3 h-3" />
-              Unassign all
-            </button>
-          )}
+        {items.length > 0 && (
           <button
-            onClick={() => setShowAddItem(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 transition-colors"
+            onClick={() => setConfirmUnassignAll(true)}
+            disabled={unassigning}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-gray-200 transition-colors"
           >
-            <FaPlus className="w-3 h-3" />
-            Add item
+            <FaLinkSlash className="w-3 h-3" />
+            Unassign all
           </button>
-        </div>
+        )}
       </div>
 
       {loading ? (
@@ -137,12 +128,30 @@ export default function BinDetail({ bin, onBack }: BinDetailProps) {
         </div>
       )}
 
-      {showAddItem && (
-        <CreateItemModal
-          preselectedBinId={bin.id}
-          onClose={() => setShowAddItem(false)}
-          onCreated={loadItems}
-        />
+      {confirmUnassignAll && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-sm w-full mx-4 text-center">
+            <p className="text-gray-200 font-medium mb-1">Unassign All Items?</p>
+            <p className="text-sm text-gray-500 mb-5">
+              {items.length} item{items.length === 1 ? '' : 's'} will be removed from this bin.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmUnassignAll(false)}
+                className="flex-1 py-2 text-sm rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUnassignAll}
+                disabled={unassigning}
+                className="flex-1 py-2 text-sm rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 transition-colors disabled:opacity-60"
+              >
+                {unassigning ? 'Unassigning...' : 'Unassign All'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       {imageModal && <ImageModal src={imageModal} onClose={() => setImageModal(null)} />}
     </div>
