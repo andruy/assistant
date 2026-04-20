@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.andruy.backend.exception.NotFoundException;
@@ -103,6 +104,7 @@ public class ProgrammingMediaService {
         return resolved;
     }
 
+    @NonNull
     private Path resolveFile(String relativePath) {
         Path resolved = resolveAndValidate(relativePath);
         if (!Files.exists(resolved) || !Files.isRegularFile(resolved)) {
@@ -111,6 +113,7 @@ public class ProgrammingMediaService {
         return resolved;
     }
 
+    @NonNull
     private Path resolveAndValidate(String relativePath) {
         String safe = relativePath == null ? "" : relativePath;
         Path resolved = rootDir.resolve(safe).normalize();
