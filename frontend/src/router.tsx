@@ -10,6 +10,7 @@ import Notepad from "./pages/Notepad"
 import Instagram from "./pages/Instagram"
 import Terminal from "./pages/Terminal"
 import Media from "./pages/Media"
+import Programming from "./pages/Programming"
 import Screenshots from "./pages/Screenshots"
 import Login from "./pages/Login"
 import Storage from "./pages/Storage"
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
             {
                 path: "media",
                 element: <Media />
+            },
+            {
+                path: "programming",
+                element: <Programming />
             },
             {
                 path: "screenshots",

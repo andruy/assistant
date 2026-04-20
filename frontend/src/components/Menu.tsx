@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRef, useEffect, useCallback, useState } from "react"
-import { FaApple, FaBoxArchive, FaCamera, FaRegClipboard, FaFolder, FaHourglassHalf, FaHouse, FaInstagram, FaMicrosoft, FaPlay, FaRegCalendarDays, FaTerminal } from "react-icons/fa6"
+import { FaApple, FaBoxArchive, FaCamera, FaRegClipboard, FaFolder, FaHourglassHalf, FaHouse, FaInstagram, FaLaptopCode, FaMicrosoft, FaPlay, FaRegCalendarDays, FaTerminal } from "react-icons/fa6"
 
 type Props = {
   open: boolean
@@ -17,6 +17,7 @@ export const pages = [
   { name: <FaInstagram size={64} />, path: "/instagram" },
   { name: <FaCamera size={64} />, path: "/screenshots" },
   { name: <FaPlay size={64} />, path: "/media" },
+  { name: <FaLaptopCode size={64} />, path: "/programming" },
   { name: <FaHourglassHalf size={64} />, path: "/hourglass" },
   { name: <FaRegCalendarDays size={64} />, path: "/calendar" },
   { name: <FaRegClipboard size={64} />, path: "/notepad" },
