@@ -397,6 +397,19 @@
   background: #4b5563;
 }
 
+/* Invisible hit-zone strip from screen's right edge out through the scrollbar's
+   right edge, spanning the screen's vertical extent. Sits below .watch-scrollbar
+   (z-index 10), so the thumb still receives pointer drags; everywhere else in
+   this rectangle the bridge catches wheel/touch for navigation. */
+.watch-btn .watch-hit-bridge {
+  position: absolute;
+  top: 9.8em;
+  bottom: 9.8em;
+  left: 18.7em;
+  right: -4.3em;
+  z-index: 1;
+}
+
 .watch-scrollbar {
   position: absolute;
   right: -1.8em;
