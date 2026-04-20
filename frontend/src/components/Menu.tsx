@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRef, useEffect, useCallback, useState } from "react"
-import { FaApple, FaBoxArchive, FaCamera, FaRegClipboard, FaFolder, FaHourglassHalf, FaHouse, FaInstagram, FaMicrosoft, FaPlay, FaRegCalendarDays, FaTerminal } from "react-icons/fa6"
+import { FaApple, FaBoxArchive, FaCamera, FaRegClipboard, FaFolder, FaHourglassHalf, FaHouse, FaInstagram, FaLaptopCode, FaMicrosoft, FaPlay, FaRegCalendarDays, FaTerminal } from "react-icons/fa6"
 
 type Props = {
   open: boolean
@@ -17,6 +17,7 @@ export const pages = [
   { name: <FaInstagram size={64} />, path: "/instagram" },
   { name: <FaCamera size={64} />, path: "/screenshots" },
   { name: <FaPlay size={64} />, path: "/media" },
+  { name: <FaLaptopCode size={64} />, path: "/programming" },
   { name: <FaHourglassHalf size={64} />, path: "/hourglass" },
   { name: <FaRegCalendarDays size={64} />, path: "/calendar" },
   { name: <FaRegClipboard size={64} />, path: "/notepad" },
@@ -33,6 +34,7 @@ export default function Menu({ open, onClose }: Props) {
   const location = useLocation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const screenRef = useRef<HTMLDivElement>(null)
+  const bridgeRef = useRef<HTMLDivElement>(null)
   const scrollbarRef = useRef<HTMLDivElement>(null)
   const watchBtnRef = useRef<HTMLDivElement>(null)
   const indexRef = useRef(0)
@@ -62,11 +64,14 @@ export default function Menu({ open, onClose }: Props) {
     return () => { document.body.style.overflow = "" }
   }, [open, location.pathname])
 
-  // Wheel — navigate every ~3 scroll lines (3 × 100px deltaY)
+  // Wheel — navigate every ~3 scroll lines (3 × 100px deltaY).
+  // Attached to screen + bridge + scrollbar so together they form a single
+  // rectangular zone from screen-left to scrollbar-right.
   useEffect(() => {
     if (!open) return
-    const el = screenRef.current
-    if (!el) return
+    const targets = [screenRef.current, bridgeRef.current, scrollbarRef.current]
+      .filter((el): el is HTMLDivElement => el !== null)
+    if (targets.length < 3) return
     let accumulated = 0
     function onWheel(e: WheelEvent) {
       e.preventDefault()
@@ -76,15 +81,17 @@ export default function Menu({ open, onClose }: Props) {
       else navigate(indexRef.current - 1)
       accumulated = 0
     }
-    el.addEventListener("wheel", onWheel, { passive: false })
-    return () => el.removeEventListener("wheel", onWheel)
+    targets.forEach(el => el.addEventListener("wheel", onWheel, { passive: false }))
+    return () => targets.forEach(el => el.removeEventListener("wheel", onWheel))
   }, [open, navigate])
 
-  // Touch — prevent background scroll & navigate on swipe
+  // Touch — swipe-navigate on screen + bridge; scrollbar is excluded so its
+  // pointer-drag handler stays uncontested (touch and pointer are separate streams).
   useEffect(() => {
     if (!open) return
-    const el = screenRef.current
-    if (!el) return
+    const targets = [screenRef.current, bridgeRef.current]
+      .filter((el): el is HTMLDivElement => el !== null)
+    if (targets.length < 2) return
     let startY = 0
     function onTouchStart(e: TouchEvent) {
       startY = e.touches[0].clientY
@@ -99,13 +106,17 @@ export default function Menu({ open, onClose }: Props) {
         else navigate(indexRef.current - 1)
       }
     }
-    el.addEventListener("touchstart", onTouchStart, { passive: false })
-    el.addEventListener("touchmove", onTouchMove, { passive: false })
-    el.addEventListener("touchend", onTouchEnd, { passive: true })
+    targets.forEach(el => {
+      el.addEventListener("touchstart", onTouchStart, { passive: false })
+      el.addEventListener("touchmove", onTouchMove, { passive: false })
+      el.addEventListener("touchend", onTouchEnd, { passive: true })
+    })
     return () => {
-      el.removeEventListener("touchstart", onTouchStart)
-      el.removeEventListener("touchmove", onTouchMove)
-      el.removeEventListener("touchend", onTouchEnd)
+      targets.forEach(el => {
+        el.removeEventListener("touchstart", onTouchStart)
+        el.removeEventListener("touchmove", onTouchMove)
+        el.removeEventListener("touchend", onTouchEnd)
+      })
     }
   }, [open, navigate])
 
@@ -226,6 +237,8 @@ export default function Menu({ open, onClose }: Props) {
                 <div className="mesh" /><div className="mesh" />
               </div>
             </div>
+            {/* Hit-zone extension: bridges the gap between screen and scrollbar */}
+            <div ref={bridgeRef} className="watch-hit-bridge" />
             {/* iOS-style scrollbar */}
             <div
               ref={scrollbarRef}

@@ -32,13 +32,13 @@ export default function Storage() {
   )
 }
 
-type Tab = 'bins' | 'items'
+type Tab = 'items' | 'bins'
 
 function StorageInner() {
   const { isAuthenticated, isLoading, signInWithGoogle, signInWithGithub, signOut, user } = useStorageAuth()
   const toast = useToast()
 
-  const [tab, setTab] = useState<Tab>('bins')
+  const [tab, setTab] = useState<Tab>('items')
   const [bins, setBins] = useState<Bin[]>([])
   const [items, setItems] = useState<Item[]>([])
   const [binCounts, setBinCounts] = useState<Record<string, number>>({})
@@ -203,15 +203,6 @@ function StorageInner() {
       {/* Tabs */}
       <div className="flex gap-1 mb-5 bg-gray-900/60 border border-gray-800 rounded-xl p-1">
         <button
-          onClick={() => setTab('bins')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${
-            tab === 'bins' ? 'bg-purple-500/20 text-purple-300' : 'text-gray-500 hover:text-gray-300'
-          }`}
-        >
-          <FaBoxesStacked className="w-3.5 h-3.5" />
-          Bins ({bins.length})
-        </button>
-        <button
           onClick={() => setTab('items')}
           className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${
             tab === 'items' ? 'bg-purple-500/20 text-purple-300' : 'text-gray-500 hover:text-gray-300'
@@ -220,13 +211,67 @@ function StorageInner() {
           <FaBox className="w-3.5 h-3.5" />
           Items ({items.length})
         </button>
+        <button
+          onClick={() => setTab('bins')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${
+            tab === 'bins' ? 'bg-purple-500/20 text-purple-300' : 'text-gray-500 hover:text-gray-300'
+          }`}
+        >
+          <FaBoxesStacked className="w-3.5 h-3.5" />
+          Bins ({bins.length})
+        </button>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-16">
           <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
         </div>
-      ) : tab === 'bins' ? (
+      ) : tab === 'items' ? (
+        /* Items Grid */
+        <>
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => setShowCreateItem(true)}
+              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 transition-colors"
+            >
+              <FaPlus className="w-3 h-3" />
+              New Item
+            </button>
+          </div>
+
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-16">
+              <FaBox className="w-10 h-10 mx-auto mb-3 text-gray-700" />
+              <p className="text-gray-500">
+                {search ? 'No items match your search' : 'No items yet — create one to get started'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {filteredItems.filter(i => i.bin_id).length > 0 && (
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Assigned</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {filteredItems.filter(i => i.bin_id).map((item) => (
+                      <ItemCard key={item.id} item={item} bins={bins} onDelete={setConfirmDelete} onImageClick={setImageModal} confirmDelete={confirmDelete} handleDeleteItem={handleDeleteItem} setConfirmDelete={setConfirmDelete} />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {filteredItems.filter(i => !i.bin_id).length > 0 && (
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Unassigned</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {filteredItems.filter(i => !i.bin_id).map((item) => (
+                      <ItemCard key={item.id} item={item} bins={bins} onDelete={setConfirmDelete} onImageClick={setImageModal} confirmDelete={confirmDelete} handleDeleteItem={handleDeleteItem} setConfirmDelete={setConfirmDelete} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      ) : (
         /* Bins Grid */
         <>
           <div className="flex justify-end mb-4">
@@ -296,78 +341,6 @@ function StorageInner() {
             </div>
           )}
         </>
-      ) : (
-        /* Items Grid */
-        <>
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={() => setShowCreateItem(true)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 transition-colors"
-            >
-              <FaPlus className="w-3 h-3" />
-              New Item
-            </button>
-          </div>
-
-          {filteredItems.length === 0 ? (
-            <div className="text-center py-16">
-              <FaBox className="w-10 h-10 mx-auto mb-3 text-gray-700" />
-              <p className="text-gray-500">
-                {search ? 'No items match your search' : 'No items yet — create one to get started'}
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="group relative bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden"
-                >
-                  <img
-                    src={item.photo_url}
-                    alt={item.label}
-                    className="w-full h-36 object-cover cursor-pointer"
-                    onClick={() => setImageModal(item.photo_url)}
-                  />
-                  <div className="p-3">
-                    <p className="text-sm text-gray-200 truncate">{item.label}</p>
-                    {item.bin_id && (
-                      <p className="text-xs text-purple-400 mt-0.5 truncate">
-                        {bins.find(b => b.id === item.bin_id)?.label ?? 'In a bin'}
-                      </p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => setConfirmDelete(item.id)}
-                    className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <FaTrash className="w-3 h-3" />
-                  </button>
-
-                  {confirmDelete === item.id && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm rounded-xl">
-                      <p className="text-xs text-gray-300 mb-2">Delete?</p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleDeleteItem(item)}
-                          className="px-3 py-1 text-xs rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30"
-                        >
-                          Yes
-                        </button>
-                        <button
-                          onClick={() => setConfirmDelete(null)}
-                          className="px-3 py-1 text-xs rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600"
-                        >
-                          No
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </>
       )}
 
       {/* Modals */}
@@ -384,6 +357,61 @@ function StorageInner() {
         />
       )}
       {imageModal && <ImageModal src={imageModal} onClose={() => setImageModal(null)} />}
+    </div>
+  )
+}
+
+function ItemCard({ item, bins, onImageClick, confirmDelete, handleDeleteItem, setConfirmDelete }: {
+  item: Item
+  bins: Bin[]
+  onDelete: (id: string) => void
+  onImageClick: (url: string) => void
+  confirmDelete: string | null
+  handleDeleteItem: (item: Item) => void
+  setConfirmDelete: (id: string | null) => void
+}) {
+  return (
+    <div className="group relative bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden">
+      <img
+        src={item.photo_url}
+        alt={item.label}
+        className="w-full h-36 object-cover cursor-pointer"
+        onClick={() => onImageClick(item.photo_url)}
+      />
+      <div className="p-3">
+        <p className="text-sm text-gray-200 truncate">{item.label}</p>
+        {item.bin_id && (
+          <p className="text-xs text-purple-400 mt-0.5 truncate">
+            {bins.find(b => b.id === item.bin_id)?.label ?? 'In a bin'}
+          </p>
+        )}
+      </div>
+      <button
+        onClick={() => setConfirmDelete(item.id)}
+        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <FaTrash className="w-3 h-3" />
+      </button>
+
+      {confirmDelete === item.id && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm rounded-xl">
+          <p className="text-xs text-gray-300 mb-2">Delete?</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleDeleteItem(item)}
+              className="px-3 py-1 text-xs rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => setConfirmDelete(null)}
+              className="px-3 py-1 text-xs rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
